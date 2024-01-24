@@ -1,0 +1,16 @@
+---
+title: "SQL Queries on PNW Database"
+author: "Chester"
+format: html
+---
+
+## Introduction
+
+This document contains SQL queries to explore the `pnw_counties` and `pnw_towns` tables in our SQLite database. (Maybe `fips` too?)
+
+## Setup
+
+```{r}
+library(DBI)
+library(RSQLite)
+con <- dbConnect(RSQLite::SQLite(), dbname = "pnw_database.sqlite")
