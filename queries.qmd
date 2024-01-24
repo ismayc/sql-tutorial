@@ -4,13 +4,55 @@ author: "Chester"
 format: html
 ---
 
-## Introduction
+# [ChatGPT main level]
+
+## Selecting columns/fields
 
 This document contains SQL queries to explore the `pnw_counties` and `pnw_towns` tables in our SQLite database. (Maybe `fips` too?)
 
-## Setup
-
-```{r}
+```{r setup}
+#| include: false
 library(DBI)
 library(RSQLite)
 con <- dbConnect(RSQLite::SQLite(), dbname = "pnw_database.sqlite")
+knitr::opts_chunk$set(engine = "SQL", connection = con)
+```
+
+### Select All Town Names from `pnw_towns`:
+
+```{sql}
+SELECT town
+  FROM pnw_towns;
+```
+
+### Select All County Names from `pnw_counties`:
+
+```{sql}
+SELECT county
+  FROM pnw_counties;
+```
+
+### Select All Columns for Towns
+
+```{sql}
+SELECT *
+  FROM pnw_towns;
+```
+
+### Select County Names and Population for 2022 
+
+```{sql}
+SELECT county, population_2022
+  FROM pnw_counties;
+```
+
+## Aliasing
+
+### Select County Names and Population for 2022, Aliased
+
+```{sql}
+SELECT county AS cty, 
+       population_2022 AS pop2022,
+       land_area_sq_mi AS area
+  FROM pnw_counties;
+```
