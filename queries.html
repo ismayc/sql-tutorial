@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Chester">
+<meta name="author" content="Dr.&nbsp;Chester Ismay">
 
-<title>SQL Queries on PNW Database</title>
+<title>SQL Queries on Pacific Northwest Database</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -80,7 +80,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">SQL Queries on PNW Database</h1>
+<h1 class="title">SQL Queries on Pacific Northwest Database</h1>
 </div>
 
 
@@ -90,7 +90,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Chester </p>
+             <p>Dr.&nbsp;Chester Ismay </p>
           </div>
   </div>
     
@@ -101,19 +101,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="chatgpt-main-level" class="level1">
-<h1>[ChatGPT main level]</h1>
+<section id="sql-selection-techniques" class="level1">
+<h1>SQL Selection Techniques</h1>
 <section id="selecting-columnsfields" class="level2">
 <h2 class="anchored" data-anchor-id="selecting-columnsfields">Selecting columns/fields</h2>
 <p>This document contains SQL queries to explore the <code>pnw_counties</code> and <code>pnw_towns</code> tables in our SQLite database. (Maybe <code>fips</code> too?)</p>
-<section id="select-all-town-names-from-pnw_towns" class="level3">
-<h3 class="anchored" data-anchor-id="select-all-town-names-from-pnw_towns">Select All Town Names from <code>pnw_towns</code>:</h3>
+<section id="select-all-town-names" class="level3">
+<h3 class="anchored" data-anchor-id="select-all-town-names">Select all town names:</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> town</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
-<caption>Displaying records 1 - 10</caption>
+<caption>Displaying records 1 - 20</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">town</th>
@@ -150,19 +150,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="even">
 <td style="text-align: left;">Corvallis</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Albany</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tigard</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lake Oswego</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Keizer</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Grants Pass</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Oregon City</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">McMinnville</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Redmond</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tualatin</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">West Linn</td>
+</tr>
 </tbody>
 </table>
 </div>
 </div>
 </section>
-<section id="select-all-county-names-from-pnw_counties" class="level3">
-<h3 class="anchored" data-anchor-id="select-all-county-names-from-pnw_counties">Select All County Names from <code>pnw_counties</code>:</h3>
+<section id="select-all-county-names" class="level3">
+<h3 class="anchored" data-anchor-id="select-all-county-names">Select all county names:</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> county</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
-<caption>Displaying records 1 - 10</caption>
+<caption>Displaying records 1 - 20</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">county</th>
@@ -199,19 +229,49 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="even">
 <td style="text-align: left;">Douglas County</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Gilliam County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Grant County</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Harney County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hood River County</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jackson County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jefferson County</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Josephine County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Klamath County</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lake County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lane County</td>
+</tr>
 </tbody>
 </table>
 </div>
 </div>
 </section>
-<section id="select-all-columns-for-towns" class="level3">
-<h3 class="anchored" data-anchor-id="select-all-columns-for-towns">Select All Columns for Towns</h3>
+<section id="select-all-columns-for-towns-table" class="level3">
+<h3 class="anchored" data-anchor-id="select-all-columns-for-towns-table">Select all columns for towns table</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
-<caption>Displaying records 1 - 10</caption>
+<caption>Displaying records 1 - 20</caption>
 <colgroup>
 <col style="width: 9%">
 <col style="width: 5%">
@@ -335,19 +395,119 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">54462</td>
 <td style="text-align: right;">14.30</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Albany</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Linn</td>
+<td style="text-align: left;">Benton</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">56472</td>
+<td style="text-align: right;">50158</td>
+<td style="text-align: right;">17.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tigard</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">54539</td>
+<td style="text-align: right;">48035</td>
+<td style="text-align: right;">11.81</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lake Oswego</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">40732</td>
+<td style="text-align: right;">36619</td>
+<td style="text-align: right;">11.35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Keizer</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Marion</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">39376</td>
+<td style="text-align: right;">36478</td>
+<td style="text-align: right;">7.21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Grants Pass</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Josephine</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">39189</td>
+<td style="text-align: right;">34533</td>
+<td style="text-align: right;">11.03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Oregon City</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">37572</td>
+<td style="text-align: right;">31859</td>
+<td style="text-align: right;">9.29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">McMinnville</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Yamhill</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">34319</td>
+<td style="text-align: right;">32187</td>
+<td style="text-align: right;">10.58</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Redmond</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Deschutes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">33274</td>
+<td style="text-align: right;">26215</td>
+<td style="text-align: right;">16.79</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tualatin</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">27942</td>
+<td style="text-align: right;">26054</td>
+<td style="text-align: right;">8.23</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">West Linn</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">27373</td>
+<td style="text-align: right;">25109</td>
+<td style="text-align: right;">8.05</td>
+</tr>
 </tbody>
 </table>
 </div>
 </div>
 </section>
 <section id="select-county-names-and-population-for-2022" class="level3">
-<h3 class="anchored" data-anchor-id="select-county-names-and-population-for-2022">Select County Names and Population for 2022</h3>
+<h3 class="anchored" data-anchor-id="select-county-names-and-population-for-2022">Select county names and population for 2022</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> county, population_2022</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
-<caption>Displaying records 1 - 10</caption>
+<caption>Displaying records 1 - 20</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">county</th>
@@ -395,6 +555,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Douglas County</td>
 <td style="text-align: right;">112297</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Gilliam County</td>
+<td style="text-align: right;">2018</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Grant County</td>
+<td style="text-align: right;">7218</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Harney County</td>
+<td style="text-align: right;">7515</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hood River County</td>
+<td style="text-align: right;">24048</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jackson County</td>
+<td style="text-align: right;">221644</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jefferson County</td>
+<td style="text-align: right;">25330</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Josephine County</td>
+<td style="text-align: right;">87730</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Klamath County</td>
+<td style="text-align: right;">70212</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lake County</td>
+<td style="text-align: right;">8385</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lane County</td>
+<td style="text-align: right;">382353</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -403,8 +603,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="aliasing" class="level2">
 <h2 class="anchored" data-anchor-id="aliasing">Aliasing</h2>
-<section id="select-county-names-and-population-for-2022-aliased" class="level3">
-<h3 class="anchored" data-anchor-id="select-county-names-and-population-for-2022-aliased">Select County Names and Population for 2022, Aliased</h3>
+<section id="select-county-names-population-for-2022-and-land-area-aliased" class="level3">
+<h3 class="anchored" data-anchor-id="select-county-names-population-for-2022-and-land-area-aliased">Select county names, population for 2022, and land area (Aliased)</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> county <span class="kw">AS</span> cty, </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>       population_2022 <span class="kw">AS</span> pop2022,</span>
@@ -412,7 +612,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="knitsql-table">
 <table class="table table-sm table-striped small">
-<caption>Displaying records 1 - 10</caption>
+<caption>Displaying records 1 - 20</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;">cty</th>
@@ -470,6 +670,1579 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">Douglas County</td>
 <td style="text-align: right;">112297</td>
 <td style="text-align: right;">5037</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Gilliam County</td>
+<td style="text-align: right;">2018</td>
+<td style="text-align: right;">1204</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Grant County</td>
+<td style="text-align: right;">7218</td>
+<td style="text-align: right;">4529</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Harney County</td>
+<td style="text-align: right;">7515</td>
+<td style="text-align: right;">10135</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hood River County</td>
+<td style="text-align: right;">24048</td>
+<td style="text-align: right;">522</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jackson County</td>
+<td style="text-align: right;">221644</td>
+<td style="text-align: right;">2785</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jefferson County</td>
+<td style="text-align: right;">25330</td>
+<td style="text-align: right;">1781</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Josephine County</td>
+<td style="text-align: right;">87730</td>
+<td style="text-align: right;">1640</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Klamath County</td>
+<td style="text-align: right;">70212</td>
+<td style="text-align: right;">5945</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lake County</td>
+<td style="text-align: right;">8385</td>
+<td style="text-align: right;">7940</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lane County</td>
+<td style="text-align: right;">382353</td>
+<td style="text-align: right;">4554</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="alias-the-table-name" class="level3">
+<h3 class="anchored" data-anchor-id="alias-the-table-name">Alias the table name</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> county,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>       origin</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties <span class="kw">AS</span> counties;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>Displaying records 1 - 20</caption>
+<colgroup>
+<col style="width: 15%">
+<col style="width: 84%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">county</th>
+<th style="text-align: left;">origin</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Baker County</td>
+<td style="text-align: left;">Eastern portion of Wasco County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Benton County</td>
+<td style="text-align: left;">Polk County</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Clackamas County</td>
+<td style="text-align: left;">One of the original four districts of the Oregon Country</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Clatsop County</td>
+<td style="text-align: left;">Northern and western portions of the original Twality District</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Columbia County</td>
+<td style="text-align: left;">Northern half of Washington County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Coos County</td>
+<td style="text-align: left;">Western parts of Umpqua and Jackson Counties</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Crook County</td>
+<td style="text-align: left;">Southern part of Wasco County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Curry County</td>
+<td style="text-align: left;">Coos County</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Deschutes County</td>
+<td style="text-align: left;">Southern part of Crook County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Douglas County</td>
+<td style="text-align: left;">Portion of Umpqua County which lay east of the Coast Range summit</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Gilliam County</td>
+<td style="text-align: left;">Eastern third of Wasco County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Grant County</td>
+<td style="text-align: left;">Parts of old Wasco and old Umatilla counties</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Harney County</td>
+<td style="text-align: left;">Southern two-thirds of Grant County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hood River County</td>
+<td style="text-align: left;">Northwest portion of Wasco County</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Jackson County</td>
+<td style="text-align: left;">Southwestern portion of Lane County and unorganized area south of Douglas and Umpqua Counties.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Jefferson County</td>
+<td style="text-align: left;">Crook County</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Josephine County</td>
+<td style="text-align: left;">Western half of Jackson County</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Klamath County</td>
+<td style="text-align: left;">Western part of Lake County</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lake County</td>
+<td style="text-align: left;">Jackson and Wasco Counties</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lane County</td>
+<td style="text-align: left;">Southern part of Linn County and the portion of Benton County east of Umpqua County</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="unique-entries" class="level2">
+<h2 class="anchored" data-anchor-id="unique-entries">Unique entries</h2>
+<section id="select-distinct-states-from-the-pnw_towns-table" class="level3">
+<h3 class="anchored" data-anchor-id="select-distinct-states-from-the-pnw_towns-table">Select distinct states from the <code>pnw_towns</code> table:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> state</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>2 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">state</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Oregon</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Washington</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="view-creation" class="level2">
+<h2 class="anchored" data-anchor-id="view-creation">View creation</h2>
+<section id="create-a-view-that-lists-towns-along-with-their-primary-counties" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-view-that-lists-towns-along-with-their-primary-counties">Create a view that lists towns along with their primary counties:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">VIEW</span> towns_with_county <span class="kw">AS</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> town, primary_county</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="use-this-view-in-a-query" class="level3">
+<h3 class="anchored" data-anchor-id="use-this-view-in-a-query">Use this view in a query</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> towns_with_county;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>Displaying records 1 - 20</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">primary_county</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Portland</td>
+<td style="text-align: left;">Multnomah</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Eugene</td>
+<td style="text-align: left;">Lane</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Salem</td>
+<td style="text-align: left;">Marion</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gresham</td>
+<td style="text-align: left;">Multnomah</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hillsboro</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bend</td>
+<td style="text-align: left;">Deschutes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Beaverton</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Medford</td>
+<td style="text-align: left;">Jackson</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Springfield</td>
+<td style="text-align: left;">Lane</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Corvallis</td>
+<td style="text-align: left;">Benton</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Albany</td>
+<td style="text-align: left;">Linn</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tigard</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lake Oswego</td>
+<td style="text-align: left;">Clackamas</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Keizer</td>
+<td style="text-align: left;">Marion</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Grants Pass</td>
+<td style="text-align: left;">Josephine</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Oregon City</td>
+<td style="text-align: left;">Clackamas</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">McMinnville</td>
+<td style="text-align: left;">Yamhill</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Redmond</td>
+<td style="text-align: left;">Deschutes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tualatin</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">West Linn</td>
+<td style="text-align: left;">Clackamas</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="counting" class="level2">
+<h2 class="anchored" data-anchor-id="counting">Counting</h2>
+<section id="count-the-number-of-records-in-the-pnw_towns-table" class="level3">
+<h3 class="anchored" data-anchor-id="count-the-number-of-records-in-the-pnw_towns-table">Count the number of records in the <code>pnw_towns</code> table:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="op">*</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">COUNT(*)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">453</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="count-the-number-of-distinct-states-in-pnw_counties" class="level3">
+<h3 class="anchored" data-anchor-id="count-the-number-of-distinct-states-in-pnw_counties">Count the number of distinct states in <code>pnw_counties</code>:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="fu">COUNT</span>(<span class="kw">DISTINCT</span> state)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">COUNT(DISTINCT state)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="sql-filtering-techniques" class="level1">
+<h1>SQL Filtering Techniques</h1>
+<section id="filtering-rowsrecords" class="level2">
+<h2 class="anchored" data-anchor-id="filtering-rowsrecords">Filtering rows/records</h2>
+<section id="towns-with-greater-than-150000-people" class="level3">
+<h3 class="anchored" data-anchor-id="towns-with-greater-than-150000-people">Towns with greater than 150,000 people</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> town, state, population_2020_census </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> population_2020_census <span class="op">&gt;</span> <span class="dv">150000</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>8 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: right;">population_2020_census</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Portland</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">652503</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Eugene</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">176654</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Salem</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">175535</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bellevue</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">151854</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Seattle</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">737015</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">228989</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tacoma</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">219346</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vancouver</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">190915</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="towns-with-greater-than-150000-people-and-in-oregon" class="level3">
+<h3 class="anchored" data-anchor-id="towns-with-greater-than-150000-people-and-in-oregon">Towns with greater than 150,000 people and in Oregon</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> town, state, population_2020_census </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> population_2020_census <span class="op">&gt;</span> <span class="dv">150000</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">AND</span> state <span class="op">=</span> <span class="st">'Oregon'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>3 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: right;">population_2020_census</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Portland</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">652503</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Eugene</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">176654</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Salem</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">175535</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="towns-with-greater-than-150000-people-or-in-oregon" class="level3">
+<h3 class="anchored" data-anchor-id="towns-with-greater-than-150000-people-or-in-oregon">Towns with greater than 150,000 people or in Oregon</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> town, state, population_2020_census </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> population_2020_census <span class="op">&gt;</span> <span class="dv">150000</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">OR</span> state <span class="op">=</span> <span class="st">'Oregon'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>Displaying records 1 - 20</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: right;">population_2020_census</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Portland</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">652503</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Eugene</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">176654</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Salem</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">175535</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gresham</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">114247</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hillsboro</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">106447</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bend</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">99178</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Beaverton</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">97494</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Medford</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">85824</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Springfield</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">61851</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Corvallis</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">59922</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Albany</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">56472</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tigard</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">54539</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lake Oswego</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">40732</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Keizer</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">39376</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Grants Pass</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">39189</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Oregon City</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">37572</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">McMinnville</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">34319</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Redmond</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">33274</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tualatin</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">27942</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">West Linn</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">27373</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="counties-established-after-1920-with-a-population-greater-than-100000" class="level3">
+<h3 class="anchored" data-anchor-id="counties-established-after-1920-with-a-population-greater-than-100000">Counties established after 1920 with a population greater than 100,000</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> county, state, year_established, population_2022</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> year_established <span class="op">&gt;</span> <span class="dv">1920</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">AND</span> population_2022 <span class="op">&gt;</span> <span class="dv">100000</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table>
+<caption>0 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">county</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: right;">year_established</th>
+<th style="text-align: right;">population_2022</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="counties-established-after-1880-with-a-population-greater-than-100000" class="level3">
+<h3 class="anchored" data-anchor-id="counties-established-after-1880-with-a-population-greater-than-100000">Counties established after 1880 with a population greater than 100,000</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> county, state, year_established, population_2022</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> year_established <span class="op">&gt;</span> <span class="dv">1880</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">AND</span> population_2022 <span class="op">&gt;</span> <span class="dv">100000</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">county</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: right;">year_established</th>
+<th style="text-align: right;">population_2022</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Deschutes County</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">1916</td>
+<td style="text-align: right;">206549</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Benton County</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">1905</td>
+<td style="text-align: right;">212791</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Grant County</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">1909</td>
+<td style="text-align: right;">101311</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Skagit County</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">1883</td>
+<td style="text-align: right;">131179</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="towns-with-a-land-area-between-12-and-15-square-miles" class="level3">
+<h3 class="anchored" data-anchor-id="towns-with-a-land-area-between-12-and-15-square-miles">Towns with a land area between 12 and 15 square miles:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> town, state, land_area_sq_mi</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> land_area_sq_mi <span class="op">&gt;=</span> <span class="dv">12</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>   <span class="kw">AND</span> land_area_sq_mi <span class="op">&lt;=</span> <span class="dv">15</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>8 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: right;">land_area_sq_mi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Corvallis</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">14.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bothell</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">12.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Camas</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">13.74</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Longview</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">14.54</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mount Vernon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">12.24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Puyallup</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">14.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tumwater</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">14.32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Walla Walla</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">12.80</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="towns-with-a-land-area-between-10-and-15-square-miles-simplified" class="level3">
+<h3 class="anchored" data-anchor-id="towns-with-a-land-area-between-10-and-15-square-miles-simplified">Towns with a land area between 10 and 15 square miles (simplified):</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> town, state, land_area_sq_mi</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> land_area_sq_mi <span class="kw">BETWEEN</span> <span class="dv">12</span> <span class="kw">AND</span> <span class="dv">15</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>8 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: right;">land_area_sq_mi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Corvallis</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">14.30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bothell</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">12.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Camas</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">13.74</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Longview</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">14.54</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mount Vernon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">12.24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Puyallup</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">14.11</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tumwater</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">14.32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Walla Walla</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">12.80</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="counties-in-washington-established-between-1890-and-1900-or-counties-in-oregon-with-a-population-greater-than-300000-in-2022" class="level3">
+<h3 class="anchored" data-anchor-id="counties-in-washington-established-between-1890-and-1900-or-counties-in-oregon-with-a-population-greater-than-300000-in-2022">Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> county, state, year_established, population_2022</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> (state <span class="op">=</span> <span class="st">'Washington'</span> <span class="kw">AND</span> year_established <span class="kw">BETWEEN</span> <span class="dv">1890</span> <span class="kw">AND</span> <span class="dv">1900</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">OR</span> (state <span class="op">=</span> <span class="st">'Oregon'</span> <span class="kw">AND</span> population_2022 <span class="op">&gt;</span> <span class="dv">300000</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>7 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">county</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: right;">year_established</th>
+<th style="text-align: right;">population_2022</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Clackamas County</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">1843</td>
+<td style="text-align: right;">423177</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lane County</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">1851</td>
+<td style="text-align: right;">382353</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Marion County</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">1843</td>
+<td style="text-align: right;">346703</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Multnomah County</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">1854</td>
+<td style="text-align: right;">795083</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Washington County</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: right;">1843</td>
+<td style="text-align: right;">600176</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Chelan County</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">1899</td>
+<td style="text-align: right;">79926</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ferry County</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">1899</td>
+<td style="text-align: right;">7448</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+</section>
+<section id="filtering-text" class="level2">
+<h2 class="anchored" data-anchor-id="filtering-text">Filtering text</h2>
+<section id="counties-that-start-with-the-letter-k" class="level3">
+<h3 class="anchored" data-anchor-id="counties-that-start-with-the-letter-k">Counties that start with the letter “K”:</h3>
+<!-- 
+In SQL, the percent symbol (%) used with the LIKE operator serves as a wildcard character representing zero, one, or multiple characters. This allows for flexible pattern matching in string comparisons. For example, if you use `LIKE '5%'`, the SQL engine will search for strings that begin with the number 5 followed by any sequence of characters, including none at all. Similarly, `NOT LIKE '5%'` would find strings that do not start with 5. This feature is particularly useful for queries where you need to find patterns in data without specifying the exact or entire pattern (source: Microsoft Learn - LIKE (Transact-SQL)).
+-->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> county, state</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> county <span class="kw">LIKE</span> <span class="st">'K%'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>5 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">county</th>
+<th style="text-align: left;">state</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Klamath County</td>
+<td style="text-align: left;">Oregon</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">King County</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Kitsap County</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kittitas County</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Klickitat County</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="towns-that-end-with-the-letters-ia" class="level3">
+<h3 class="anchored" data-anchor-id="towns-that-end-with-the-letters-ia">Towns that end with the letters “ia”:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> town, state</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> town <span class="kw">LIKE</span> <span class="st">'%ia'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>4 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Astoria</td>
+<td style="text-align: left;">Oregon</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vernonia</td>
+<td style="text-align: left;">Oregon</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Centralia</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Olympia</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="towns-that-contain-the-phrase-mount" class="level3">
+<h3 class="anchored" data-anchor-id="towns-that-contain-the-phrase-mount">Towns that contain the phrase “mount”:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> town, state</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> town <span class="kw">LIKE</span> <span class="st">'%mount%'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>3 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mount Vernon</td>
+<td style="text-align: left;">Oregon</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mount Vernon</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mountlake Terrace</td>
+<td style="text-align: left;">Washington</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="counties-with-specific-pattern-in-third-and-fourth-position-ar" class="level3">
+<h3 class="anchored" data-anchor-id="counties-with-specific-pattern-in-third-and-fourth-position-ar">Counties with specific pattern in third and fourth position (“ar”):</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> county</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_counties</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> county <span class="kw">LIKE</span> <span class="st">'__ar%'</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">county</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Clark County</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="towns-that-are-in-multnomah-or-spokane-counties" class="level3">
+<h3 class="anchored" data-anchor-id="towns-that-are-in-multnomah-or-spokane-counties">Towns that are in Multnomah or Spokane counties:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">FROM</span> pnw_towns </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a> <span class="kw">WHERE</span> primary_county <span class="kw">IN</span> (<span class="st">'Multnomah'</span>, <span class="st">'Spokane'</span>);</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>15 records</caption>
+<colgroup>
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 11%">
+<col style="width: 12%">
+<col style="width: 11%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: left;">primary_county</th>
+<th style="text-align: left;">secondary_county</th>
+<th style="text-align: left;">tertiary_county</th>
+<th style="text-align: right;">population_2020_census</th>
+<th style="text-align: right;">population_2010_census</th>
+<th style="text-align: right;">land_area_sq_mi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Portland</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: right;">652503</td>
+<td style="text-align: right;">583776</td>
+<td style="text-align: right;">145.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gresham</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">114247</td>
+<td style="text-align: right;">105594</td>
+<td style="text-align: right;">23.43</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Troutdale</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">16300</td>
+<td style="text-align: right;">15962</td>
+<td style="text-align: right;">6.02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fairview</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">10424</td>
+<td style="text-align: right;">8920</td>
+<td style="text-align: right;">3.58</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wood Village</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">4387</td>
+<td style="text-align: right;">3878</td>
+<td style="text-align: right;">0.94</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Maywood Park</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">829</td>
+<td style="text-align: right;">752</td>
+<td style="text-align: right;">0.17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Airway Heights</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">10757</td>
+<td style="text-align: right;">6114</td>
+<td style="text-align: right;">5.12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cheney</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">13255</td>
+<td style="text-align: right;">10590</td>
+<td style="text-align: right;">4.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Deer Park</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">4383</td>
+<td style="text-align: right;">3652</td>
+<td style="text-align: right;">6.89</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Liberty Lake</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">12003</td>
+<td style="text-align: right;">7591</td>
+<td style="text-align: right;">6.14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Medical Lake</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">4874</td>
+<td style="text-align: right;">5060</td>
+<td style="text-align: right;">3.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Millwood</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">1881</td>
+<td style="text-align: right;">1786</td>
+<td style="text-align: right;">0.70</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Spangle</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">278</td>
+<td style="text-align: right;">0.36</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">228989</td>
+<td style="text-align: right;">208916</td>
+<td style="text-align: right;">68.73</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Spokane Valley</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Spokane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">102976</td>
+<td style="text-align: right;">89755</td>
+<td style="text-align: right;">37.71</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="towns-with-missing-values-for-secondary-county" class="level3">
+<h3 class="anchored" data-anchor-id="towns-with-missing-values-for-secondary-county">Towns with missing values for secondary county:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a> <span class="kw">FROM</span> pnw_towns </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> secondary_county <span class="kw">IS</span> <span class="kw">NULL</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>Displaying records 1 - 20</caption>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 5%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: left;">primary_county</th>
+<th style="text-align: left;">secondary_county</th>
+<th style="text-align: left;">tertiary_county</th>
+<th style="text-align: right;">population_2020_census</th>
+<th style="text-align: right;">population_2010_census</th>
+<th style="text-align: right;">land_area_sq_mi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Eugene</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Lane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">176654</td>
+<td style="text-align: right;">156185</td>
+<td style="text-align: right;">43.74</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gresham</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">114247</td>
+<td style="text-align: right;">105594</td>
+<td style="text-align: right;">23.43</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hillsboro</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">106447</td>
+<td style="text-align: right;">91611</td>
+<td style="text-align: right;">24.25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Bend</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Deschutes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">99178</td>
+<td style="text-align: right;">76639</td>
+<td style="text-align: right;">33.27</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Beaverton</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">97494</td>
+<td style="text-align: right;">89803</td>
+<td style="text-align: right;">18.73</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Medford</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Jackson</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">85824</td>
+<td style="text-align: right;">74907</td>
+<td style="text-align: right;">25.74</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Springfield</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Lane</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">61851</td>
+<td style="text-align: right;">59403</td>
+<td style="text-align: right;">15.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Corvallis</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Benton</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">59922</td>
+<td style="text-align: right;">54462</td>
+<td style="text-align: right;">14.30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tigard</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">54539</td>
+<td style="text-align: right;">48035</td>
+<td style="text-align: right;">11.81</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Keizer</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Marion</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">39376</td>
+<td style="text-align: right;">36478</td>
+<td style="text-align: right;">7.21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Grants Pass</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Josephine</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">39189</td>
+<td style="text-align: right;">34533</td>
+<td style="text-align: right;">11.03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Oregon City</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">37572</td>
+<td style="text-align: right;">31859</td>
+<td style="text-align: right;">9.29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">McMinnville</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Yamhill</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">34319</td>
+<td style="text-align: right;">32187</td>
+<td style="text-align: right;">10.58</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Redmond</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Deschutes</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">33274</td>
+<td style="text-align: right;">26215</td>
+<td style="text-align: right;">16.79</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">West Linn</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">27373</td>
+<td style="text-align: right;">25109</td>
+<td style="text-align: right;">8.05</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Forest Grove</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">26225</td>
+<td style="text-align: right;">21083</td>
+<td style="text-align: right;">5.88</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Woodburn</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Marion</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">26013</td>
+<td style="text-align: right;">24080</td>
+<td style="text-align: right;">5.37</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Newberg</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Yamhill</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">25138</td>
+<td style="text-align: right;">22068</td>
+<td style="text-align: right;">5.81</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Happy Valley</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">23733</td>
+<td style="text-align: right;">13903</td>
+<td style="text-align: right;">8.32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Roseburg</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Douglas</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">23683</td>
+<td style="text-align: right;">21181</td>
+<td style="text-align: right;">10.20</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="towns-without-missing-values-for-secondary-county" class="level3">
+<h3 class="anchored" data-anchor-id="towns-without-missing-values-for-secondary-county">Towns without missing values for secondary county:</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a> <span class="kw">FROM</span> pnw_towns </span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> secondary_county <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="knitsql-table">
+<table class="table table-sm table-striped small">
+<caption>14 records</caption>
+<colgroup>
+<col style="width: 9%">
+<col style="width: 5%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 17%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">town</th>
+<th style="text-align: left;">state</th>
+<th style="text-align: left;">primary_county</th>
+<th style="text-align: left;">secondary_county</th>
+<th style="text-align: left;">tertiary_county</th>
+<th style="text-align: right;">population_2020_census</th>
+<th style="text-align: right;">population_2010_census</th>
+<th style="text-align: right;">land_area_sq_mi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Portland</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: right;">652503</td>
+<td style="text-align: right;">583776</td>
+<td style="text-align: right;">145.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Salem</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Marion</td>
+<td style="text-align: left;">Polk</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">175535</td>
+<td style="text-align: right;">154637</td>
+<td style="text-align: right;">48.45</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Albany</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Linn</td>
+<td style="text-align: left;">Benton</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">56472</td>
+<td style="text-align: right;">50158</td>
+<td style="text-align: right;">17.75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lake Oswego</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: right;">40732</td>
+<td style="text-align: right;">36619</td>
+<td style="text-align: right;">11.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tualatin</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">27942</td>
+<td style="text-align: right;">26054</td>
+<td style="text-align: right;">8.23</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Wilsonville</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">26664</td>
+<td style="text-align: right;">19509</td>
+<td style="text-align: right;">7.42</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Milwaukie</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">Multnomah</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">21119</td>
+<td style="text-align: right;">20291</td>
+<td style="text-align: right;">4.85</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Willamina</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Yamhill</td>
+<td style="text-align: left;">Polk</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2239</td>
+<td style="text-align: right;">2025</td>
+<td style="text-align: right;">0.96</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mill City</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Marion</td>
+<td style="text-align: left;">Linn</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">1971</td>
+<td style="text-align: right;">1855</td>
+<td style="text-align: right;">0.83</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gaston</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">Yamhill</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">676</td>
+<td style="text-align: right;">637</td>
+<td style="text-align: right;">0.28</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Gates</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Marion</td>
+<td style="text-align: left;">Linn</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">548</td>
+<td style="text-align: right;">471</td>
+<td style="text-align: right;">0.65</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rivergrove</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Clackamas</td>
+<td style="text-align: left;">Washington</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">545</td>
+<td style="text-align: right;">289</td>
+<td style="text-align: right;">0.16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Idanha</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Marion</td>
+<td style="text-align: left;">Linn</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">156</td>
+<td style="text-align: right;">134</td>
+<td style="text-align: right;">1.09</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Greenhorn</td>
+<td style="text-align: left;">Oregon</td>
+<td style="text-align: left;">Baker</td>
+<td style="text-align: left;">Grant</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.10</td>
 </tr>
 </tbody>
 </table>

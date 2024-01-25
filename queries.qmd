@@ -1,10 +1,10 @@
 ---
-title: "SQL Queries on PNW Database"
-author: "Chester"
+title: "SQL Queries on Pacific Northwest Database"
+author: "Dr. Chester Ismay"
 format: html
 ---
 
-# [ChatGPT main level]
+# SQL Selection Techniques
 
 ## Selecting columns/fields
 
@@ -15,31 +15,32 @@ This document contains SQL queries to explore the `pnw_counties` and `pnw_towns`
 library(DBI)
 library(RSQLite)
 con <- dbConnect(RSQLite::SQLite(), dbname = "pnw_database.sqlite")
-knitr::opts_chunk$set(engine = "SQL", connection = con)
+knitr::opts_chunk$set(engine = "SQL", connection = con, max.print = 20)
+options(connection = con) 
 ```
 
-### Select All Town Names from `pnw_towns`:
+### Select all town names:
 
 ```{sql}
 SELECT town
   FROM pnw_towns;
 ```
 
-### Select All County Names from `pnw_counties`:
+### Select all county names:
 
 ```{sql}
 SELECT county
   FROM pnw_counties;
 ```
 
-### Select All Columns for Towns
+### Select all columns for towns table
 
 ```{sql}
 SELECT *
   FROM pnw_towns;
 ```
 
-### Select County Names and Population for 2022 
+### Select county names and population for 2022 
 
 ```{sql}
 SELECT county, population_2022
@@ -48,11 +49,201 @@ SELECT county, population_2022
 
 ## Aliasing
 
-### Select County Names and Population for 2022, Aliased
+### Select county names, population for 2022, and land area (Aliased)
 
 ```{sql}
 SELECT county AS cty, 
        population_2022 AS pop2022,
        land_area_sq_mi AS area
   FROM pnw_counties;
+```
+
+### Alias the table name
+
+```{sql}
+SELECT county,
+       origin
+  FROM pnw_counties AS counties;
+```
+
+## Unique entries
+
+### Select distinct states from the `pnw_towns` table:
+
+```{sql}
+SELECT DISTINCT state
+  FROM pnw_towns;
+```
+
+## View creation
+
+### Create a view that lists towns along with their primary counties:
+
+```{sql}
+#| include: false
+DROP VIEW IF EXISTS towns_with_county;
+```
+
+```{sql}
+CREATE VIEW towns_with_county AS
+SELECT town, primary_county
+  FROM pnw_towns;
+```
+
+### Use this view in a query
+
+```{sql}
+SELECT * FROM towns_with_county;
+```
+
+## Counting
+
+### Count the number of records in the `pnw_towns` table:
+
+```{sql}
+SELECT COUNT(*)
+  FROM pnw_towns;
+```
+
+### Count the number of distinct states in `pnw_counties`:
+
+```{sql}
+SELECT COUNT(DISTINCT state)
+  FROM pnw_counties;
+```
+
+# SQL Filtering Techniques
+
+## Filtering rows/records
+
+### Towns with greater than 150,000 people
+
+```{sql}
+SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 150000;
+```
+
+### Towns with greater than 150,000 people and in Oregon
+
+```{sql}
+SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 150000
+   AND state = 'Oregon';
+```
+
+### Towns with greater than 150,000 people or in Oregon
+
+```{sql}
+SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 150000
+    OR state = 'Oregon';
+```
+
+### Counties established after 1920 with a population greater than 100,000
+
+```{sql}
+SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE year_established > 1920
+   AND population_2022 > 100000;
+```
+
+### Counties established after 1880 with a population greater than 100,000
+
+```{sql}
+SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE year_established > 1880
+   AND population_2022 > 100000;
+```
+
+### Towns with a land area between 12 and 15 square miles:
+
+```{sql}
+SELECT town, state, land_area_sq_mi
+  FROM pnw_towns
+ WHERE land_area_sq_mi >= 12
+   AND land_area_sq_mi <= 15;
+```
+
+### Towns with a land area between 10 and 15 square miles (simplified):
+
+```{sql}
+SELECT town, state, land_area_sq_mi
+  FROM pnw_towns
+ WHERE land_area_sq_mi BETWEEN 12 AND 15;
+```
+
+### Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022:
+
+```{sql}
+SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE (state = 'Washington' AND year_established BETWEEN 1890 AND 1900)
+    OR (state = 'Oregon' AND population_2022 > 300000);
+```
+
+## Filtering text
+
+### Counties that start with the letter "K":
+
+<!-- 
+In SQL, the percent symbol (%) used with the LIKE operator serves as a wildcard character representing zero, one, or multiple characters. This allows for flexible pattern matching in string comparisons. For example, if you use `LIKE '5%'`, the SQL engine will search for strings that begin with the number 5 followed by any sequence of characters, including none at all. Similarly, `NOT LIKE '5%'` would find strings that do not start with 5. This feature is particularly useful for queries where you need to find patterns in data without specifying the exact or entire pattern (source: Microsoft Learn - LIKE (Transact-SQL)).
+-->
+
+```{sql}
+SELECT county, state
+  FROM pnw_counties
+ WHERE county LIKE 'K%';
+```
+
+### Towns that end with the letters "ia":
+
+```{sql}
+SELECT town, state
+  FROM pnw_towns
+ WHERE town LIKE '%ia';
+```
+
+### Towns that contain the phrase "mount":
+
+```{sql}
+SELECT town, state
+  FROM pnw_towns
+ WHERE town LIKE '%mount%';
+```
+
+### Counties with specific pattern in third and fourth position ("ar"):
+
+```{sql}
+SELECT county
+  FROM pnw_counties
+ WHERE county LIKE '__ar%';
+```
+
+### Towns that are in Multnomah or Spokane counties:
+
+```{sql}
+SELECT * 
+  FROM pnw_towns 
+ WHERE primary_county IN ('Multnomah', 'Spokane');
+```
+
+### Towns with missing values for secondary county:
+
+```{sql}
+SELECT * 
+ FROM pnw_towns 
+WHERE secondary_county IS NULL;
+```
+
+### Towns without missing values for secondary county:
+
+```{sql}
+SELECT * 
+ FROM pnw_towns 
+WHERE secondary_county IS NOT NULL;
 ```
