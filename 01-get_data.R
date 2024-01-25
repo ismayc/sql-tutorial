@@ -83,7 +83,8 @@ wa_counties <- wa_counties_raw |>
   mutate(state = "Washington", .after = county)
 
 pnw_counties <- or_counties |> 
-  bind_rows(wa_counties)
+  bind_rows(wa_counties) |> 
+  mutate(county = str_replace_all(county, " County", ""))
 
 if (!dir.exists("data")) {
   dir.create("data")
