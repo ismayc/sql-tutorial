@@ -1,0 +1,13 @@
+name: pnw-sql-exercises
+title: pnw-sql-exercises
+username: chester-ismay
+account: chester-ismay
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11035541
+bundleId: 8184579
+url: https://chester-ismay.shinyapps.io/pnw-sql-exercises/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .Rprofile|01-get_data.R|02-sql_tables_tutorial.R|exercises_example.Rmd|exercises.html|pnw_database.sqlite|queries.html|queries.qmd|README.md|queries_files

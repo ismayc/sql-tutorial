@@ -1,0 +1,158 @@
+---
+title: "SQL Exercises on Seattle and Portland Flights data"
+author: "Dr. Chester Ismay"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(gradethis)
+library(DBI)
+library(RSQLite)
+library(tidyverse)
+
+# Copy data over into this folder
+# file.copy(from = "../flights2023/pnwflights23/data/airlines.rda", 
+#           to = "data/airlines.rda")
+# file.copy(from = "../flights2023/pnwflights23/data/airports.rda",
+#           to = "data/airports.rda")
+# file.copy(from = "../flights2023/pnwflights23/data/flights.rda",
+#           to = "data/flights.rda")
+# file.copy(from = "../flights2023/pnwflights23/data/planes.rda",
+#           to = "data/planes.rda")
+# file.copy(from = "../flights2023/pnwflights23/data/weather.rda",
+#           to = "data/weather.rda")
+
+# Read data in from RDA files
+load("data/airlines.rda")
+load("data/airports.rda")
+load("data/flights.rda")
+load("data/planes.rda")
+load("data/weather.rda")
+
+## Create an ephemeral in-memory RSQLite database
+con <- dbConnect(SQLite(), ":memory:")
+
+# Write the new data to the database
+dbWriteTable(con, "airlines", airlines, overwrite = TRUE)
+dbWriteTable(con, "airports", airports, overwrite = TRUE)
+dbWriteTable(con, "flights", flights, overwrite = TRUE)
+dbWriteTable(con, "planes", planes, overwrite = TRUE)
+dbWriteTable(con, "weather", weather, overwrite = TRUE)
+
+knitr::opts_chunk$set(connection = "con", 
+                      max.print = 20)
+```
+
+```{r setup2, echo=FALSE, out.width='100%', fig.align='center'}
+tutorial_options(exercise.cap = "Query", 
+                 exercise.eval = FALSE,
+                 exercise.reveal_solution = TRUE)
+
+library(DiagrammeR)
+# https://github.com/bergant/datamodelr
+library(datamodelr)
+
+dm_f <- dm_from_data_frames(airlines, airports, flights, planes, weather)
+
+graph <- dm_create_graph(dm_f, rankdir = "BT", col_attr = c("column", "type"))
+
+dm_render_graph(graph)
+```
+
+# Selection Techniques
+
+## Selecting columns/fields
+
+1. Select all airline names from the `airlines` table.
+
+```{sql query1, exercise=TRUE}
+
+```
+
+```{sql query1-solution}
+SELECT name
+  FROM airlines;
+```
+
+```{r query1-check}
+grade_this({
+  # Execute the solution query to get the correct result
+  .solution <- DBI::dbGetQuery(con, .solution_code)
+
+  # Execute the student's query
+  .result <- DBI::dbGetQuery(con, .user_code)
+
+  # Expected column
+  cols_expected <- c("name")
+  
+  # Check for missing columns
+  for (column in cols_expected) {
+    if (!column %in% names(.result)) {
+      fail(paste("Your query is missing the", column, "column."))
+    }
+  }
+  
+  # Check for extra columns
+  extra_cols <- setdiff(names(.result), cols_expected)
+  if (length(extra_cols)) {
+    extra_cols <- knitr::combine_words(extra_cols, and = " or ", before = "`")
+    fail(paste("Your query should not include the columns", extra_cols, "."))
+  }
+  
+  # Check if the number of rows matches
+  if (nrow(.result) != nrow(.solution)) {
+    fail("The number of rows returned by your query does not match the expected result.")
+  }
+
+  # Check if the values match (assuming order doesn't matter)
+  if (!all(sort(.result[[1]]) == sort(.solution[[1]]))) {
+    fail("The values returned by your query do not match the expected result.")
+  }
+  
+  # If all checks pass
+  pass("Your query appears to be correct.")
+})
+
+```
+
+## Aliasing
+
+## Unique entries
+
+## View creation
+
+## Counting
+
+# Filtering Techniques
+
+## Filtering rows/records
+
+## Filtering text
+
+# Aggregating Techniques
+
+## Numerical summaries
+
+## Categorical summaries
+
+## Rounding summaries
+
+# Sorting and Grouping Techniques
+
+## Sorting
+
+## Grouping
+
+# Transforming Techniques
+
+# Joining Techniques
+
+## INNER JOIN
+
+## LEFT JOIN
+
+## RIGHT JOIN
+
+## Anti-Join

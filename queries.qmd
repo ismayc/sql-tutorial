@@ -1,5 +1,5 @@
 ---
-title: "SQL Queries on Pacific Northwest Database"
+title: "SQL Queries on Pacific Northwest Towns and Counties Database"
 author: "Dr. Chester Ismay"
 format: 
   html:
