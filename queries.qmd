@@ -1,12 +1,15 @@
 ---
 title: "SQL Queries on Pacific Northwest Database"
 author: "Dr. Chester Ismay"
-format: html
+format: 
+  html:
+    toc: true
+    toc-location: left
 ---
 
 This document contains SQL queries to explore the `pnw_counties` and `pnw_towns` tables in our SQLite database.
 
-# Selecting columns
+# Selection Techniques
 
 ## Selecting columns/fields
 
@@ -161,7 +164,7 @@ SELECT COUNT(DISTINCT state)
 DT::datatable(sql_results)
 ```
 
-# SQL Filtering Techniques
+# Filtering Techniques
 
 ## Filtering rows/records
 
@@ -357,7 +360,7 @@ WHERE secondary_county IS NOT NULL;
 DT::datatable(sql_results)
 ```
 
-# Aggregating
+# Aggregating Techniques
 
 ## Numerical summaries
 
@@ -466,7 +469,7 @@ DT::datatable(sql_results)
   DT::datatable(sql_results)
   ```
 
-# Sorting and Grouping
+# Sorting and Grouping Techniques
 
 ## Sorting
 
@@ -570,7 +573,7 @@ DT::datatable(sql_results)
   ```
 
 
-# Transforming
+# Transforming Techniques
 
 ### Classifying towns by population size using CASE WHEN
 
@@ -615,7 +618,7 @@ SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
 DT::datatable(sql_results)
 ```
 
-# Joins
+# Joining Techniques
 
 ## INNER JOIN
 
