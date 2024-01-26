@@ -1,9 +1,24 @@
 ---
-title: "SQL Exercises on Seattle and Portland Flights data"
-author: "Dr. Chester Ismay"
+title: SQL Exercises
 output: learnr::tutorial
 runtime: shiny_prerendered
 ---
+
+<style>
+.title {
+  margin-bottom: 0; /* Reduces space below the title */
+}
+.author {
+  margin-top: 0; /* Reduces space above the author */
+}
+</style>
+
+<div class="title">
+  <h1>SQL Exercises on Seattle and Portland Flights data</h1>
+</div>
+<div class="author">
+  <h3>Author: Dr. Chester Ismay</h3>
+</div>
 
 ```{r setup, include=FALSE}
 library(learnr)
@@ -56,10 +71,38 @@ library(datamodelr)
 
 dm_f <- dm_from_data_frames(airlines, airports, flights, planes, weather)
 
+dm_f <- dm_add_references(
+  dm_f,
+  
+  flights$carrier == airlines$carrier,
+  flights$origin == airports$faa,
+  flights$dest == airports$faa,
+  flights$tailnum == planes$tailnum,
+  weather$origin == airports$faa
+)
+
 graph <- dm_create_graph(dm_f, rankdir = "BT", col_attr = c("column", "type"))
 
 dm_render_graph(graph)
 ```
+
+<style>
+.small-yellow-btn {
+padding: 5px 10px; /* Adjust padding to reduce size */
+font-size: 12px; /* Smaller font size */
+border-radius: 5px; /* Adjust border radius for rounded corners */
+background-color: yellow; /* Set background color to yellow */
+color: black; /* Text color */
+border: 1px solid darkgray; /* Optional: add border */
+}
+</style>
+
+<style>
+.hint-container {
+margin-left: 40px; /* Adjust indentation as needed */
+}
+</style>
+
 
 # Selection Techniques
 
@@ -67,23 +110,66 @@ dm_render_graph(graph)
 
 1. Select all airline names from the `airlines` table.
 
-```{sql query1, exercise=TRUE}
+```{r hint-server-logic, context="server", echo=FALSE}
+values <- reactiveValues(hint1Visible = FALSE, hint2Visible = FALSE)
+
+observeEvent(input$hint1, {
+  values$hint1Visible <- !values$hint1Visible
+})
+
+observeEvent(input$hint2, {
+  values$hint2Visible <- !values$hint2Visible
+})
+
+output$hintText1 <- renderUI({
+  if(values$hint1Visible) {
+    shiny::HTML("Small Hint: Start with <code>SELECT</code> followed by the column name.")
+  } else {
+    shiny::HTML("")  # Render empty HTML when the hint should be hidden
+  }
+})
+
+output$hintText2 <- renderUI({
+  if(values$hint2Visible) {
+    shiny::HTML("Larger Hint: The query is <code>SELECT name FROM ___;</code> - fill in the blank.")
+  } else {
+    shiny::HTML("")  # Render empty HTML when the hint should be hidden
+  }
+})
+
+```
+
+```{r hint-query1, echo=FALSE}
+div(class = "hint-container",
+    # Hint buttons
+    shiny::actionButton("hint1", "Small Hint", class = "btn small-yellow-btn"),
+    shiny::actionButton("hint2", "Larger Hint", class = "btn small-yellow-btn"),
+    
+    # Hint output areas
+    shiny::uiOutput("hintText1"),
+    shiny::uiOutput("hintText2")
+)
+```
+
+
+```{sql query1, exercise=TRUE, exercise.eval = FALSE}
 
 ```
 
 ```{sql query1-solution}
 SELECT name
-  FROM airlines;
+FROM airlines;
 ```
+
 
 ```{r query1-check}
 grade_this({
   # Execute the solution query to get the correct result
   .solution <- DBI::dbGetQuery(con, .solution_code)
-
+  
   # Execute the student's query
   .result <- DBI::dbGetQuery(con, .user_code)
-
+  
   # Expected column
   cols_expected <- c("name")
   
@@ -105,7 +191,7 @@ grade_this({
   if (nrow(.result) != nrow(.solution)) {
     fail("The number of rows returned by your query does not match the expected result.")
   }
-
+  
   # Check if the values match (assuming order doesn't matter)
   if (!all(sort(.result[[1]]) == sort(.solution[[1]]))) {
     fail("The values returned by your query do not match the expected result.")
