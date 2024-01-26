@@ -1,6 +1,9 @@
 ---
 title: SQL Exercises
-output: learnr::tutorial
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
 runtime: shiny_prerendered
 ---
 
@@ -22,10 +25,10 @@ runtime: shiny_prerendered
 
 ```{r setup, include=FALSE}
 library(learnr)
-library(gradethis)
+suppressPackageStartupMessages(library(gradethis))
 library(DBI)
 library(RSQLite)
-library(tidyverse)
+suppressPackageStartupMessages(library(tidyverse))
 
 # Copy data over into this folder
 # file.copy(from = "../flights2023/pnwflights23/data/airlines.rda", 
@@ -109,53 +112,24 @@ margin-left: 40px; /* Adjust indentation as needed */
 
 1. Select all airline names from the `airlines` table.
 
-```{r hint-server-logic, context="server", echo=FALSE}
-values <- reactiveValues(hint1Visible = FALSE, hint2Visible = FALSE)
-
-observeEvent(input$hint1, {
-  values$hint1Visible <- !values$hint1Visible
-})
-
-observeEvent(input$hint2, {
-  values$hint2Visible <- !values$hint2Visible
-})
-
-output$hintText1 <- renderUI({
-  if(values$hint1Visible) {
-    shiny::HTML("Small Hint: Start with <code>SELECT</code> followed by the column name.")
-  } else {
-    shiny::HTML("")  # Render empty HTML when the hint should be hidden
-  }
-})
-
-output$hintText2 <- renderUI({
-  if(values$hint2Visible) {
-    shiny::HTML("Larger Hint: The query is <code>SELECT name FROM ___;</code> - fill in the blank.")
-  } else {
-    shiny::HTML("")  # Render empty HTML when the hint should be hidden
-  }
-})
-
+```{sql query1, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select all airline names from the airlines table
 ```
 
-```{r hint-query1, echo=FALSE}
-div(class = "hint-container",
-    # Hint buttons
-    shiny::actionButton("hint1", "Small Hint", class = "btn small-yellow-btn"),
-    shiny::actionButton("hint2", "Larger Hint", class = "btn small-yellow-btn"),
-    
-    # Hint output areas
-    shiny::uiOutput("hintText1"),
-    shiny::uiOutput("hintText2")
-)
+```{sql query1-hint-1}
+-- HINT: The syntax for selecting all columns from a table is:
+SELECT ___
+FROM ___;
 ```
 
-
-```{sql query1, exercise=TRUE, exercise.eval = FALSE}
-
+```{sql query1-hint-2}
+-- HINT: The syntax for selecting specific columns from airlines is:
+SELECT ___
+FROM airlines;
 ```
 
 ```{sql query1-solution}
+-- SOLUTION: Here's one way to select all airline names from the airlines table
 SELECT name
 FROM airlines;
 ```
@@ -205,6 +179,149 @@ grade_this({
   pass("Your query appears to be correct.")
 })
 ```
+
+
+2. Select all columns from the `weather` table.
+
+```{sql query2, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select all columns/fields from the weather table
+```
+
+```{sql query2-hint-1}
+-- HINT: Use SELECT * to select all columns from a table.
+SELECT *
+___ ___;
+```
+
+```{sql query2-hint-2}
+-- HINT: Use FROM to specify which table to pull all columns from.
+SELECT *
+FROM ___;
+```
+
+```{sql query2-solution}
+-- SOLUTION: Here is one way to select all fields from the `weather` table:
+SELECT *
+FROM weather;
+```
+
+```{r query2-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result
+  .solution_ex2 <- DBI::dbGetQuery(con, .solution_code)
+  
+  # Execute the student's query
+  .result_ex2 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Use the grading logic from EXERCISE 1, adapted for EXERCISE 2
+  # Dynamically get expected columns from the solution for EXERCISE 2
+  cols_expected_ex2 <- names(.solution_ex2)
+  
+  # Check for missing or extra columns
+  missing_cols_ex2 <- setdiff(cols_expected_ex2, names(.result_ex2))
+  extra_cols_ex2 <- setdiff(names(.result_ex2), cols_expected_ex2)
+  
+  if (length(missing_cols_ex2) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex2)}."))
+  }
+  
+  if (length(extra_cols_ex2) > 0) {
+    fail(glue::glue("Your query should not include the following columns: {toString(extra_cols_ex2)}."))
+  }
+  
+  # Check for matching row counts
+  if (nrow(.result_ex2) != nrow(.solution_ex2)) {
+    fail("The number of rows returned by your query does not match the expected result.")
+  }
+  
+  # Check if all values in each column match, allowing for different row orders
+  all_columns_match_ex2 <- TRUE
+  for (column in cols_expected_ex2) {
+    if (!identical(sort(.result_ex2[[column]]), sort(.solution_ex2[[column]]))) {
+      all_columns_match_ex2 <- FALSE
+      break
+    }
+  }
+  
+  if (!all_columns_match_ex2) {
+    fail("The values returned by your query do not match the expected result in one or more columns.")
+  }
+  
+  # If all checks pass
+  pass("Your query appears to be correct.")
+})
+```
+
+3. Select the FAA code and name from the `airports` table.
+
+```{sql query3, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select the FAA code and name from the airports table
+```
+
+```{sql query3-hint-1}
+-- HINT: The syntax for selecting specific columns from a table is:
+SELECT ___, ___
+FROM ___;
+```
+
+```{sql query3-hint-2}
+-- HINT: You need to specify the columns and table you're selecting from:
+SELECT faa, ___
+FROM airports;
+```
+
+```{sql query3-solution}
+-- SOLUTION: Here is one way to select the FAA code and name from the airports table:
+SELECT faa, name
+FROM airports;
+```
+
+```{r query3-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result
+  .solution_ex3 <- DBI::dbGetQuery(con, .solution_code)
+  
+  # Execute the student's query
+  .result_ex3 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Dynamically get expected columns from the solution for EXERCISE 3
+  cols_expected_ex3 <- names(.solution_ex3)
+  
+  # Check for missing or extra columns
+  missing_cols_ex3 <- setdiff(cols_expected_ex3, names(.result_ex3))
+  extra_cols_ex3 <- setdiff(names(.result_ex3), cols_expected_ex3)
+  
+  if (length(missing_cols_ex3) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex3)}."))
+  }
+  
+  if (length(extra_cols_ex3) > 0) {
+    fail(glue::glue("Your query should not include the following columns: {toString(extra_cols_ex3)}."))
+  }
+  
+  # Check for matching row counts
+  if (nrow(.result_ex3) != nrow(.solution_ex3)) {
+    fail("The number of rows returned by your query does not match the expected result.")
+  }
+  
+  # Check if all values in each column match, allowing for different row orders
+  all_columns_match_ex3 <- TRUE
+  for (column in cols_expected_ex3) {
+    if (!identical(sort(.result_ex3[[column]]), sort(.solution_ex3[[column]]))) {
+      all_columns_match_ex3 <- FALSE
+      break
+    }
+  }
+  
+  if (!all_columns_match_ex3) {
+    fail("The values returned by your query do not match the expected result in one or more columns.")
+  }
+  
+  # If all checks pass
+  pass("Your query appears to be correct.")
+})
+```
+
 
 ## Aliasing
 
