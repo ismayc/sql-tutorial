@@ -103,7 +103,6 @@ margin-left: 40px; /* Adjust indentation as needed */
 }
 </style>
 
-
 # Selection Techniques
 
 ## Selecting columns/fields
@@ -161,8 +160,7 @@ SELECT name
 FROM airlines;
 ```
 
-
-```{r query1-check}
+```{r query1-check, echo=FALSE}
 grade_this({
   # Execute the solution query to get the correct result
   .solution <- DBI::dbGetQuery(con, .solution_code)
