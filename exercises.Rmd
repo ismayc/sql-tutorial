@@ -170,37 +170,42 @@ grade_this({
   # Execute the student's query
   .result <- DBI::dbGetQuery(con, .user_code)
   
-  # Expected column
-  cols_expected <- c("name")
+  # Dynamically get expected columns from the solution
+  cols_expected <- names(.solution)
   
-  # Check for missing columns
-  for (column in cols_expected) {
-    if (!column %in% names(.result)) {
-      fail(paste("Your query is missing the", column, "column."))
-    }
-  }
-  
-  # Check for extra columns
+  # Check for missing or extra columns
+  missing_cols <- setdiff(cols_expected, names(.result))
   extra_cols <- setdiff(names(.result), cols_expected)
-  if (length(extra_cols)) {
-    extra_cols <- knitr::combine_words(extra_cols, and = " or ", before = "`")
-    fail(paste("Your query should not include the columns", extra_cols, "."))
+  
+  if (length(missing_cols) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols)}."))
   }
   
-  # Check if the number of rows matches
+  if (length(extra_cols) > 0) {
+    fail(glue::glue("Your query should not include the following columns: {toString(extra_cols)}."))
+  }
+  
+  # Check for matching row counts
   if (nrow(.result) != nrow(.solution)) {
     fail("The number of rows returned by your query does not match the expected result.")
   }
   
-  # Check if the values match (assuming order doesn't matter)
-  if (!all(sort(.result[[1]]) == sort(.solution[[1]]))) {
-    fail("The values returned by your query do not match the expected result.")
+  # Check if all values in each column match, allowing for different row orders
+  all_columns_match <- TRUE
+  for (column in cols_expected) {
+    if (!identical(sort(.result[[column]]), sort(.solution[[column]]))) {
+      all_columns_match <- FALSE
+      break
+    }
+  }
+  
+  if (!all_columns_match) {
+    fail("The values returned by your query do not match the expected result in one or more columns.")
   }
   
   # If all checks pass
   pass("Your query appears to be correct.")
 })
-
 ```
 
 ## Aliasing
