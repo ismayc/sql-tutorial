@@ -322,8 +322,151 @@ grade_this({
 })
 ```
 
-
 ## Aliasing
+
+4. Select and alias specific columns from the airports table
+
+```{sql query4, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select the FAA code, name, 
+-- and alt from the airports table with aliases of 
+-- code, airport_name, and altitude, respectively
+```
+
+
+```{sql query4-hint-1}
+-- HINT: Start by selecting columns and use AS to give them aliases. For example:
+SELECT column_name AS alias_name
+FROM table_name;
+```
+
+
+```{sql query4-hint-2}
+-- HINT: Your query should look something like this, fill in the blanks:
+SELECT faa AS code, name AS ___, alt AS ___
+FROM airports;
+```
+
+
+```{sql query4-solution}
+-- SOLUTION: Here is how you can select and alias the FAA code, name, and altitude from the airports table:
+SELECT faa AS code, name AS airport_name, alt AS altitude
+FROM airports;
+```
+
+
+```{r query4-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 4
+  .solution_ex4 <- DBI::dbGetQuery(con, "SELECT faa AS code, name AS airport_name, alt AS altitude FROM airports;")
+  
+  # Execute the student's query for EXERCISE 4
+  .result_ex4 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Dynamically get expected columns from the solution for EXERCISE 4
+  cols_expected_ex4 <- names(.solution_ex4)
+  
+  # Check for missing or extra columns in the student's result
+  missing_cols_ex4 <- setdiff(cols_expected_ex4, names(.result_ex4))
+  extra_cols_ex4 <- setdiff(names(.result_ex4), cols_expected_ex4)
+  
+  if (length(missing_cols_ex4) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex4)}."))
+  }
+  
+  if (length(extra_cols_ex4) > 0) {
+    fail(glue::glue("Your query should not include the following columns: {toString(extra_cols_ex4)}."))
+  }
+  
+  # Check if the number of rows and values in each column match the solution
+  if (nrow(.result_ex4) != nrow(.solution_ex4)) {
+    fail("The number of rows returned by your query does not match the expected result.")
+  }
+  
+  all_columns_match_ex4 <- TRUE
+  for (column in cols_expected_ex4) {
+    if (!identical(sort(.result_ex4[[column]]), sort(.solution_ex4[[column]]))) {
+      all_columns_match_ex4 <- FALSE
+      break
+    }
+  }
+  
+  if (!all_columns_match_ex4) {
+    fail("The values returned by your query do not match the expected result in one or more columns.")
+  }
+  
+  # If all checks pass
+  pass("Your query appears to be correct.")
+})
+```
+
+5. Choose the destination airport code and air time from the flights table with an alias
+
+```{sql query5, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select the destination airport code and air time from the flights table with an alias
+```
+
+```{sql query5-hint-1}
+-- HINT: Use the SELECT statement to choose columns and AS to alias the table. For example:
+SELECT column_name
+FROM table_name AS table_alias;
+```
+
+```{sql query5-hint-2}
+-- HINT: Your query should include the table alias and select specific columns like this:
+SELECT f.dest, f.air_time
+FROM flights AS f;
+```
+
+```{sql query5-solution}
+-- SOLUTION: Here's how to select the destination airport code and air time from the flights table using an alias:
+SELECT f.dest, f.air_time
+FROM flights AS f;
+```
+
+```{r query5-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 5
+  .solution_ex5 <- DBI::dbGetQuery(con, "SELECT dest, air_time FROM flights AS f;")
+  
+  # Execute the student's query for EXERCISE 5
+  .result_ex5 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Dynamically get expected columns from the solution for EXERCISE 5
+  cols_expected_ex5 <- names(.solution_ex5)
+  
+  # Check for missing or extra columns in the student's result
+  missing_cols_ex5 <- setdiff(cols_expected_ex5, names(.result_ex5))
+  extra_cols_ex5 <- setdiff(names(.result_ex5), cols_expected_ex5)
+  
+  if (length(missing_cols_ex5) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex5)}."))
+  }
+  
+  if (length(extra_cols_ex5) > 0) {
+    fail(glue::glue("Your query should not include the following columns: {toString(extra_cols_ex5)}."))
+  }
+  
+  # Check if the number of rows and values in each column match the solution
+  if (nrow(.result_ex5) != nrow(.solution_ex5)) {
+    fail("The number of rows returned by your query does not match the expected result.")
+  }
+  
+  all_columns_match_ex5 <- TRUE
+  for (column in cols_expected_ex5) {
+    if (!identical(sort(.result_ex5[[column]]), sort(.solution_ex5[[column]]))) {
+      all_columns_match_ex5 <- FALSE
+      break
+    }
+  }
+  
+  if (!all_columns_match_ex5) {
+    fail("The values returned by your query do not match the expected result in one or more columns.")
+  }
+  
+  # If all checks pass
+  pass("Your query appears to be correct.")
+})
+```
 
 ## Unique entries
 

@@ -88,8 +88,8 @@ DT::datatable(sql_results)
 ### Alias the table name
 
 ```{sql, output.var="sql_results"}
-SELECT county,
-       origin
+SELECT counties.county,
+       counties.origin
   FROM pnw_counties AS counties;
 ```
 
