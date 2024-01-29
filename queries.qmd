@@ -145,7 +145,7 @@ DT::datatable(sql_results)
 ### Count the number of records in the `pnw_towns` table:
 
 ```{sql, output.var="sql_results"}
-SELECT COUNT(*)
+SELECT COUNT(*) AS num_towns
   FROM pnw_towns;
 ```
 
@@ -156,7 +156,7 @@ DT::datatable(sql_results)
 ### Count the number of distinct states in `pnw_counties`:
 
 ```{sql, output.var="sql_results"}
-SELECT COUNT(DISTINCT state)
+SELECT COUNT(DISTINCT state) AS num_unique_states
   FROM pnw_counties;
 ```
 

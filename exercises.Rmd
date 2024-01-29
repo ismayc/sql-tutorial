@@ -470,13 +470,365 @@ grade_this({
 
 ## Unique entries
 
+
+6. Select all distinct time zones (`tz`) from the `airports` table.
+
+```{sql query6, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select all distinct time zones from
+-- the airports table
+```
+
+
+```{sql query6-hint-1}
+-- HINT: Use SELECT DISTINCT to get unique values from a column. For example:
+SELECT DISTINCT column_name
+FROM table_name;
+```
+
+```{sql query6-hint-2}
+-- HINT: Fill in the blank with the appropriate column name:
+SELECT DISTINCT ___
+FROM airports;
+```
+
+```{sql query6-solution}
+-- SOLUTION: Here's how to select all distinct time zones from the airports table:
+SELECT DISTINCT tz
+FROM airports;
+```
+
+```{r query6-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 6
+  .solution_ex6 <- DBI::dbGetQuery(con, "SELECT DISTINCT tz FROM airports;")
+  
+  # Execute the student's query for EXERCISE 6
+  .result_ex6 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Expecting only the 'tz' column in the result
+  cols_expected_ex6 <- names(.solution_ex6)
+  
+  # Check for missing or extra columns in the student's result
+  missing_cols_ex6 <- setdiff(cols_expected_ex6, names(.result_ex6))
+  extra_cols_ex6 <- setdiff(names(.result_ex6), cols_expected_ex6)
+  
+  if (length(missing_cols_ex6) > 0) {
+    fail(glue::glue("Your query is missing the 'tz' column."))
+  }
+  
+  if (length(extra_cols_ex6) > 0) {
+    fail(glue::glue("Your query should not include columns other than 'tz'."))
+  }
+  
+  # Check if the number of rows matches the solution
+  if (nrow(.result_ex6) != nrow(.solution_ex6)) {
+    fail("The number of distinct time zones returned by your query does not match the expected result.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly retrieves all distinct time zones from the airports table.")
+})
+```
+
+
 ## View creation
 
+7. Create a view named `flight_details` to select carrier and destination from the flights table
+
+```{sql query7, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to create a view that selects the carrier
+-- and destination from the flights table
+```
+
+```{sql query7-hint-1}
+-- HINT: To create a view, use the CREATE VIEW statement followed by SELECT. For example:
+CREATE VIEW view_name AS
+SELECT column1, column2
+FROM table_name;
+```
+
+```{sql query7-hint-2}
+-- HINT: Define the view to include the carrier and destination columns from the flights table:
+CREATE VIEW flight_details AS
+SELECT ___, ___
+FROM ___;
+```
+
+```{sql query7-solution}
+-- SOLUTION: Here's how to create a view for carrier and destination from the flights table:
+CREATE VIEW flight_details AS
+SELECT carrier, dest
+FROM flights;
+```
+
+```{r query7-check, echo=FALSE}
+grade_this({
+  # Since CREATE VIEW operations don't return a conventional result set,
+  # you might need to check if the view exists and has the correct structure.
+  # This grading code is a simplified example and may need adjustment for actual use.
+
+  # Check if the view exists
+  views <- dbListTables(con)
+  if (!"flight_details" %in% views) {
+    fail("The view 'flight_details' was not created.")
+  } else {
+    # If the view exists, check its structure
+    .result_view <- DBI::dbGetQuery(con, "SELECT * FROM flight_details LIMIT 0;")
+    cols_expected_view <- c("carrier", "dest")
+    
+    missing_cols_view <- setdiff(cols_expected_view, names(.result_view))
+    extra_cols_view <- setdiff(names(.result_view), cols_expected_view)
+    
+    if (length(missing_cols_view) > 0) {
+      fail(glue::glue("The view 'flight_details' is missing the following columns: {toString(missing_cols_view)}."))
+    }
+    
+    if (length(extra_cols_view) > 0) {
+      fail(glue::glue("The view 'flight_details' should not include the following columns: {toString(extra_cols_view)}."))
+    }
+    
+    # If all checks pass
+    pass("The view 'flight_details' was created successfully with the correct structure.")
+  }
+})
+```
+
+8. Select All Columns from the flight_details View
+
+```{sql query8, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select all columns from the flight_details view
+```
+
+```{sql query8-hint-1}
+-- HINT: To select all columns from a view or table, use the asterisk (*) symbol. For example:
+SELECT * 
+FROM view_name;
+```
+
+```{sql query8-hint-2}
+-- HINT: Use the SELECT * statement to retrieve all columns from the flight_details view:
+SELECT ___
+FROM ___;
+```
+
+```{sql query8-solution}
+-- SOLUTION: Here's how to select all columns from the flight_details view:
+SELECT * 
+FROM flight_details;
+```
+
+```{r query8-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 8
+  .solution_ex8 <- DBI::dbGetQuery(con, "SELECT * FROM flight_details;")
+  
+  # Execute the student's query for EXERCISE 8
+  .result_ex8 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Since the view 'flight_details' structure is predefined, we expect all its columns
+  cols_expected_ex8 <- names(.solution_ex8)
+  
+  # Check for missing or extra columns in the student's result
+  missing_cols_ex8 <- setdiff(cols_expected_ex8, names(.result_ex8))
+  extra_cols_ex8 <- setdiff(names(.result_ex8), cols_expected_ex8)
+  
+  if (length(missing_cols_ex8) > 0) {
+    fail(glue::glue("Your query is missing columns from the 'flight_details' view."))
+  }
+  
+  if (length(extra_cols_ex8) > 0) {
+    fail(glue::glue("Your query should not include extra columns not present in the 'flight_details' view."))
+  }
+  
+  # Check if the number of rows matches the solution
+  if (nrow(.result_ex8) != nrow(.solution_ex8)) {
+    fail("The number of rows returned by your query does not match the expected result.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly retrieves all columns from the 'flight_details' view.")
+})
+```
+
 ## Counting
+
+9. Count the Records in the Flights Table (aliased as `total_flights`)
+
+
+```{sql query9, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to count all records in the flights table
+```
+
+```{sql query9-hint-1}
+-- HINT: Use the COUNT() function to count the number of records. For example:
+SELECT COUNT(*) AS alias
+FROM table_name;
+```
+
+
+```{sql query9-hint-2}
+-- HINT: Apply the COUNT() function to the flights table to count all its records:
+SELECT ___ AS ___
+FROM ___;
+```
+
+
+```{sql query9-solution}
+-- SOLUTION: Here's how to count all records in the flights table:
+SELECT COUNT(*) AS total_flights
+FROM flights;
+```
+
+
+```{r query9-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 9
+  .solution_ex9 <- DBI::dbGetQuery(con, "SELECT COUNT(*) AS total_flights FROM flights;")
+  
+  # Execute the student's query for EXERCISE 9
+  .result_ex9 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Expecting a single column named 'total_flights' in the result
+  cols_expected_ex9 <- names(.solution_ex9)
+  
+  # Check for missing or extra columns in the student's result
+  missing_cols_ex9 <- setdiff(cols_expected_ex9, names(.result_ex9))
+  extra_cols_ex9 <- setdiff(names(.result_ex9), cols_expected_ex9)
+  
+  if (length(missing_cols_ex9) > 0) {
+    fail(glue::glue("Your query is missing the 'total_flights' column."))
+  }
+  
+  if (length(extra_cols_ex9) > 0) {
+    fail(glue::glue("Your query should not include extra columns not present in the expected result."))
+  }
+  
+  # Check if the count value matches the solution
+  if (.result_ex9$total_flights != .solution_ex9$total_flights) {
+    fail("The total count of flights returned by your query does not match the expected result.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly counts all records in the flights table.")
+})
+```
+
+10. Count all distinct carriers in the flights table
+
+```{sql query10, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to count all distinct carriers in the flights table.
+```
+
+```{sql query10-hint-1}
+-- HINT: To count unique values from a column, use
+SELECT COUNT(DISTINCT column) 
+FROM table_name;
+```
+
+```{sql query10-hint-2}
+-- HINT: Fill in the blank to complete the query for counting distinct carriers.
+SELECT COUNT(DISTINCT ___) 
+FROM flights;
+```
+
+```{sql query10-solution}
+-- SOLUTION: This query counts all distinct carriers in the flights table.
+SELECT COUNT(DISTINCT carrier) 
+FROM flights;
+```
+
+```{r query10-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 10
+  .solution_ex10 <- DBI::dbGetQuery(con, "SELECT COUNT(DISTINCT carrier) AS total_distinct_carriers FROM flights;")
+  
+  # Execute the student's query for EXERCISE 10
+  .result_ex10 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Expecting a single column named 'total_distinct_carriers' in the result
+  cols_expected_ex10 <- names(.solution_ex10)
+  
+  # Check for missing or extra columns in the student's result
+  missing_cols_ex10 <- setdiff(cols_expected_ex10, names(.result_ex10))
+  extra_cols_ex10 <- setdiff(names(.result_ex10), cols_expected_ex10)
+  
+  if (length(missing_cols_ex10) > 0) {
+    fail(glue::glue("Your query is missing the 'total_distinct_carriers' column."))
+  }
+  
+  if (length(extra_cols_ex10) > 0) {
+    fail(glue::glue("Your query should not include extra columns not present in the expected result."))
+  }
+  
+  # Check if the count value matches the solution
+  if (.result_ex10$total_distinct_carriers != .solution_ex10$total_distinct_carriers) {
+    fail("The total count of distinct carriers returned by your query does not match the expected result.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly counts all distinct carriers in the flights table.")
+})
+```
 
 # Filtering Techniques
 
 ## Filtering rows/records
+
+11. Select Boeing Planes' Tail Numbers and Models
+
+```{sql query11, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select tail numbers and models 
+-- of all Boeing planes.
+```
+
+```{sql query11-hint-1}
+-- HINT: Use a WHERE clause to filter for specific conditions. Syntax example:
+SELECT column1, column2 
+FROM table_name 
+WHERE condition;
+```
+
+```{sql query11-hint-2}
+-- HINT: Fill in the blanks to select tail numbers and models from the planes table for Boeing planes.
+SELECT ___, ___ 
+FROM planes 
+WHERE manufacturer = '___';
+```
+
+```{sql query11-solution}
+-- SOLUTION: This query selects tail numbers and models of planes manufactured by Boeing.
+SELECT tailnum, model 
+FROM planes 
+WHERE manufacturer = 'BOEING';
+```
+
+```{r query11-check, echo=FALSE}
+grade_this({
+  .solution_query11 <- "SELECT tailnum, model FROM planes WHERE manufacturer = 'BOEING';"
+  .solution_ex11 <- DBI::dbGetQuery(con, .solution_query11)
+  .result_ex11 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Check for missing or extra columns in the student's result
+  cols_expected_ex11 <- names(.solution_ex11)
+  missing_cols_ex11 <- setdiff(cols_expected_ex11, names(.result_ex11))
+  extra_cols_ex11 <- setdiff(names(.result_ex11), cols_expected_ex11)
+
+  if (length(missing_cols_ex11) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex11)}."))
+  }
+
+  if (length(extra_cols_ex11) > 0) {
+    fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex11)}."))
+  }
+  
+  # Check the correctness of the result
+  if (!all(.result_ex11$tailnum %in% .solution_ex11$tailnum) || !all(.result_ex11$model %in% .solution_ex11$model)) {
+    fail("The tail numbers and/or models returned by your query do not match the expected result. Ensure you're filtering for Boeing planes.")
+  }
+
+  pass("Correct! Your query successfully retrieved tail numbers and models of Boeing planes.")
+})
+```
 
 ## Filtering text
 
