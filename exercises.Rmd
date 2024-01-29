@@ -255,7 +255,8 @@ grade_this({
 3. Select the FAA code and name from the `airports` table.
 
 ```{sql query3, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here to select the FAA code and name from the airports table
+-- Write your SQL query here to select the FAA code and name from the 
+-- airports table
 ```
 
 ```{sql query3-hint-1}
@@ -402,7 +403,8 @@ grade_this({
 5. Choose the destination airport code and air time from the flights table with an alias
 
 ```{sql query5, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here to select the destination airport code and air time from the flights table with an alias
+-- Write your SQL query here to select the destination airport code and 
+-- air time from the flights table with an alias
 ```
 
 ```{sql query5-hint-1}
@@ -716,7 +718,7 @@ grade_this({
 10. Count all distinct carriers in the flights table
 
 ```{sql query10, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here to count all distinct carriers in the flights table.
+-- Write your SQL query here to count all distinct carriers in the flights table
 ```
 
 ```{sql query10-hint-1}
@@ -890,7 +892,7 @@ grade_this({
 13. Select airports (faa code and name) within 40 to 42 degrees latitude.
 
 ```{sql query13, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here to select airports within a specific latitude range.
+-- Write your SQL query here to select airports within a specific latitude range
 ```
 
 ```{sql query13-hint-1}
@@ -947,7 +949,8 @@ grade_this({
 14. Select airlines (carrier code and name) with name starting with an "A"
 
 ```{sql query14, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here to select airlines with names starting with a specific letter.
+-- Write your SQL query here to select airlines with names starting with a 
+-- specific letter.
 ```
 
 ```{sql query14-hint-1}
@@ -1002,7 +1005,8 @@ grade_this({
 15. Select flights having 101 as the third, fourth, and fifth characters of the tail number.
 
 ```{sql query15, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here to select flights with tail numbers matching a specific pattern.
+-- Write your SQL query here to select flights with tail numbers matching 
+-- a specific pattern.
 ```
 
 ```{sql query15-hint-1}
@@ -1108,28 +1112,920 @@ grade_this({
 })
 ```
 
+17. Select weather records (all columns) where wind direction is missing
+
+```{sql query17, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select weather records where the 
+-- wind direction is missing.
+```
+
+```{sql query17-hint-1}
+-- HINT: Use IS NULL to check for missing values in a column. Example syntax:
+SELECT * 
+FROM table_name 
+WHERE column_name IS NULL;
+```
+
+```{sql query17-hint-2}
+-- HINT: Complete this query to select records with missing information. Remember to fill in the blanks:
+SELECT ___ 
+FROM weather 
+WHERE ___ IS NULL;
+```
+
+```{sql query17-solution}
+-- SOLUTION: This query selects all weather records where the wind direction is missing.
+SELECT * 
+FROM weather 
+WHERE wind_dir IS NULL;
+```
+
+```{r query17-check, echo=FALSE}
+grade_this({
+  .solution_query17 <- "SELECT * FROM weather WHERE wind_dir IS NULL;"
+  .solution_ex17 <- DBI::dbGetQuery(con, .solution_query17)
+  .result_ex17 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check for missing wind_dir in the student's result
+  if (!all(is.na(.result_ex17$wind_dir))) {
+    fail("Not all records in your query result have missing wind direction.")
+  }
+
+  # Ensure no additional records are included or excluded unintentionally
+  if (nrow(.result_ex17) != nrow(.solution_ex17)) {
+    fail("The number of records returned by your query does not match the expected number of records with missing wind direction.")
+  }
+
+  pass("Your query correctly retrieves all weather records where the wind direction is missing.")
+})
+```
+
+18. Select weather records where temperature is not missing
+
+```{sql query18, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select weather records where the temperature 
+-- is not missing.
+```
+
+```{sql query18-hint-1}
+-- HINT: Use IS NOT NULL to check for non-missing values in a column. Example syntax:
+SELECT * 
+FROM table_name 
+WHERE column_name IS NOT NULL;
+```
+
+```{sql query18-hint-2}
+-- HINT: Complete this query to select records with available temperature information. Remember to fill in the blanks:
+SELECT ___ 
+FROM weather 
+WHERE ___ IS NOT NULL;
+```
+
+```{sql query18-solution}
+-- SOLUTION: This query selects all weather records where the temperature is not missing.
+SELECT * 
+FROM weather 
+WHERE temp IS NOT NULL;
+```
+
+```{r query18-check, echo=FALSE}
+grade_this({
+  .solution_query18 <- "SELECT * FROM weather WHERE temp IS NOT NULL;"
+  .solution_ex18 <- DBI::dbGetQuery(con, .solution_query18)
+  .result_ex18 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check for non-missing temp in the student's result
+  if (!all(!is.na(.result_ex18$temp))) {
+    fail("Some records in your query result have missing temperature.")
+  }
+
+  # Ensure no additional records are included or excluded unintentionally
+  if (nrow(.result_ex18) != nrow(.solution_ex18)) {
+    fail("The number of records returned by your query does not match the expected number of records with non-missing temperature.")
+  }
+
+  pass("Your query correctly retrieves all weather records where the temperature is not missing.")
+})
+```
+
 # Aggregating Techniques
 
 ## Numerical summaries
 
+19. Calculate the average temperature from the weather table as `avg_temperature`
+
+```{sql query19, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to calculate the average temperature from 
+-- the weather table.
+```
+
+```{sql query19-hint-1}
+-- HINT: Use AVG() function to calculate the average of a column. Example syntax:
+SELECT AVG(column_name) AS alias
+FROM table_name;
+```
+
+```{sql query19-hint-2}
+-- HINT: Complete this query to calculate the average temperature. Remember to fill in the blanks:
+SELECT AVG(___ ) AS ___
+FROM weather;
+```
+
+```{sql query19-solution}
+-- SOLUTION: This query calculates the average temperature from the weather table.
+SELECT AVG(temp) AS avg_temperature
+FROM weather;
+```
+
+```{r query19-check, echo=FALSE}
+grade_this({
+  .solution_query19 <- "SELECT AVG(temp) AS avg_temperature FROM weather;"
+  .solution_ex19 <- DBI::dbGetQuery(con, .solution_query19)
+  .result_ex19 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check for the 'avg_temperature' column in the student's result
+  if (!"avg_temperature" %in% names(.result_ex19)) {
+    fail("Your query is missing the 'avg_temperature' column.")
+  }
+
+  # Ensure the calculated average matches the solution
+  if (abs(.result_ex19$avg_temperature - .solution_ex19$avg_temperature) > 1e-2) {
+    fail("The average temperature returned by your query does not match the expected average temperature.")
+  }
+
+  pass("Your query correctly calculates the average temperature from the weather table.")
+})
+```
+
+20. Find the maximum arrival time for flights destined to ORD as `max_arr_time`
+
+```{sql query20, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to find the maximum arrival time for flights 
+-- destined to ORD (Chicago O'Hare).
+```
+
+```{sql query20-hint-1}
+-- HINT: Use MAX() function to find the maximum value of a column. Syntax example:
+SELECT MAX(column_name) AS alias
+FROM table_name
+WHERE condition;
+```
+
+```{sql query20-hint-2}
+-- HINT: Fill in the blanks to complete the query for finding the maximum arrival time to ORD:
+SELECT MAX(___) AS ___
+FROM flights
+WHERE dest = 'ORD';
+```
+
+```{sql query20-solution}
+-- SOLUTION: This query finds the maximum arrival time for flights destined to ORD.
+SELECT MAX(arr_time) AS max_arr_time
+FROM flights
+WHERE dest = 'ORD';
+```
+
+```{r query20-check, echo=FALSE}
+grade_this({
+  .solution_query20 <- "SELECT MAX(arr_time) AS max_arr_time FROM flights WHERE dest = 'ORD';"
+  .solution_ex20 <- DBI::dbGetQuery(con, .solution_query20)
+  .result_ex20 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check for the 'max_arr_time' column in the student's result
+  if (!"max_arr_time" %in% names(.result_ex20)) {
+    fail("Your query is missing the 'max_arr_time' column.")
+  }
+
+  # Ensure the maximum arrival time matches the solution
+  if (.result_ex20$max_arr_time != .solution_ex20$max_arr_time) {
+    fail("The maximum arrival time returned by your query does not match the expected maximum arrival time.")
+  }
+
+  pass("Your query correctly finds the maximum arrival time for flights destined to ORD.")
+})
+```
+
 ## Categorical summaries
 
+21. Find the first destination alphabetically for flights destined to SEA as `first_sea_dest`
+
+```{sql query21, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to find the first destination alphabetically 
+-- for flights destined to SEA.
+```
+
+```{sql query21-hint-1}
+-- HINT: Use MIN() function to find the minimum (first alphabetically) value of a column. Syntax example:
+SELECT MIN(column_name) AS alias
+FROM table_name
+WHERE condition;
+```
+
+```{sql query21-hint-2}
+-- HINT: Complete this query to find the first destination alphabetically where flights are destined to SEA. Fill in the blanks:
+SELECT MIN(___) AS first_sea_dest
+FROM flights
+WHERE dest = 'SEA';
+```
+
+```{sql query21-solution}
+-- SOLUTION: This query finds the first destination alphabetically for flights destined to SEA.
+SELECT MIN(dest) AS first_sea_dest
+FROM flights
+WHERE dest = 'SEA';
+```
+
+```{r query21-check, echo=FALSE}
+grade_this({
+  .solution_query21 <- "SELECT MIN(dest) AS first_dest FROM flights WHERE dest = 'SEA';"
+  .solution_ex21 <- DBI::dbGetQuery(con, .solution_query21)
+  .result_ex21 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check for the 'first_dest' column in the student's result
+  if (!"first_dest" %in% names(.result_ex21)) {
+    fail("Your query is missing the 'first_dest' column.")
+  }
+
+  # Ensure the first destination alphabetically matches the solution
+  if (.result_ex21$first_dest != .solution_ex21$first_dest) {
+    fail("The first destination alphabetically returned by your query does not match the expected first destination.")
+  }
+
+  pass("Your query correctly finds the first destination alphabetically for flights destined to SEA.")
+})
+```
+
 ## Rounding summaries
+
+22. Round wind gust values in the weather table to 0 decimal places as `rounded_wind_gust`
+
+```{sql query22, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to round wind gust values in the weather 
+-- table to 0 decimal places.
+```
+
+```{sql query22-hint-1}
+-- HINT: Use the ROUND() function to round numerical values to a specified number of decimal places. Syntax example:
+SELECT ROUND(column_name, number_of_decimal_places) AS alias
+FROM table_name;
+```
+
+```{sql query22-hint-2}
+-- HINT: Complete this query to round wind gust values in the weather table to 0 decimal places. Fill in the blanks:
+SELECT ROUND(___, 0) AS rounded_wind_gust
+FROM weather;
+```
+
+```{sql query22-solution}
+-- SOLUTION: This query rounds wind gust values in the weather table to 0 decimal places.
+SELECT ROUND(wind_gust, 0) AS rounded_wind_gust
+FROM weather;
+```
+
+```{r query22-check, echo=FALSE}
+grade_this({
+  .solution_query22 <- "SELECT ROUND(wind_gust, 0) AS rounded_wind_gust FROM weather;"
+  .solution_ex22 <- DBI::dbGetQuery(con, .solution_query22)
+  .result_ex22 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check for the 'rounded_wind_gust' column in the student's result
+  if (!"rounded_wind_gust" %in% names(.result_ex22)) {
+    fail("Your query is missing the 'rounded_wind_gust' column.")
+  }
+
+  # Ensure the rounded wind gust values match the solution
+  if (!all.equal(.result_ex22$rounded_wind_gust, .solution_ex22$rounded_wind_gust, check.attributes = FALSE)) {
+    fail("The rounded wind gust values returned by your query do not match the expected rounded values.")
+  }
+
+  pass("Your query correctly rounds wind gust values in the weather table to 0 decimal places.")
+})
+```
 
 # Sorting and Grouping Techniques
 
 ## Sorting
 
+23. Sort flights by departure delay
+
+```{sql query23, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to sort flights by departure delay.
+```
+
+```{sql query23-hint-1}
+-- HINT: Use the ORDER BY clause to sort results by a specific column. Syntax example:
+SELECT column_name
+FROM table_name
+ORDER BY column_name;
+```
+
+```{sql query23-hint-2}
+-- HINT: Complete this query to sort flights by departure delay. Fill in the blanks:
+SELECT ___
+FROM flights
+ORDER BY ___;
+```
+
+```{sql query23-solution}
+-- SOLUTION: This query sorts flights by departure delay.
+SELECT *
+FROM flights
+ORDER BY dep_delay;
+```
+
+```{r query23-check, echo=FALSE}
+grade_this({
+  .solution_query23 <- "SELECT * FROM flights ORDER BY dep_delay;"
+  .solution_ex23 <- DBI::dbGetQuery(con, .solution_query23)
+  .result_ex23 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check if the order of departure delay in the student's result matches the solution
+  correct_order <- all(diff(.solution_ex23$dep_delay) >= 0)  # Check if departure delays are in ascending order
+  student_order <- all(diff(.result_ex23$dep_delay) >= 0)
+
+  if (!student_order || !identical(.result_ex23$dep_delay, .solution_ex23$dep_delay)) {
+    fail("The flights in your query are not correctly ordered by departure delay.")
+  }
+
+  pass("Your query correctly sorts flights by departure delay.")
+})
+```
+
+24. Sort flights by descending arrival delay
+
+```{sql query24, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to sort flights by descending arrival delay.
+```
+
+```{sql query24-hint-1}
+-- HINT: Use the ORDER BY clause along with DESC to sort results in descending order. Example:
+SELECT column_name
+FROM table_name
+ORDER BY column_name DESC;
+```
+
+```{sql query24-hint-2}
+-- HINT: Complete this query to sort flights by descending arrival delay. Fill in the blanks:
+SELECT ___
+FROM flights
+ORDER BY ___ DESC;
+```
+
+```{sql query24-solution}
+-- SOLUTION: This query sorts flights by descending arrival delay.
+SELECT *
+FROM flights
+ORDER BY arr_delay DESC;
+```
+
+```{r query24-check, echo=FALSE}
+grade_this({
+  .solution_query24 <- "SELECT * FROM flights ORDER BY arr_delay DESC;"
+  .solution_ex24 <- DBI::dbGetQuery(con, .solution_query24)
+  .result_ex24 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check if the order of arrival delay in the student's result matches the solution
+  correct_order <- all(diff(.solution_ex24$arr_delay, na.rm = TRUE) <= 0)  # Check if arrival delays are in descending order
+  student_order <- all(diff(.result_ex24$arr_delay, na.rm = TRUE) <= 0)
+
+  if (!student_order || !identical(.result_ex24$arr_delay[order(.result_ex24$arr_delay, decreasing = TRUE, na.last = NA)], .solution_ex24$arr_delay)) {
+    fail("The flights in your query are not correctly ordered by descending arrival delay.")
+  }
+
+  pass("Your query correctly sorts flights by descending arrival delay.")
+})
+```
+
 ## Grouping
 
+25. Sort weather data by descending visibility and wind speed
+
+```{sql query25, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to sort weather data by descending visibility 
+-- and descending wind speed.
+```
+
+```{sql query25-hint-1}
+-- HINT: Use the ORDER BY clause to sort results by multiple columns. You can add DESC to sort in descending order. Example:
+SELECT column1, column2
+FROM table_name
+ORDER BY column1 DESC, column2 DESC;
+```
+
+```{sql query25-hint-2}
+-- HINT: Complete this query to sort weather data by descending visibility and then by descending wind speed. Fill in the blanks:
+SELECT ___
+FROM weather
+ORDER BY ___ DESC, ___ DESC;
+```
+
+```{sql query25-solution}
+-- SOLUTION: This query sorts weather data by descending visibility and then by descending wind speed.
+SELECT *
+FROM weather
+ORDER BY visib DESC, wind_speed DESC;
+```
+
+```{r query25-check, echo=FALSE}
+grade_this({
+  .solution_query25 <- "SELECT * FROM weather ORDER BY visib DESC, wind_speed DESC;"
+  .solution_ex25 <- DBI::dbGetQuery(con, .solution_query25)
+  .result_ex25 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check if the order of visibility and wind speed in the student's result matches the solution
+  correct_order_visib <- all(diff(.solution_ex25$visib, na.rm = TRUE) <= 0)  # Check if visibility values are in descending order
+  student_order_visib <- all(diff(.result_ex25$visib, na.rm = TRUE) <= 0)
+  correct_order_wind_speed <- all(diff(.solution_ex25$wind_speed[order(.solution_ex25$visib, decreasing = TRUE)], na.rm = TRUE) <= 0)  # Check wind speed in descending order within each visibility group
+  student_order_wind_speed <- all(diff(.result_ex25$wind_speed[order(.result_ex25$visib, decreasing = TRUE)], na.rm = TRUE) <= 0)
+
+  if (!student_order_visib || !student_order_wind_speed || !identical(.result_ex25$visib, .solution_ex25$visib) || !identical(.result_ex25$wind_speed, .solution_ex25$wind_speed)) {
+    fail("The weather data in your query are not correctly ordered by descending visibility and wind speed.")
+  }
+
+  pass("Your query correctly sorts weather data by descending visibility and wind speed.")
+})
+```
+
+26. Group flights by origin and calculate the average arrival delay as `avg_arr_delay`
+
+```{sql query26, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to group flights by origin and 
+-- calculate the average arrival delay.
+```
+
+```{sql query26-hint-1}
+-- HINT: Use the GROUP BY clause to aggregate data by a specific column. AVG() function calculates the average. Example:
+SELECT column1, AVG(column2) AS avg_column
+FROM table_name
+GROUP BY column1;
+```
+
+```{sql query26-hint-2}
+-- HINT: Fill in the blanks to complete the query for calculating the average arrival delay grouped by origin.
+SELECT ___, AVG(___) AS avg_arr_delay
+FROM flights
+GROUP BY ___;
+```
+
+```{sql query26-solution}
+-- SOLUTION: This query groups flights by origin and calculates the average arrival delay.
+SELECT origin, AVG(arr_delay) AS avg_arr_delay
+FROM flights
+GROUP BY origin
+ORDER BY avg_arr_delay DESC;
+```
+
+```{r query26-check, echo=FALSE}
+grade_this({
+  .solution_query26 <- "SELECT origin, AVG(arr_delay) AS avg_arr_delay FROM flights GROUP BY origin ORDER BY avg_arr_delay DESC;"
+  .solution_ex26 <- DBI::dbGetQuery(con, .solution_query26)
+  .result_ex26 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check if the student's result matches the solution for 'origin' and 'avg_arr_delay'
+  correct_origins <- identical(sort(unique(.result_ex26$origin)), sort(unique(.solution_ex26$origin)))
+  correct_avg_arr_delays <- all(abs(.result_ex26$avg_arr_delay - .solution_ex26$avg_arr_delay[match(.result_ex26$origin, .solution_ex26$origin)]) < 1e-5)
+
+  if (!correct_origins || !correct_avg_arr_delays) {
+    fail("The average arrival delays by origin in your query do not match the expected results.")
+  }
+
+  pass("Your query correctly calculates the average arrival delay for each origin.")
+})
+```
+
+27. Group flights by destination and count the number of flights for each destination having more than 100 flights as `total_flights`
+
+```{sql query27, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to group flights by destination and count the 
+-- number of flights for each, only for those destinations with 
+-- more than 100 flights.
+```
+
+```{sql query27-hint-1}
+-- HINT: Use GROUP BY to aggregate data by a specific column and HAVING to filter aggregated results. COUNT() function counts the number of records. Example:
+SELECT column1, COUNT(*) AS count_column
+FROM table_name
+GROUP BY column1
+HAVING COUNT(*) > condition;
+```
+
+```{sql query27-hint-2}
+-- HINT: Fill in the blanks to complete the query for counting the number of flights grouped by destination, only including those with more than 100 flights.
+SELECT ___, COUNT(*) AS total_flights
+FROM flights
+GROUP BY ___
+HAVING COUNT(*) > ___;
+```
+
+```{sql query27-solution}
+-- SOLUTION: This query groups flights by destination and counts the number of flights for each, only including those destinations with more than 100 flights.
+SELECT dest, COUNT(*) AS total_flights
+FROM flights
+GROUP BY dest
+HAVING COUNT(*) > 100;
+```
+
+```{r query27-check, echo=FALSE}
+grade_this({
+  .solution_query27 <- "SELECT dest, COUNT(*) AS total_flights FROM flights GROUP BY dest HAVING COUNT(*) > 100;"
+  .solution_ex27 <- DBI::dbGetQuery(con, .solution_query27)
+  .result_ex27 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check if the student's result matches the solution for 'dest' and 'total_flights'
+  correct_dests <- identical(sort(unique(.result_ex27$dest)), sort(unique(.solution_ex27$dest)))
+  correct_total_flights <- all(.result_ex27$total_flights[match(.result_ex27$dest, .solution_ex27$dest)] == .solution_ex27$total_flights)
+
+  if (!correct_dests || !correct_total_flights) {
+    fail("The count of flights by destination in your query does not match the expected results for destinations with more than 100 flights.")
+  }
+
+  pass("Your query correctly counts the number of flights for each destination, only including those with more than 100 flights.")
+})
+```
+
 # Transforming Techniques
+
+28. Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.
+
+```{sql query28, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to categorize flights by distance as 'Short', 
+-- 'Medium', or 'Long'.
+```
+
+```{sql query28-hint-1}
+-- HINT: Use CASE WHEN statements to categorize data based on conditions. The syntax is CASE WHEN condition THEN result END. For example:
+SELECT column1,
+       CASE 
+           WHEN condition1 THEN 'Result1'
+           WHEN condition2 THEN 'Result2'
+           ELSE 'OtherResult'
+       END AS new_column
+FROM table_name;
+```
+
+```{sql query28-hint-2}
+-- HINT: Fill in the blanks to categorize flights by distance. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.
+SELECT CASE 
+           WHEN distance < ___ THEN 'Short'
+           WHEN distance BETWEEN ___ AND ___ THEN 'Medium'
+           ELSE 'Long'
+       END AS flight_distance_category
+FROM flights;
+```
+
+```{sql query28-solution}
+-- SOLUTION: This query categorizes flights by distance as 'Short', 'Medium', or 'Long'.
+SELECT CASE 
+           WHEN distance < 500 THEN 'Short'
+           WHEN distance BETWEEN 500 AND 2000 THEN 'Medium'
+           ELSE 'Long'
+       END AS flight_distance_category
+FROM flights
+ORDER BY distance DESC;
+```
+
+```{r query28-check, echo=FALSE}
+grade_this({
+  .solution_query28 <- "SELECT CASE WHEN distance < 500 THEN 'Short' WHEN distance BETWEEN 500 AND 2000 THEN 'Medium' ELSE 'Long' END AS flight_distance_category FROM flights ORDER BY distance DESC;"
+  .solution_ex28 <- DBI::dbGetQuery(con, .solution_query28)
+  .result_ex28 <- DBI::dbGetQuery(con, .user_code)
+
+  # Verify if the student's query categorization matches the solution
+  correct_categories <- identical(.result_ex28$flight_distance_category, .solution_ex28$flight_distance_category)
+
+  if (!correct_categories) {
+    fail("The flight distance categorization in your query does not match the expected categories.")
+  }
+
+  pass("Your query correctly categorizes flights by distance as 'Short', 'Medium', or 'Long'.")
+})
+```
+
+29. Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed
+
+    To calculate the average speed, use the `dist` and `air_time` columns. Remember to convert `air_time` from minutes to hours for speed in miles per hour.
+
+```{sql query29, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to calculate the average speed of flights and 
+-- order by the fastest average speed.
+```
+
+```{sql query29-hint-1}
+-- HINT:  Order the results by the average speed in descending order to get the fastest speeds at the top.
+SELECT origin, dest, AVG(distance / (air_time / 60)) AS avg_speed
+FROM flights
+GROUP BY origin, dest
+ORDER BY avg_speed DESC;
+```
+
+```{sql query29-hint-2}
+-- HINT: Complete the query by calculating the average speed and ordering the results. Fill in the blanks:
+SELECT origin, dest,
+       AVG(___ / (___ / 60)) AS avg_speed
+FROM flights
+GROUP BY ___, ___
+ORDER BY ___ DESC;
+```
+
+```{sql query29-solution}
+-- SOLUTION: This query calculates the average speed of flights from each origin to each destination and orders the results by the fastest average speeds.
+SELECT origin, dest,
+       AVG(distance / (air_time / 60)) AS avg_speed
+FROM flights
+GROUP BY origin, dest
+ORDER BY avg_speed DESC;
+```
+
+```{r query29-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 29
+  .solution_ex29 <- DBI::dbGetQuery(con, "SELECT origin, dest, AVG(distance / (air_time / 60)) AS avg_speed FROM flights GROUP BY origin, dest ORDER BY avg_speed DESC;")
+  
+  # Execute the student's query for EXERCISE 29
+  .result_ex29 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Check if the student's result has the expected columns
+  cols_expected_ex29 <- names(.solution_ex29)
+  missing_cols_ex29 <- setdiff(cols_expected_ex29, names(.result_ex29))
+  extra_cols_ex29 <- setdiff(names(.result_ex29), cols_expected_ex29)
+  
+  if (length(missing_cols_ex29) > 0) {
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex29)}."))
+  }
+  
+  if (length(extra_cols_ex29) > 0) {
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex29)}."))
+  }
+  
+  # Check if the order of average speeds is correct
+  correct_order <- all(diff(.result_ex29$avg_speed) <= 0)  # Check if all differences are non-positive, indicating descending order
+  if (!correct_order) {
+    fail("The average speeds in your query results are not in the correct descending order.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly calculates and orders the average speed of flights.")
+})
+```
 
 # Joining Techniques
 
 ## INNER JOIN
 
+30. Join flights (as `f`) with weather (as `w`) on `origin` and `time_hour` (returning only the rows matching between both tables). Select the `origin`, `dest`,
+`temp`, and `humid` fields.
+
+```{sql query30, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to join flights with weather on origin 
+-- and time_hour.
+```
+
+```{sql query30-hint-1}
+-- HINT: Use an INNER JOIN to combine rows from flights and weather tables where the origin in flights matches the origin in weather, and the time_hour in flights matches the time_hour in weather. Select the flight's origin, destination, and the weather's temperature and humidity.
+SELECT f.origin, f.dest, w.temp, w.humid
+FROM flights AS f
+INNER JOIN weather AS w ON f.origin = w.origin AND f.time_hour = w.time_hour;
+```
+
+```{sql query30-hint-2}
+-- HINT: Fill in the blanks to complete the INNER JOIN between flights and weather tables.
+SELECT f.origin, f.dest, w.temp, w.humid
+FROM flights AS f
+INNER JOIN weather AS w ON f.___ = w.___ AND f.___ = w.___;
+```
+
+```{sql query30-solution}
+-- SOLUTION: This query joins the flights table with the weather table on matching origin and time_hour, selecting origin, destination, temperature, and humidity.
+SELECT f.origin, f.dest, w.temp, w.humid
+FROM flights AS f
+INNER JOIN weather AS w ON f.origin = w.origin AND f.time_hour = w.time_hour;
+```
+
+```{r query30-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 30
+  .solution_ex30 <- DBI::dbGetQuery(con, "SELECT f.origin, f.dest, w.temp, w.humid FROM flights AS f INNER JOIN weather AS w ON f.origin = w.origin AND f.time_hour = w.time_hour;")
+  
+  # Execute the student's query for EXERCISE 30
+  .result_ex30 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Check if the student's result has the expected columns
+  cols_expected_ex30 <- names(.solution_ex30)
+  missing_cols_ex30 <- setdiff(cols_expected_ex30, names(.result_ex30))
+  extra_cols_ex30 <- setdiff(names(.result_ex30), cols_expected_ex30)
+  
+  if (length(missing_cols_ex30) > 0) {
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex30)}."))
+  }
+  
+  if (length(extra_cols_ex30) > 0) {
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex30)}."))
+  }
+  
+  # Check if the join is performed correctly by comparing the number of rows
+  if (nrow(.result_ex30) != nrow(.solution_ex30)) {
+    fail("The number of rows returned by your query does not match the expected result, indicating a potential issue with the join conditions.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly joins the flights table with the weather table on origin and time_hour.")
+})
+```
+
 ## LEFT JOIN
+
+31. Left join flights with planes on tailnum (returning all rows from flights and only the rows from planes that match). Select the `tailnum`, `origin`, `dest`, `manufacturer`, and `model` fields.
+
+```{sql query31, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to left join flights with planes on tailnum.
+```
+
+```{sql query31-hint-1}
+-- HINT: Use a LEFT JOIN to combine rows from flights and planes tables where the tailnum in flights matches the tailnum in planes. Select the flight's tailnum, origin, destination, and the plane's manufacturer and model.
+SELECT f.tailnum, f.origin, f.dest, p.manufacturer, p.model
+FROM flights AS f
+LEFT JOIN planes AS p ON f.tailnum = p.tailnum;
+```
+
+```{sql query31-hint-2}
+-- HINT: Fill in the blanks to complete the LEFT JOIN between flights and planes tables.
+SELECT f.tailnum, f.origin, f.dest, p.manufacturer, p.model
+FROM flights AS f
+LEFT JOIN planes AS p ON f.___ = p.___;
+```
+
+```{sql query31-solution}
+-- SOLUTION: This query left joins the flights table with the planes table on matching tailnum, selecting tailnum, origin, destination, manufacturer, and model.
+SELECT f.tailnum, f.origin, f.dest, p.manufacturer, p.model
+FROM flights AS f
+LEFT JOIN planes AS p ON f.tailnum = p.tailnum;
+```
+
+```{r query31-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 31
+  .solution_ex31 <- DBI::dbGetQuery(con, "SELECT f.tailnum, f.origin, f.dest, p.manufacturer, p.model FROM flights AS f LEFT JOIN planes AS p ON f.tailnum = p.tailnum;")
+  
+  # Execute the student's query for EXERCISE 31
+  .result_ex31 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Check if the student's result has the expected columns
+  cols_expected_ex31 <- names(.solution_ex31)
+  missing_cols_ex31 <- setdiff(cols_expected_ex31, names(.result_ex31))
+  extra_cols_ex31 <- setdiff(names(.result_ex31), cols_expected_ex31)
+  
+  if (length(missing_cols_ex31) > 0) {
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex31)}."))
+  }
+  
+  if (length(extra_cols_ex31) > 0) {
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex31)}."))
+  }
+  
+  # Check if the left join is performed correctly by comparing the number of rows
+  if (nrow(.result_ex31) < nrow(.solution_ex31)) {
+    fail("The number of rows returned by your query is less than expected, indicating a potential issue with the left join conditions.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly left joins the flights table with the planes table on tailnum.")
+})
+```
 
 ## RIGHT JOIN
 
+32. Right join airlines (as `a`) with flights (as `f`) on carrier code (returning all rows from airlines and only the rows from flights that match). Select the `name`, `tailnum`, `origin`, and `dest` fields.
+
+```{sql query32, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to right join airlines with flights on carrier code
+```
+
+```{sql query32-hint-1}
+-- HINT: Use a RIGHT JOIN to combine rows from airlines and flights tables where the carrier code in airlines matches the carrier code in flights. Select the airline's name, flight's tailnum, origin, and destination.
+SELECT a.name, f.tailnum, f.origin, f.dest
+FROM airlines AS a
+RIGHT JOIN flights AS f ON a.carrier = f.carrier
+ORDER BY a.name DESC;
+```
+
+```{sql query32-hint-2}
+-- HINT: Fill in the blanks to complete the RIGHT JOIN between airlines and flights tables, and order the results by the airline's name in descending order.
+SELECT a.name, f.tailnum, f.origin, f.dest
+FROM airlines AS a
+RIGHT JOIN flights AS f ON a.___ = f.___
+ORDER BY a.___ DESC;
+```
+
+```{sql query32-solution}
+-- SOLUTION: This query right joins the airlines table with the flights table on matching carrier code, selecting the airline's name, flight's tailnum, origin, and destination, ordered by the airline's name in descending order.
+SELECT a.name, f.tailnum, f.origin, f.dest
+FROM airlines AS a
+RIGHT JOIN flights AS f ON a.carrier = f.carrier
+ORDER BY a.name DESC;
+```
+
+```{r query32-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 32
+  .solution_ex32 <- DBI::dbGetQuery(con, "SELECT a.name, f.tailnum, f.origin, f.dest FROM airlines AS a RIGHT JOIN flights AS f ON a.carrier = f.carrier ORDER BY a.name DESC;")
+  
+  # Execute the student's query for EXERCISE 32
+  .result_ex32 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Check if the student's result has the expected columns
+  cols_expected_ex32 <- names(.solution_ex32)
+  missing_cols_ex32 <- setdiff(cols_expected_ex32, names(.result_ex32))
+  extra_cols_ex32 <- setdiff(names(.result_ex32), cols_expected_ex32)
+  
+  if (length(missing_cols_ex32) > 0) {
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex32)}."))
+  }
+  
+  if (length(extra_cols_ex32) > 0) {
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex32)}."))
+  }
+  
+  # Check if the right join is performed correctly by comparing the number of rows
+  if (nrow(.result_ex32) < nrow(.solution_ex32)) {
+    fail("The number of rows returned by your query is less than expected, indicating a potential issue with the right join conditions.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly right joins the airlines table with the flights table on carrier code, ordered by the airline's name in descending order.")
+})
+```
+
 ## Anti-Join
+
+33. Anti-join flights (as `f`) with planes (as `p`) where plane's tailnum is missing. Select the `tailnum`, `origin`, and `dest` fields.
+
+```{sql query33, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to left join flights with planes where the 
+-- plane's tailnum is missing.
+```
+
+```{sql query33-hint-1}
+-- HINT: Use a LEFT JOIN to combine rows from flights and planes tables where the tailnum in flights matches the tailnum in planes. Select flights' tailnum, origin, and destination where the corresponding tailnum in planes is missing.
+SELECT f.tailnum, f.origin, f.dest
+FROM flights AS f
+LEFT JOIN planes AS p ON f.tailnum = p.tailnum
+WHERE p.tailnum IS NULL;
+```
+
+```{sql query33-hint-2}
+-- HINT: Fill in the blanks to complete the LEFT JOIN between flights and planes tables, and select where the plane's tailnum is missing.
+SELECT f.tailnum, f.origin, f.dest
+FROM flights AS f
+LEFT JOIN planes AS p ON f.___ = p.___
+WHERE p.___ IS NULL;
+```
+
+```{sql query33-solution}
+-- SOLUTION: This query left joins the flights table with the planes table on matching tailnum, selecting flights' tailnum, origin, and destination where the corresponding tailnum in planes is missing.
+SELECT f.tailnum, f.origin, f.dest
+FROM flights AS f
+LEFT JOIN planes AS p ON f.tailnum = p.tailnum
+WHERE p.tailnum IS NULL;
+```
+
+```{r query33-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 33
+  .solution_ex33 <- DBI::dbGetQuery(con, "SELECT f.tailnum, f.origin, f.dest FROM flights AS f LEFT JOIN planes AS p ON f.tailnum = p.tailnum WHERE p.tailnum IS NULL;")
+  
+  # Execute the student's query for EXERCISE 33
+  .result_ex33 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Check if the student's result has the expected columns
+  cols_expected_ex33 <- names(.solution_ex33)
+  missing_cols_ex33 <- setdiff(cols_expected_ex33, names(.result_ex33))
+  extra_cols_ex33 <- setdiff(names(.result_ex33), cols_expected_ex33)
+  
+  if (length(missing_cols_ex33) > 0) {
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex33)}."))
+  }
+  
+  if (length(extra_cols_ex33) > 0) {
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex33)}."))
+  }
+  
+  # Check if the left join is performed correctly by comparing the number of rows where tailnum is missing
+  if (nrow(.result_ex33) != nrow(.solution_ex33)) {
+    fail("The number of rows returned by your query does not match the expected result, indicating a potential issue with the left join conditions or the WHERE clause.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly anti-joins (using a left join) the flights table with the planes table where the plane's tailnum is missing.")
+})
+```
+
+## Write your own queries!
+
+
+```{sql query34, exercise=TRUE, exercise.eval=FALSE}
+-- Write your own query here determining a different result from these tables
+```
+
+```{sql query35, exercise=TRUE, exercise.eval=FALSE}
+-- Write another query here determining a different result from these tables
+```

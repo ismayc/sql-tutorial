@@ -23,7 +23,7 @@ knitr::opts_chunk$set(#engine = "SQL",
 options(connection = con) 
 ```
 
-### Select all town names:
+### Selection 1: Select all town names:
 
 ```{sql, output.var="sql_results"}
 SELECT town
@@ -34,7 +34,7 @@ SELECT town
 DT::datatable(sql_results)
 ```
 
-### Select all county names:
+### Selection 2: Select all county names:
 
 ```{sql, output.var="sql_results"}
 SELECT county
@@ -46,7 +46,7 @@ DT::datatable(sql_results)
 ```
 
 
-### Select all columns for towns table
+### Selection 3: Select all columns for towns table
 
 ```{sql, output.var="sql_results"}
 SELECT *
@@ -59,7 +59,7 @@ DT::datatable(sql_results)
 ```
 
 
-### Select county names and population for 2022 
+### Selection 4: Select county names and population for 2022 
 
 ```{sql, output.var="sql_results"}
 SELECT county, population_2022
@@ -72,7 +72,7 @@ DT::datatable(sql_results)
 
 ## Aliasing
 
-### Select county names, population for 2022, and land area (Aliased)
+### Aliasing 1: Select county names, population for 2022, and land area (Aliased)
 
 ```{sql, output.var="sql_results"}
 SELECT county AS cty, 
@@ -85,7 +85,7 @@ SELECT county AS cty,
 DT::datatable(sql_results)
 ```
 
-### Alias the table name
+### Aliasing 2: Alias the table name
 
 ```{sql, output.var="sql_results"}
 SELECT counties.county,
@@ -99,7 +99,7 @@ DT::datatable(sql_results)
 
 ## Unique entries
 
-### Select distinct states from the `pnw_towns` table:
+### Unique 1: Select distinct states from the `pnw_towns` table:
 
 ```{sql, output.var="sql_results"}
 SELECT DISTINCT state
@@ -112,7 +112,7 @@ DT::datatable(sql_results)
 
 ## View creation
 
-### Create a view that lists towns along with their primary counties:
+### View 1: Create a view that lists towns along with their primary counties:
 
 ```{sql}
 #| include: false
@@ -129,7 +129,7 @@ SELECT town, primary_county
 DT::datatable(sql_results)
 ```
 
-### Use this view in a query
+### View 2: Use this view in a query
 
 ```{sql, output.var="sql_results"}
 SELECT * 
@@ -142,7 +142,7 @@ DT::datatable(sql_results)
 
 ## Counting
 
-### Count the number of records in the `pnw_towns` table:
+### Counting 1: Count the number of records in the `pnw_towns` table:
 
 ```{sql, output.var="sql_results"}
 SELECT COUNT(*) AS num_towns
@@ -153,7 +153,7 @@ SELECT COUNT(*) AS num_towns
 DT::datatable(sql_results)
 ```
 
-### Count the number of distinct states in `pnw_counties`:
+### Counting 2: Count the number of distinct states in `pnw_counties`:
 
 ```{sql, output.var="sql_results"}
 SELECT COUNT(DISTINCT state) AS num_unique_states
@@ -168,7 +168,7 @@ DT::datatable(sql_results)
 
 ## Filtering rows/records
 
-### Towns with greater than 150,000 people
+### Filtering 1: Towns with greater than 150,000 people
 
 ```{sql, output.var="sql_results"}
 SELECT town, state, population_2020_census 
@@ -180,7 +180,7 @@ SELECT town, state, population_2020_census
 DT::datatable(sql_results)
 ```
 
-### Towns with greater than 150,000 people and in Oregon
+### Filtering 2: Towns with greater than 150,000 people and in Oregon
 
 ```{sql, output.var="sql_results"}
 SELECT town, state, population_2020_census 
@@ -193,7 +193,7 @@ SELECT town, state, population_2020_census
 DT::datatable(sql_results)
 ```
 
-### Towns with greater than 150,000 people or in Oregon
+### Filtering 3: Towns with greater than 150,000 people or in Oregon
 
 ```{sql, output.var="sql_results"}
 SELECT town, state, population_2020_census 
@@ -206,7 +206,7 @@ SELECT town, state, population_2020_census
 DT::datatable(sql_results)
 ```
 
-### Counties established after 1920 with a population greater than 100,000
+### Filtering 4: Counties established after 1920 with a population greater than 100,000
 
 ```{sql, output.var="sql_results"}
 SELECT county, state, year_established, population_2022
@@ -219,7 +219,7 @@ SELECT county, state, year_established, population_2022
 DT::datatable(sql_results)
 ```
 
-### Counties established after 1880 with a population greater than 100,000
+### Filtering 5: Counties established after 1880 with a population greater than 100,000
 
 ```{sql, output.var="sql_results"}
 SELECT county, state, year_established, population_2022
@@ -232,7 +232,7 @@ SELECT county, state, year_established, population_2022
 DT::datatable(sql_results)
 ```
 
-### Towns with a land area between 12 and 15 square miles:
+### Filtering 6: Towns with a land area between 12 and 15 square miles:
 
 ```{sql, output.var="sql_results"}
 SELECT town, state, land_area_sq_mi
@@ -245,7 +245,7 @@ SELECT town, state, land_area_sq_mi
 DT::datatable(sql_results)
 ```
 
-### Towns with a land area between 10 and 15 square miles (simplified):
+### Filtering 7: Towns with a land area between 10 and 15 square miles (simplified):
 
 ```{sql, output.var="sql_results"}
 SELECT town, state, land_area_sq_mi
@@ -257,7 +257,7 @@ SELECT town, state, land_area_sq_mi
 DT::datatable(sql_results)
 ```
 
-### Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022:
+### Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022:
 
 ```{sql, output.var="sql_results"}
 SELECT county, state, year_established, population_2022
@@ -272,7 +272,7 @@ DT::datatable(sql_results)
 
 ## Filtering text
 
-### Counties that start with the letter "K":
+### Filtering 9: Counties that start with the letter "K":
 
 <!-- 
 In SQL, the percent symbol (%) used with the LIKE operator serves as a wildcard character representing zero, one, or multiple characters. This allows for flexible pattern matching in string comparisons. For example, if you use `LIKE '5%'`, the SQL engine will search for strings that begin with the number 5 followed by any sequence of characters, including none at all. Similarly, `NOT LIKE '5%'` would find strings that do not start with 5. This feature is particularly useful for queries where you need to find patterns in data without specifying the exact or entire pattern (source: Microsoft Learn - LIKE (Transact-SQL)).
@@ -288,7 +288,7 @@ SELECT county, state
 DT::datatable(sql_results)
 ```
 
-### Towns that end with the letters "ia":
+### Filtering 10: Towns that end with the letters "ia":
 
 ```{sql, output.var="sql_results"}
 SELECT town, state
@@ -300,7 +300,7 @@ SELECT town, state
 DT::datatable(sql_results)
 ```
 
-### Towns that contain the phrase "mount":
+### Filtering 11: Towns that contain the phrase "mount":
 
 ```{sql, output.var="sql_results"}
 SELECT town, state
@@ -312,7 +312,7 @@ SELECT town, state
 DT::datatable(sql_results)
 ```
 
-### Counties with specific pattern in third and fourth position ("ar"):
+### Filtering 12: Counties with specific pattern in third and fourth position ("ar"):
 
 ```{sql, output.var="sql_results"}
 SELECT county
@@ -324,7 +324,7 @@ SELECT county
 DT::datatable(sql_results)
 ```
 
-### Towns that are in Multnomah or Spokane counties:
+### Filtering 13: Towns that are in Multnomah or Spokane counties:
 
 ```{sql, output.var="sql_results"}
 SELECT * 
@@ -336,7 +336,7 @@ SELECT *
 DT::datatable(sql_results)
 ```
 
-### Towns with missing values for secondary county:
+### Filtering 14: Towns with missing values for secondary county:
 
 ```{sql, output.var="sql_results"}
 SELECT * 
@@ -348,7 +348,7 @@ WHERE secondary_county IS NULL;
 DT::datatable(sql_results)
 ```
 
-### Towns without missing values for secondary county:
+### Filtering 15: Towns without missing values for secondary county:
 
 ```{sql, output.var="sql_results"}
 SELECT * 
@@ -364,7 +364,7 @@ DT::datatable(sql_results)
 
 ## Numerical summaries
 
-### Average population across all towns in Washington
+### Aggregating 1: Average population across all towns in Washington
 
 ```{sql, output.var="sql_results"}
 SELECT AVG(population_2020_census) AS avg_population
@@ -376,7 +376,7 @@ SELECT AVG(population_2020_census) AS avg_population
 DT::datatable(sql_results)
 ```
 
-### Total population across all towns in Oregon
+### Aggregating 2: Total population across all towns in Oregon
 
 ```{sql, output.var="sql_results"}
 SELECT SUM(population_2020_census) AS total_population
@@ -388,7 +388,7 @@ SELECT SUM(population_2020_census) AS total_population
 DT::datatable(sql_results)
 ```
 
-### Minimum population across all towns
+### Aggregating 3: Minimum population across all towns
 
 ```{sql, output.var="sql_results"}
 SELECT MIN(population_2020_census) AS min_population
@@ -399,7 +399,7 @@ SELECT MIN(population_2020_census) AS min_population
 DT::datatable(sql_results)
 ```
 
-### Maximum population across all towns
+### Aggregating 4: Maximum population across all towns
 
 ```{sql, output.var="sql_results"}
 SELECT MAX(population_2020_census) AS max_population
@@ -410,7 +410,7 @@ SELECT MAX(population_2020_census) AS max_population
 DT::datatable(sql_results)
 ```
 
-### Total number of towns
+### Aggregating 5: Total number of towns
 
 ```{sql, output.var="sql_results"}
 SELECT COUNT(*) AS total_towns
@@ -423,7 +423,7 @@ DT::datatable(sql_results)
 
 ## Categorical summaries
 
-### First town alphabetically
+### Aggregating 6: First town alphabetically
 
 ```{sql, output.var="sql_results"}
 SELECT MIN(town) AS first_town
@@ -434,7 +434,7 @@ SELECT MIN(town) AS first_town
 DT::datatable(sql_results)
 ```
 
-### Last county alphabetically
+### Aggregating 7: Last county alphabetically
 
 ```{sql, output.var="sql_results"}
 SELECT MAX(county) AS last_county
@@ -447,9 +447,9 @@ DT::datatable(sql_results)
 
 ## Rounding summaries
 
-### Rounded average land areas
+### Aggregating 8: Rounded average land areas
 
-- Rounding to 2 decimal places:
+- 8a: Rounding to 2 decimal places:
   ```{sql, output.var="sql_results"}
   SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area
     FROM pnw_towns;
@@ -459,7 +459,7 @@ DT::datatable(sql_results)
   DT::datatable(sql_results)
   ```
 
-- Rounding to 0 decimal places:
+- 8b: Rounding to 0 decimal places:
   ```{sql, output.var="sql_results"}
   SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area
     FROM pnw_towns;
@@ -473,7 +473,7 @@ DT::datatable(sql_results)
 
 ## Sorting
 
-### Sorting towns by 2020 census population
+### Sorting 1: Sorting towns by 2020 census population
 ```{sql, output.var="sql_results"}
 SELECT town, population_2020_census
   FROM pnw_towns
@@ -485,8 +485,8 @@ DT::datatable(sql_results)
 ```
 
 
-### Sorting towns by 2020 census population in ascending and descending order
-- Ascending:
+### Sorting 2: Sorting towns by 2020 census population in ascending and descending order
+- 2a: Ascending:
   ```{sql, output.var="sql_results"}
   SELECT town, population_2020_census
     FROM pnw_towns
@@ -498,7 +498,7 @@ DT::datatable(sql_results)
   ```
 
   
-- Descending:
+- 2b: Descending:
   ```{sql, output.var="sql_results"}
   SELECT town, population_2020_census
     FROM pnw_towns
@@ -510,7 +510,7 @@ DT::datatable(sql_results)
   ```
 
 
-### Sorting counties by state and population in 2022
+### Sorting 3: Sorting counties by state and population in 2022
 ```{sql, output.var="sql_results"}
 SELECT county, state, population_2022
   FROM pnw_counties
@@ -525,7 +525,7 @@ DT::datatable(sql_results)
 
 ## Grouping
 
-### Grouping towns by state
+### Grouping 1: Grouping towns by state
 ```{sql, output.var="sql_results"}
 SELECT state, COUNT(*) AS total_towns
   FROM pnw_towns
@@ -537,7 +537,7 @@ SELECT state, COUNT(*) AS total_towns
 DT::datatable(sql_results)
 ```
 
-### Grouping and ordering counties by state and average population
+### Grouping 2: Grouping and ordering counties by state and average population
 ```{sql, output.var="sql_results"}
 SELECT state, AVG(population_2022) AS avg_population
   FROM pnw_counties
@@ -550,7 +550,7 @@ SELECT state, AVG(population_2022) AS avg_population
 DT::datatable(sql_results)
 ```
 
-### Filtering on grouped data
+### Grouping 3: Filtering on grouped data
 
 - Display counties with more than 10 towns (trying with `WHERE`):
   ```{sql, error=TRUE}
@@ -575,7 +575,7 @@ DT::datatable(sql_results)
 
 # Transforming Techniques
 
-### Classifying towns by population size using CASE WHEN
+### Transforming 1: Classifying towns by population size using CASE WHEN
 
 ```{sql, output.var="sql_results"}
 SELECT town, 
@@ -594,7 +594,7 @@ SELECT town,
 DT::datatable(sql_results)
 ```
 
-### Percentage increase in population from 2010 to 2020
+### Transforming 2: Percentage increase in population from 2010 to 2020
 
 ```{sql, output.var="sql_results"}
 SELECT town, state, (population_2020_census - population_2010_census) / population_2010_census * 100 AS pct_change
@@ -606,7 +606,7 @@ SELECT town, state, (population_2020_census - population_2010_census) / populati
 DT::datatable(sql_results)
 ```
 
-### Population density
+### Transforming 3: Population density
 
 ```{sql, output.var="sql_results"}
 SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
@@ -622,7 +622,7 @@ DT::datatable(sql_results)
 
 ## INNER JOIN
 
-### Join towns with counties where the primary county matches:
+### Joining 1: Join towns with counties where the primary county matches:
 ```{sql, output.var="sql_results"}
 SELECT c.county, c.county_seat, t.population_2020_census
   FROM pnw_counties AS c
@@ -635,7 +635,7 @@ DT::datatable(sql_results)
 
 ## LEFT JOIN
 
-### Are there any towns without county data listed?
+### Joining 2: Are there any towns without county data listed?
 
 ```{sql, output.var="sql_results"}
 SELECT c.county, c.county_seat, t.population_2020_census
@@ -649,7 +649,7 @@ DT::datatable(sql_results)
 
 ## RIGHT JOIN
 
-### List all counties and their corresponding town data (including counties without town data):
+### Joining 3: List all counties and their corresponding town data (including counties without town data):
 ```{sql, output.var="sql_results"}
 SELECT c.county, t.town
  FROM pnw_towns AS t
@@ -663,7 +663,7 @@ DT::datatable(sql_results)
 
 ## Anti-Join
 
-### Find counties that don't have any towns listed:
+### Joining 4: Find counties that don't have any towns listed:
 ```{sql, output.var="sql_results"}
 SELECT c.county
  FROM pnw_counties AS c

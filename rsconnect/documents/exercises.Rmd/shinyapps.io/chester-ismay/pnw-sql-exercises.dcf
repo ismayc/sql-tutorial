@@ -5,7 +5,7 @@ account: chester-ismay
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 11035541
-bundleId: 8188472
+bundleId: 8195322
 url: https://chester-ismay.shinyapps.io/pnw-sql-exercises/
 version: 1
 asMultiple: FALSE
