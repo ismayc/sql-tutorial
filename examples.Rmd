@@ -1,0 +1,764 @@
+---
+title: SQL Examples
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+<style>
+.title {
+  margin-bottom: 0; /* Reduces space below the title */
+}
+.author {
+  margin-top: 0; /* Reduces space above the author */
+}
+</style>
+
+<div class="title">
+  <h1>SQL Examples on Pacific Northwest Towns and Counties data</h1>
+</div>
+<div class="author">
+  <h3>Author: Dr. Chester Ismay</h3>
+</div>
+
+```{r setup, include=FALSE}
+library(learnr)
+suppressPackageStartupMessages(library(gradethis))
+library(DBI)
+library(RSQLite)
+suppressPackageStartupMessages(library(tidyverse))
+
+# Copy data over into this folder
+# file.copy(from = "../flights2023/pnwflights23/data/airlines.rda", 
+#           to = "data/airlines.rda")
+# file.copy(from = "../flights2023/pnwflights23/data/airports.rda",
+#           to = "data/airports.rda")
+# file.copy(from = "../flights2023/pnwflights23/data/flights.rda",
+#           to = "data/flights.rda")
+# file.copy(from = "../flights2023/pnwflights23/data/planes.rda",
+#           to = "data/planes.rda")
+# file.copy(from = "../flights2023/pnwflights23/data/weather.rda",
+#           to = "data/weather.rda")
+
+# Read data in from RDS files
+# source("02-sql_tables_tutorial.R")
+library(DBI)
+library(RSQLite)
+library(tidyverse)
+
+# Read data from RDS files
+pnw_counties_df <- as.data.frame(read_rds("data/pnw_counties.rds"))
+pnw_towns_df <- as.data.frame(read_rds("data/pnw_towns.rds"))
+fips <- as.data.frame(read_rds("data/fips.rds"))
+
+# Connect to the SQLite database
+con <- dbConnect(SQLite(), ":memory:")
+
+# Write the new data to the database
+dbWriteTable(con, "pnw_counties", pnw_counties_df, overwrite = TRUE)
+dbWriteTable(con, "pnw_towns", pnw_towns_df, overwrite = TRUE)
+dbWriteTable(con, "fips", fips, overwrite = TRUE)
+
+knitr::opts_chunk$set(connection = "con", 
+                      max.print = 20)
+```
+
+```{r setup2, echo=FALSE, out.width='100%', fig.align='center'}
+tutorial_options(exercise.cap = "Query", 
+                 exercise.eval = FALSE,
+                 exercise.reveal_solution = TRUE)
+
+library(DiagrammeR)
+# https://github.com/bergant/datamodelr
+library(datamodelr)
+
+pnw_counties <- pnw_counties_df
+pnw_towns <- pnw_towns_df
+
+dm_f <- dm_from_data_frames(pnw_counties, pnw_towns)
+
+dm_f <- dm_add_references(
+  dm_f,
+  
+  pnw_counties$county == pnw_towns$primary_county,
+  pnw_counties$state == pnw_towns$state
+)
+
+graph <- dm_create_graph(dm_f, rankdir = "BT", col_attr = c("column", "type"))
+
+dm_render_graph(graph)
+```
+
+<style>
+.small-yellow-btn {
+padding: 5px 10px; /* Adjust padding to reduce size */
+font-size: 12px; /* Smaller font size */
+border-radius: 5px; /* Adjust border radius for rounded corners */
+background-color: yellow; /* Set background color to yellow */
+color: black; /* Text color */
+border: 1px solid darkgray; /* Optional: add border */
+}
+</style>
+
+<style>
+.hint-container {
+margin-left: 40px; /* Adjust indentation as needed */
+}
+</style>
+
+# Selection Techniques
+
+## Selecting columns/fields
+
+### Selection 1: Select all town names:
+
+```{sql example1, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example1-solution}
+SELECT town
+  FROM pnw_towns;
+```
+
+### Selection 2: Select all county names:
+
+```{sql example2, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example2-solution}
+SELECT county
+  FROM pnw_counties;
+```
+
+
+### Selection 3: Select all columns for towns table
+
+```{sql example3, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example3-solution}
+SELECT *
+  FROM pnw_towns;
+```
+
+### Selection 4: Select county names and population for 2022 
+
+```{sql example4, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example4-solution}
+SELECT county, population_2022
+  FROM pnw_counties;
+```
+
+## Aliasing
+
+### Aliasing 1: Select county names, population for 2022, and land area (Aliased)
+
+```{sql example5, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example5-solution}
+SELECT county AS cty, 
+       population_2022 AS pop2022,
+       land_area_sq_mi AS area
+  FROM pnw_counties;
+```
+
+### Aliasing 2: Alias the table name
+
+```{sql example6, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example6-solution}
+SELECT counties.county,
+       counties.origin
+  FROM pnw_counties AS counties;
+```
+
+## Unique entries
+
+### Unique 1: Select distinct states from the `pnw_towns` table:
+
+```{sql example7, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example7-solution}
+SELECT DISTINCT state
+  FROM pnw_towns;
+```
+
+## View creation
+
+### View 1: Create a view that lists towns along with their primary counties:
+
+```{sql example8, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example8-solution}
+CREATE VIEW towns_with_county AS
+SELECT town, primary_county
+  FROM pnw_towns;
+```
+
+### View 2: Use this view in a query
+
+```{sql example9, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example9-solution}
+SELECT * 
+  FROM towns_with_county;
+```
+
+## Counting
+
+### Counting 1: Count the number of records in the `pnw_towns` table:
+
+```{sql example10, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example10-solution}
+SELECT COUNT(*) AS num_towns
+  FROM pnw_towns;
+```
+
+### Counting 2: Count the number of distinct states in `pnw_counties`:
+
+```{sql example11, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example11-solution}
+SELECT COUNT(DISTINCT state) AS num_unique_states
+  FROM pnw_counties;
+```
+
+# Filtering Techniques
+
+## Filtering rows/records
+
+### Filtering 1: Towns with greater than 150,000 people
+
+```{sql example12, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example12-solution}
+SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 150000;
+```
+
+### Filtering 2: Towns with greater than 150,000 people and in Oregon
+
+```{sql example13, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example13-solution}
+SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 150000
+   AND state = 'Oregon';
+```
+
+### Filtering 3: Towns with greater than 150,000 people or in Oregon
+
+```{sql example14, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example14-solution}
+SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 150000
+    OR state = 'Oregon';
+```
+
+### Filtering 4: Counties established after 1920 with a population greater than 100,000
+
+```{sql example15, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example15-solution}
+SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE year_established > 1920
+   AND population_2022 > 100000;
+```
+
+### Filtering 5: Counties established after 1880 with a population greater than 100,000
+
+```{sql example16, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example16-solution}
+SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE year_established > 1880
+   AND population_2022 > 100000;
+```
+
+### Filtering 6: Towns with a land area between 12 and 15 square miles:
+
+```{sql example17, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example17-solution}
+SELECT town, state, land_area_sq_mi
+  FROM pnw_towns
+ WHERE land_area_sq_mi >= 12
+   AND land_area_sq_mi <= 15;
+```
+
+### Filtering 7: Towns with a land area between 10 and 15 square miles (simplified):
+
+```{sql example18, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example18-solution}
+SELECT town, state, land_area_sq_mi
+  FROM pnw_towns
+ WHERE land_area_sq_mi BETWEEN 12 AND 15;
+```
+
+### Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022:
+
+```{sql example19, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example19-solution}
+SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE (state = 'Washington' AND year_established BETWEEN 1890 AND 1900)
+    OR (state = 'Oregon' AND population_2022 > 300000);
+```
+
+## Filtering text
+
+### Filtering 9: Counties that start with the letter "K":
+
+```{sql example20, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example20-solution}
+SELECT county, state
+  FROM pnw_counties
+ WHERE county LIKE 'K%';
+```
+
+### Filtering 10: Towns that end with the letters "ia":
+
+```{sql example21, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example21-solution}
+SELECT town, state
+  FROM pnw_towns
+ WHERE town LIKE '%ia';
+```
+
+### Filtering 11: Towns that contain the phrase "mount":
+
+```{sql example22, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example22-solution}
+SELECT town, state
+  FROM pnw_towns
+ WHERE town LIKE '%mount%';
+```
+
+### Filtering 12: Counties with specific pattern in third and fourth position ("ar"):
+
+```{sql example23, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example23-solution}
+SELECT county
+  FROM pnw_counties
+ WHERE county LIKE '__ar%';
+```
+
+### Filtering 13: Towns that are in Multnomah or Spokane counties:
+
+```{sql example24, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example24-solution}
+SELECT * 
+  FROM pnw_towns 
+ WHERE primary_county IN ('Multnomah', 'Spokane');
+```
+
+### Filtering 14: Towns with missing values for secondary county:
+
+```{sql example25, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example25-solution}
+SELECT * 
+ FROM pnw_towns 
+WHERE secondary_county IS NULL;
+```
+
+### Filtering 15: Towns without missing values for secondary county:
+
+```{sql example26, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example26-solution}
+SELECT * 
+ FROM pnw_towns 
+WHERE secondary_county IS NOT NULL;
+``` 
+
+# Aggregating Techniques
+
+## Numerical summaries
+
+### Aggregating 1: Average population across all towns in Washington
+
+```{sql example27, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example27-solution}
+SELECT AVG(population_2020_census) AS avg_population
+  FROM pnw_towns
+ WHERE state = 'Washington';
+```
+
+### Aggregating 2: Total population across all towns in Oregon
+
+```{sql example28, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example28-solution}
+SELECT SUM(population_2020_census) AS total_population
+  FROM pnw_towns
+ WHERE state = 'Oregon';
+```
+
+### Aggregating 3: Minimum population across all towns
+
+```{sql example29, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example29-solution}
+SELECT MIN(population_2020_census) AS min_population
+  FROM pnw_towns;
+```
+
+### Aggregating 4: Maximum population across all towns
+
+```{sql example30, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example30-solution}
+SELECT MAX(population_2020_census) AS max_population
+  FROM pnw_towns;
+```
+
+### Aggregating 5: Total number of towns
+
+```{sql example31, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example31-solution}
+SELECT COUNT(*) AS total_towns
+  FROM pnw_towns;
+```
+
+## Categorical summaries
+
+### Aggregating 6: First town alphabetically
+
+```{sql example32, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example32-solution}
+SELECT MIN(town) AS first_town
+  FROM pnw_towns;
+```
+
+### Aggregating 7: Last county alphabetically
+
+```{sql example33, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example33-solution}
+SELECT MAX(county) AS last_county
+  FROM pnw_counties;
+```
+
+## Rounding summaries
+
+### Aggregating 8: Rounded average land areas
+
+- 8a: Rounding to 2 decimal places:
+
+```{sql example34a, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example34a-solution}
+  SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area
+    FROM pnw_towns;
+```
+
+- 8b: Rounding to 0 decimal places:
+
+```{sql example34b, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example34b-solution}
+  SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area
+    FROM pnw_towns;
+```
+
+# Sorting and Grouping Techniques
+
+## Sorting
+
+### Sorting 1: Sorting towns by 2020 census population
+
+```{sql example35, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example35-solution}
+SELECT town, population_2020_census
+  FROM pnw_towns
+ ORDER BY population_2020_census;
+```
+
+### Sorting 2: Sorting towns by 2020 census population in ascending and descending order
+
+- 2a: Ascending order:
+
+```{sql example36a, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example36a-solution}
+SELECT town, population_2020_census
+  FROM pnw_towns
+ORDER BY population_2020_census ASC;
+```
+
+- 2b: Descending order:
+
+```{sql example36b, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example36b-solution}
+SELECT town, population_2020_census
+  FROM pnw_towns
+ ORDER BY population_2020_census DESC;
+```
+
+### Sorting 3: Sorting counties by state and population in 2022
+
+```{sql example37, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example37-solution}
+SELECT county, state, population_2022
+  FROM pnw_counties
+ ORDER BY state, population_2022 DESC;
+```
+
+## Grouping
+
+### Grouping 1: Grouping towns by state
+
+```{sql example38, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example38-solution}
+SELECT state, COUNT(*) AS total_towns
+  FROM pnw_towns
+ GROUP BY state;
+```
+
+### Grouping 2: Grouping and ordering counties by state and average population
+
+```{sql example39, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example39-solution}
+SELECT state, AVG(population_2022) AS avg_population
+  FROM pnw_counties
+ GROUP BY state
+ ORDER BY avg_population DESC;
+```
+
+### Grouping 3: Filtering on grouped data
+
+- Trying with `WHERE`
+
+```{sql example40a, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example40a-solution, error=TRUE}
+SELECT primary_county, state, COUNT(*) AS total_towns
+  FROM pnw_towns
+ GROUP BY primary_county
+ WHERE COUNT(*) > 10;
+```   
+
+- Trying with `HAVING`
+
+```{sql example40b, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example40b-solution}
+SELECT primary_county, state, COUNT(*) AS total_towns
+  FROM pnw_towns
+ GROUP BY primary_county
+HAVING COUNT(*) > 10;
+```
+
+# Transforming Techniques
+
+### Transforming 1: Classifying towns by population size using CASE WHEN
+
+```{sql example41, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example41-solution}
+SELECT town, 
+       population_2010_census,
+       CASE 
+           WHEN population_2010_census > 100000 THEN 'Large'
+           WHEN population_2010_census BETWEEN 50000 AND 100000 THEN 'Medium'
+           ELSE 'Small'
+       END AS town_size
+  FROM pnw_towns
+  ORDER BY population_2010_census DESC;
+```  
+
+### Transforming 2: Percentage increase in population from 2010 to 2020
+
+```{sql example42, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example42-solution}
+SELECT town, state, (population_2020_census - population_2010_census) / population_2010_census * 100 AS pct_change
+  FROM pnw_towns
+  ORDER BY pct_change DESC;
+```
+
+### Transforming 3: Population density
+
+```{sql example43, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example43-solution}
+SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
+  FROM pnw_towns
+ ORDER BY pop_density DESC;
+```
+
+# Joining Techniques
+
+## INNER JOIN
+
+### Joining 1: Join towns with counties where the primary county matches:
+
+```{sql example44, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example44-solution}
+SELECT c.county, c.county_seat, t.population_2020_census
+  FROM pnw_counties AS c
+ INNER JOIN pnw_towns AS t ON c.county_seat = t.town;
+```
+
+## LEFT JOIN
+
+### Joining 2: Are there any towns without county data listed?
+
+```{sql example45, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example45-solution}
+SELECT c.county, c.county_seat, t.population_2020_census
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;
+```
+
+## RIGHT JOIN
+
+### Joining 3: List all counties and their corresponding town data (including counties without town data):
+
+```{sql example46, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example46-solution}
+SELECT c.county, t.town
+ FROM pnw_towns AS t
+RIGHT JOIN pnw_counties AS c ON t.primary_county = c.county
+  ORDER BY c.county DESC;
+```
+
+## Anti-Join
+
+### Joining 4: Find counties that don't have any towns listed:
+
+```{sql example47, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example47-solution}
+SELECT c.county
+ FROM pnw_counties AS c
+LEFT JOIN pnw_towns AS t ON c.county = t.primary_county
+WHERE t.town IS NULL;
+```
+
