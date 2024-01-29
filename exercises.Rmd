@@ -652,7 +652,7 @@ grade_this({
 
 ## Counting
 
-9. Count the Records in the Flights Table (aliased as `total_flights`)
+9. Count the records in the flights table (aliased as `total_flights`)
 
 
 ```{sql query9, exercise=TRUE, exercise.eval=FALSE}
@@ -830,7 +830,283 @@ grade_this({
 })
 ```
 
+12. Select airports above 40 latitude and in the America/New_York time zone.
+
+```{sql query12, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select airports that meet specific criteria.
+```
+
+```{sql query12-hint-1}
+-- HINT: Use WHERE to filter records based on conditions. Remember to use AND for multiple conditions.
+SELECT column1, column2, column3 
+FROM table_name 
+WHERE condition1 AND condition2;
+```
+
+```{sql query12-hint-2}
+-- HINT: Complete the query to select certain airports. Fill in the blanks appropriately.
+SELECT ___, ___, ___ 
+FROM airports 
+WHERE ___ > ___ 
+  AND ___ = '___';
+```
+
+```{sql query12-solution}
+-- SOLUTION: This query selects certain columns from airports based on specified conditions.
+SELECT faa, name, lat 
+FROM airports 
+WHERE lat > 40 
+  AND tzone = 'America/New_York';
+```
+
+```{r query12-check, echo=FALSE}
+grade_this({
+  .solution_query12 <- "SELECT faa, name, lat FROM airports WHERE lat > 40 AND tzone = 'America/New_York';"
+  .solution_ex12 <- DBI::dbGetQuery(con, .solution_query12)
+  .result_ex12 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Check for missing or extra columns in the student's result
+  cols_expected_ex12 <- names(.solution_ex12)
+  missing_cols_ex12 <- setdiff(cols_expected_ex12, names(.result_ex12))
+  extra_cols_ex12 <- setdiff(names(.result_ex12), cols_expected_ex12)
+
+  if (length(missing_cols_ex12) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex12)}."))
+  }
+
+  if (length(extra_cols_ex12) > 0) {
+    fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex12)}."))
+  }
+  
+  # Validate the correctness of the result
+  if (!all(.result_ex12$faa %in% .solution_ex12$faa)) {
+    fail("The FAA codes returned by your query do not match the expected result. Ensure your conditions are correct.")
+  }
+
+  pass("Correct! Your query successfully retrieved the required information from the airports table based on the specified conditions.")
+})
+```
+
+13. Select airports (faa code and name) within 40 to 42 degrees latitude.
+
+```{sql query13, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select airports within a specific latitude range.
+```
+
+```{sql query13-hint-1}
+-- HINT: Use BETWEEN to filter records within a range. Example syntax:
+SELECT column1, column2 
+FROM table_name 
+WHERE column3 BETWEEN value1 AND value2;
+```
+
+```{sql query13-hint-2}
+-- HINT: Complete this query to select airports based on their latitude. Remember to fill in the blanks:
+SELECT ___, ___, ___ 
+FROM airports 
+WHERE lat BETWEEN ___ AND ___;
+```
+
+```{sql query13-solution}
+-- SOLUTION: This query selects FAA codes, names, and latitudes of airports within a specific latitude range.
+SELECT faa, name, lat 
+FROM airports 
+WHERE lat BETWEEN 40 AND 42;
+```
+
+```{r query13-check, echo=FALSE}
+grade_this({
+  .solution_query13 <- "SELECT faa, name, lat FROM airports WHERE lat BETWEEN 40 AND 42;"
+  .solution_ex13 <- DBI::dbGetQuery(con, .solution_query13)
+  .result_ex13 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check for missing or extra columns in the student's result
+  cols_expected_ex13 <- names(.solution_ex13)
+  missing_cols_ex13 <- setdiff(cols_expected_ex13, names(.result_ex13))
+  extra_cols_ex13 <- setdiff(names(.result_ex13), cols_expected_ex13)
+
+  if (length(missing_cols_ex13) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex13)}."))
+  }
+
+  if (length(extra_cols_ex13) > 0) {
+    fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex13)}."))
+  }
+
+  # Validate the correctness of the result
+  if (!all(.result_ex13$faa %in% .solution_ex13$faa)) {
+    fail("The FAA codes returned by your query do not match the expected result. Ensure your latitude range is correct.")
+  }
+
+  pass("Correct! Your query successfully retrieved the required information from the airports table based on the specified latitude range.")
+})
+```
+
 ## Filtering text
+
+14. Select airlines (carrier code and name) with name starting with an "A"
+
+```{sql query14, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select airlines with names starting with a specific letter.
+```
+
+```{sql query14-hint-1}
+-- HINT: Use LIKE to filter records based on a pattern. Example syntax:
+SELECT column1 
+FROM table_name 
+WHERE column1 LIKE 'pattern%';
+```
+
+```{sql query14-hint-2}
+-- HINT: Complete this query to select airlines based on the starting letter of their names. Remember to fill in the blanks:
+SELECT ___, ___ 
+FROM airlines 
+WHERE name LIKE '___%';
+```
+
+```{sql query14-solution}
+-- SOLUTION: This query selects the carrier code and name of airlines with names starting with 'A'.
+SELECT carrier, name 
+FROM airlines 
+WHERE name LIKE 'A%';
+```
+
+```{r query14-check, echo=FALSE}
+grade_this({
+  .solution_query14 <- "SELECT carrier, name FROM airlines WHERE name LIKE 'A%';"
+  .solution_ex14 <- DBI::dbGetQuery(con, .solution_query14)
+  .result_ex14 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check for missing or extra columns in the student's result
+  cols_expected_ex14 <- names(.solution_ex14)
+  missing_cols_ex14 <- setdiff(cols_expected_ex14, names(.result_ex14))
+  extra_cols_ex14 <- setdiff(names(.result_ex14), cols_expected_ex14)
+
+  if (length(missing_cols_ex14) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex14)}."))
+  }
+
+  if (length(extra_cols_ex14) > 0) {
+    fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex14)}."))
+  }
+
+  # Validate the correctness of the result
+  if (!all(.result_ex14$carrier %in% .solution_ex14$carrier)) {
+    fail("The carrier codes returned by your query do not match the expected result. Ensure your LIKE pattern is correct.")
+  }
+
+  pass("Correct! Your query successfully retrieved the required information from the airlines table based on the specified pattern.")
+})
+```
+
+15. Select flights having 101 as the third, fourth, and fifth characters of the tail number.
+
+```{sql query15, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select flights with tail numbers matching a specific pattern.
+```
+
+```{sql query15-hint-1}
+-- HINT: Use LIKE with underscores (_) to represent single characters in a pattern. For example:
+SELECT column 
+FROM table_name 
+WHERE column LIKE '__pattern%';
+```
+
+```{sql query15-hint-2}
+-- HINT: Fill in the blanks to complete the query for selecting flights by their tail number pattern.
+SELECT ___ 
+FROM flights 
+WHERE tailnum LIKE '___';
+```
+
+```{sql query15-solution}
+-- SOLUTION: This query selects flights with tail numbers that have 'ar' as the third and fourth characters.
+SELECT tailnum 
+FROM flights 
+WHERE tailnum LIKE '__101%';
+```
+
+```{r query15-check, echo=FALSE}
+grade_this({
+  # Execute the solution query to get the correct result for EXERCISE 15
+  .solution_ex15 <- DBI::dbGetQuery(con, "SELECT tailnum FROM flights WHERE tailnum LIKE '__101%';")
+  
+  # Execute the student's query for EXERCISE 15
+  .result_ex15 <- DBI::dbGetQuery(con, .user_code)
+  
+  # Expecting only the 'tailnum' column in the result
+  cols_expected_ex15 <- names(.solution_ex15)
+  
+  # Check for missing or extra columns in the student's result
+  missing_cols_ex15 <- setdiff(cols_expected_ex15, names(.result_ex15))
+  extra_cols_ex15 <- setdiff(names(.result_ex15), cols_expected_ex15)
+  
+  if (length(missing_cols_ex15) > 0) {
+    fail(glue::glue("Your query is missing the 'tailnum' column."))
+  }
+  
+  if (length(extra_cols_ex15) > 0) {
+    fail(glue::glue("Your query should not include extra columns not present in the expected result."))
+  }
+  
+  # Check if the result set matches the expected pattern
+  if (!all(grepl('^__ar', .result_ex15$tailnum))) {
+    fail("The tail numbers returned by your query do not match the expected pattern.")
+  }
+  
+  # If all checks pass
+  pass("Your query correctly retrieves flights based on the specified tail number pattern.")
+})
+```
+
+16. Select flights (all columns) where the carrier is either "AS" or "HA"
+
+```{sql query16, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here to select flights where the carrier is either 
+-- "AS" or "HA".
+```
+
+```{sql query16-hint-1}
+-- HINT: Use the IN operator to specify multiple possible values for a column. Example syntax:
+SELECT * 
+FROM table_name 
+WHERE column_name IN ('value1', 'value2');
+```
+
+```{sql query16-hint-2}
+-- HINT: Complete this query to select flights from specific carriers. Remember to fill in the blanks:
+SELECT ___ 
+FROM flights 
+WHERE carrier IN ('___', '___');
+```
+
+```{sql query16-solution}
+-- SOLUTION: This query selects all flights where the carrier is either "AS" or "HA".
+SELECT * 
+FROM flights 
+WHERE carrier IN ('AS', 'HA');
+```
+
+```{r query16-check, echo=FALSE}
+grade_this({
+  .solution_query16 <- "SELECT * FROM flights WHERE carrier IN ('AS', 'HA');"
+  .solution_ex16 <- DBI::dbGetQuery(con, .solution_query16)
+  .result_ex16 <- DBI::dbGetQuery(con, .user_code)
+
+  # Check for matching carriers in the student's result
+  valid_carriers_ex16 <- c("AS", "HA")
+  if (!all(.result_ex16$carrier %in% valid_carriers_ex16)) {
+    fail("The carriers returned by your query do not match the expected carriers 'AS' or 'HA'.")
+  }
+
+  # If the carriers match, ensure no additional filtering has excluded records unintentionally
+  if (nrow(.result_ex16) != nrow(.solution_ex16)) {
+    fail("The number of records returned by your query does not match the expected number of records for carriers 'AS' or 'HA'.")
+  }
+
+  pass("Your query correctly retrieves all flights where the carrier is either 'AS' or 'HA'.")
+})
+```
 
 # Aggregating Techniques
 
