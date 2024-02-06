@@ -114,7 +114,7 @@ margin-left: 40px; /* Adjust indentation as needed */
 
 ## Selecting columns/fields
 
-### Selection 1: Select all town names:
+### Selection 1: Select all town names
 
 ```{sql example1, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -125,7 +125,7 @@ SELECT town
   FROM pnw_towns;
 ```
 
-### Selection 2: Select all county names:
+### Selection 2: Select all county names
 
 ```{sql example2, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -188,7 +188,7 @@ SELECT counties.county,
 
 ## Unique entries
 
-### Unique 1: Select distinct states from the `pnw_towns` table:
+### Unique 1: Select distinct states from the `pnw_towns` table
 
 ```{sql example7, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -201,7 +201,7 @@ SELECT DISTINCT state
 
 ## View creation
 
-### View 1: Create a view that lists towns along with their primary counties:
+### View 1: Create a view that lists towns along with their primary counties
 
 ```{sql example8, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -226,7 +226,7 @@ SELECT *
 
 ## Counting
 
-### Counting 1: Count the number of records in the `pnw_towns` table:
+### Counting 1: Count the number of records in the `pnw_towns` table
 
 ```{sql example10, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -237,7 +237,7 @@ SELECT COUNT(*) AS num_towns
   FROM pnw_towns;
 ```
 
-### Counting 2: Count the number of distinct states in `pnw_counties`:
+### Counting 2: Count the number of distinct states in `pnw_counties`
 
 ```{sql example11, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -316,7 +316,7 @@ SELECT county, state, year_established, population_2022
    AND population_2022 > 100000;
 ```
 
-### Filtering 6: Towns with a land area between 12 and 15 square miles:
+### Filtering 6: Towns with a land area between 12 and 15 square miles
 
 ```{sql example17, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -329,7 +329,7 @@ SELECT town, state, land_area_sq_mi
    AND land_area_sq_mi <= 15;
 ```
 
-### Filtering 7: Towns with a land area between 10 and 15 square miles (simplified):
+### Filtering 7: Towns with a land area between 10 and 15 square miles (simplified)
 
 ```{sql example18, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -341,7 +341,7 @@ SELECT town, state, land_area_sq_mi
  WHERE land_area_sq_mi BETWEEN 12 AND 15;
 ```
 
-### Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022:
+### Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022
 
 ```{sql example19, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -392,7 +392,7 @@ SELECT town, state
  WHERE town LIKE '%mount%';
 ```
 
-### Filtering 12: Counties with specific pattern in third and fourth position ("ar"):
+### Filtering 12: Counties with specific pattern in third and fourth position ("ar")
 
 ```{sql example23, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -404,7 +404,7 @@ SELECT county
  WHERE county LIKE '__ar%';
 ```
 
-### Filtering 13: Towns that are in Multnomah or Spokane counties:
+### Filtering 13: Towns that are in Multnomah or Spokane counties
 
 ```{sql example24, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -416,7 +416,7 @@ SELECT *
  WHERE primary_county IN ('Multnomah', 'Spokane');
 ```
 
-### Filtering 14: Towns with missing values for secondary county:
+### Filtering 14: Towns with missing values for secondary county
 
 ```{sql example25, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -428,7 +428,7 @@ SELECT *
 WHERE secondary_county IS NULL;
 ```
 
-### Filtering 15: Towns without missing values for secondary county:
+### Filtering 15: Towns without missing values for secondary county
 
 ```{sql example26, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -708,7 +708,7 @@ SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
 
 ## INNER JOIN
 
-### Joining 1: Join towns with counties where the primary county matches:
+### Joining 1: Join towns with counties where the primary county matches
 
 ```{sql example44, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -736,7 +736,7 @@ SELECT c.county, c.county_seat, t.population_2020_census
 
 ## RIGHT JOIN
 
-### Joining 3: List all counties and their corresponding town data (including counties without town data):
+### Joining 3: List all counties and their corresponding town data (including counties without town data)
 
 ```{sql example46, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -751,7 +751,7 @@ RIGHT JOIN pnw_counties AS c ON t.primary_county = c.county
 
 ## Anti-Join
 
-### Joining 4: Find counties that don't have any towns listed:
+### Joining 4: Find counties that don't have any towns listed
 
 ```{sql example47, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
