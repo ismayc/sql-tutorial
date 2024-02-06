@@ -23,6 +23,8 @@ runtime: shiny_prerendered
   <h3>Author: Dr. Chester Ismay</h3>
 </div>
 
+Note that query results are capped at 20 records maximum to avoid the page being unable to load.
+
 ```{r setup, include=FALSE}
 library(learnr)
 suppressPackageStartupMessages(library(gradethis))
