@@ -2183,10 +2183,10 @@ grade_this({
 
 ```{sql query33-hint-1}
 -- HINT: Use a LEFT JOIN to combine rows from flights and planes tables where the tailnum in flights matches the tailnum in planes. Select flights' tailnum, origin, and destination where the corresponding tailnum in planes is missing.
-SELECT f.tailnum, f.origin, f.dest
-FROM flights AS f
-LEFT JOIN planes AS p ON f.tailnum = p.tailnum
-WHERE p.tailnum IS NULL;
+SELECT ___, ___, ___
+FROM flights AS ___
+LEFT JOIN planes AS ___ ON ___ = ___
+WHERE ___ IS NULL;
 ```
 
 ```{sql query33-hint-2}

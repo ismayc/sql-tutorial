@@ -7,7 +7,7 @@ format:
     toc-location: left
 ---
 
-This document contains SQL queries to explore the flights related tables from 2023 flights departing the SEA and PDX airports in our SQLite database.
+This document contains SQL queries to explore the flights related tables from 2023 flights departing the SEA and PDX airports in our SQLite database. Note that query results are capped at 1000 records maximum to avoid the page being unable to load. There are more than 187,000 flights in the `flights` table covering January - October of 2023!
 
 ```{r setup}
 #| include: false
@@ -87,6 +87,9 @@ FROM airlines;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -98,6 +101,9 @@ FROM weather;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -111,6 +117,9 @@ FROM airports;
 
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -124,6 +133,9 @@ FROM airports;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -135,6 +147,9 @@ FROM flights AS f;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -148,6 +163,9 @@ FROM airports;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -159,17 +177,13 @@ DT::datatable(sql_results)
 DROP VIEW IF EXISTS flight_details;
 ```
 
-```{sql, output.var="sql_results"}
+```{sql}
 CREATE VIEW flight_details AS
 SELECT carrier, dest
 FROM flights;
 ```
 
 No output given for `VIEW` creation.
-
-```{r, echo=FALSE}
-DT::datatable(sql_results)
-```
 
 ### 8. Select all columns from the `flight_details` View
 
@@ -179,6 +193,9 @@ FROM flight_details;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -192,6 +209,9 @@ FROM flights;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -203,6 +223,9 @@ FROM flights;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -219,6 +242,9 @@ WHERE manufacturer = 'BOEING';
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -232,6 +258,9 @@ AND tzone = 'America/New_York';
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -244,6 +273,9 @@ WHERE lat BETWEEN 40 AND 42;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -258,6 +290,9 @@ WHERE name LIKE 'A%';
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -270,6 +305,9 @@ WHERE tailnum LIKE '__101%';
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -282,6 +320,9 @@ WHERE carrier IN ('AS', 'HA');
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -294,6 +335,9 @@ WHERE wind_dir IS NULL;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -306,6 +350,9 @@ WHERE temp IS NOT NULL;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -321,6 +368,9 @@ FROM weather;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -333,6 +383,9 @@ WHERE dest = 'ORD';
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -347,6 +400,9 @@ WHERE dest = 'SEA';
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -360,6 +416,9 @@ FROM weather;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -376,6 +435,9 @@ ORDER BY dep_delay;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -388,6 +450,9 @@ ORDER BY arr_delay DESC;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -402,6 +467,9 @@ ORDER BY visib DESC, wind_speed DESC;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -414,6 +482,9 @@ GROUP BY origin;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -427,6 +498,9 @@ HAVING COUNT(*) > 100;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -446,6 +520,9 @@ FROM flights;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -462,6 +539,9 @@ ORDER BY avg_speed DESC;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -478,6 +558,9 @@ INNER JOIN weather AS w ON f.origin = w.origin AND f.time_hour = w.time_hour;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -492,6 +575,9 @@ LEFT JOIN planes AS p ON f.tailnum = p.tailnum;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -507,6 +593,9 @@ ORDER BY a.name DESC;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
 
@@ -522,5 +611,8 @@ WHERE p.tailnum IS NULL;
 ```
 
 ```{r, echo=FALSE}
+if(nrow(sql_results) > 1000) {
+  sql_results <- sql_results %>% sample_n(1000)
+}
 DT::datatable(sql_results)
 ```
