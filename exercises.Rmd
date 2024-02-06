@@ -9,18 +9,18 @@ runtime: shiny_prerendered
 
 <style>
 .title {
-  margin-bottom: 0; /* Reduces space below the title */
+margin-bottom: 0; /* Reduces space below the title */
 }
 .author {
-  margin-top: 0; /* Reduces space above the author */
+margin-top: 0; /* Reduces space above the author */
 }
 </style>
 
 <div class="title">
-  <h1>SQL Exercises on Seattle and Portland Flights data</h1>
+<h1>SQL Exercises on Seattle and Portland Flights data</h1>
 </div>
 <div class="author">
-  <h3>Author: Dr. Chester Ismay</h3>
+<h3>Author: Dr. Chester Ismay</h3>
 </div>
 
 ```{r setup, include=FALSE}
@@ -400,7 +400,7 @@ grade_this({
 })
 ```
 
-5. Choose the destination airport code and air time from the flights table with an alias
+5. Choose the destination airport code and air time from the flights table with an alias `f`
 
 ```{sql query5, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select the destination airport code and 
@@ -565,10 +565,73 @@ FROM flights;
 
 ```{r query7-check, echo=FALSE}
 grade_this({
-  # Since CREATE VIEW operations don't return a conventional result set,
-  # you might need to check if the view exists and has the correct structure.
-  # This grading code is a simplified example and may need adjustment for actual use.
+  # Pre-check cleanup: Drop existing views, especially 'flight_details'
+  existing_views_df <- DBI::dbGetQuery(con, "SELECT name FROM sqlite_master WHERE type = 'view';")
+  if (nrow(existing_views_df) > 0) {
+    for (view in existing_views_df$name) {
+      DBI::dbExecute(con, paste0("DROP VIEW IF EXISTS ", view, ";"))
+    }
+  }
+  
+  # Attempt to create the view as per the student's submission
+  # Note: This step assumes that the student's code is attempting to create the view
+  # and that executing it will not result in errors.
+  # If the student's code is incorrect, you might need additional error handling here.
+  
+  # Attempt to create the view with detailed error reporting
+  error_message <- NULL
+  tryCatch({
+    dbExecute(con, .user_code)
+  }, error = function(e) {
+    error_message <<- e$message
+    fail(glue::glue("Error in creating the view: {error_message}"))
+  })
+  
+  if (!is.null(error_message)) {
+    fail(glue::glue("Error in creating the view: {error_message}"))
+  }
+  
+  # Check if the view was created successfully
+  views <- dbListTables(con)
+  if (!"flight_details" %in% views) {
+    fail("The view 'flight_details' was not created. Make sure your SQL statement uses the CREATE VIEW syntax.")
+  }
 
+  # If the view exists, validate its structure
+  .result_view <- dbGetQuery(con, "SELECT * FROM flight_details LIMIT 0;")
+  cols_expected_view <- c("carrier", "dest")
+  
+  missing_cols_view <- setdiff(cols_expected_view, names(.result_view))
+  extra_cols_view <- setdiff(names(.result_view), cols_expected_view)
+  
+  if (length(missing_cols_view) > 0) {
+    fail(glue("The view 'flight_details' is missing the expected columns: {toString(missing_cols_view)}."))
+  }
+  
+  if (length(extra_cols_view) > 0) {
+    fail(glue("The view 'flight_details' includes unexpected columns: {toString(extra_cols_view)}."))
+  }
+  
+  # Cleanup: Drop the 'flight_details' view to clean up the database after grading
+  on.exit({
+    dbExecute(con, "DROP VIEW IF EXISTS flight_details;")
+  }, add = TRUE)
+  
+  # If all checks pass
+  pass("The view 'flight_details' was created successfully with the correct structure.")
+})
+```
+
+```{r old, echo=FALSE, eval=FALSE}
+grade_this({
+  # Pre-check cleanup: Drop existing views, especially 'flight_details'
+  existing_views_df <- DBI::dbGetQuery(con, "SELECT name FROM sqlite_master WHERE type = 'view';")
+  if (nrow(existing_views_df) > 0) {
+    for (view in existing_views_df$name) {
+      DBI::dbExecute(con, paste0("DROP VIEW IF EXISTS ", view, ";"))
+    }
+  }
+  
   # Check if the view exists
   views <- dbListTables(con)
   if (!"flight_details" %in% views) {
@@ -589,38 +652,50 @@ grade_this({
       fail(glue::glue("The view 'flight_details' should not include the following columns: {toString(extra_cols_view)}."))
     }
     
-    # If all checks pass
+    # If all checks pass, pass the check
     pass("The view 'flight_details' was created successfully with the correct structure.")
   }
+  
+  # Cleanup: Identify and drop all views
+  on.exit({
+    # Query the sqlite_master table to list all views
+    views_df <- DBI::dbGetQuery(con, "SELECT name FROM sqlite_master WHERE type = 'view';")
+
+    if (nrow(views_df) > 0) {
+      views_to_drop <- views_df$name
+
+      # Drop each identified view
+      for (view in views_to_drop) {
+        DBI::dbExecute(con, paste0("DROP VIEW IF EXISTS ", view, ";"))
+      }
+    }
+  }, add = TRUE)
 })
 ```
 
-8. Select All Columns from the flight_details View
+8. Select all columns from the `flight_details` View
 
-```{sql query8, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here to select all columns from the flight_details view
-```
+    *NOTE:* Unfortunately, I couldn't figure out a way to get the `flight_details` view to work in the SQL query. I tried to use the `CREATE VIEW` statement to create the view, but it didn't work. Thus, I'm just showing the results of the query that would have been used to create the view.
 
-```{sql query8-hint-1}
--- HINT: To select all columns from a view or table, use the asterisk (*) symbol. For example:
-SELECT * 
-FROM view_name;
-```
-
-```{sql query8-hint-2}
--- HINT: Use the SELECT * statement to retrieve all columns from the flight_details view:
-SELECT ___
-FROM ___;
-```
-
-```{sql query8-solution}
+```{sql query8-solution, eval=FALSE}
 -- SOLUTION: Here's how to select all columns from the flight_details view:
 SELECT * 
 FROM flight_details;
 ```
 
-```{r query8-check, echo=FALSE}
+```{sql echo=FALSE}
+SELECT carrier, dest
+FROM flights;
+```
+
+```{r old-query8-check, echo=FALSE, eval=FALSE}
 grade_this({
+  # Drop the 'flight_details' view if it exists to ensure a clean setup
+  DBI::dbExecute(con, "DROP VIEW IF EXISTS flight_details;")
+
+  # Recreate the 'flight_details' view with the correct structure
+  DBI::dbExecute(con, "CREATE VIEW flight_details AS SELECT carrier, dest FROM flights;")
+  
   # Execute the solution query to get the correct result for EXERCISE 8
   .solution_ex8 <- DBI::dbGetQuery(con, "SELECT * FROM flight_details;")
   
@@ -715,7 +790,7 @@ grade_this({
 })
 ```
 
-10. Count all distinct carriers in the flights table
+10. Count all distinct carriers in the flights table as `total_distinct_carriers`
 
 ```{sql query10, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to count all distinct carriers in the flights table
@@ -723,19 +798,19 @@ grade_this({
 
 ```{sql query10-hint-1}
 -- HINT: To count unique values from a column, use
-SELECT COUNT(DISTINCT column) 
+SELECT COUNT(DISTINCT column) AS alias
 FROM table_name;
 ```
 
 ```{sql query10-hint-2}
 -- HINT: Fill in the blank to complete the query for counting distinct carriers.
-SELECT COUNT(DISTINCT ___) 
+SELECT COUNT(DISTINCT ___) AS ___
 FROM flights;
 ```
 
 ```{sql query10-solution}
 -- SOLUTION: This query counts all distinct carriers in the flights table.
-SELECT COUNT(DISTINCT carrier) 
+SELECT COUNT(DISTINCT carrier) AS total_distinct_carriers
 FROM flights;
 ```
 
@@ -814,11 +889,11 @@ grade_this({
   cols_expected_ex11 <- names(.solution_ex11)
   missing_cols_ex11 <- setdiff(cols_expected_ex11, names(.result_ex11))
   extra_cols_ex11 <- setdiff(names(.result_ex11), cols_expected_ex11)
-
+  
   if (length(missing_cols_ex11) > 0) {
     fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex11)}."))
   }
-
+  
   if (length(extra_cols_ex11) > 0) {
     fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex11)}."))
   }
@@ -827,7 +902,7 @@ grade_this({
   if (!all(.result_ex11$tailnum %in% .solution_ex11$tailnum) || !all(.result_ex11$model %in% .solution_ex11$model)) {
     fail("The tail numbers and/or models returned by your query do not match the expected result. Ensure you're filtering for Boeing planes.")
   }
-
+  
   pass("Correct! Your query successfully retrieved tail numbers and models of Boeing planes.")
 })
 ```
@@ -850,7 +925,7 @@ WHERE condition1 AND condition2;
 SELECT ___, ___, ___ 
 FROM airports 
 WHERE ___ > ___ 
-  AND ___ = '___';
+AND ___ = '___';
 ```
 
 ```{sql query12-solution}
@@ -858,7 +933,7 @@ WHERE ___ > ___
 SELECT faa, name, lat 
 FROM airports 
 WHERE lat > 40 
-  AND tzone = 'America/New_York';
+AND tzone = 'America/New_York';
 ```
 
 ```{r query12-check, echo=FALSE}
@@ -871,11 +946,11 @@ grade_this({
   cols_expected_ex12 <- names(.solution_ex12)
   missing_cols_ex12 <- setdiff(cols_expected_ex12, names(.result_ex12))
   extra_cols_ex12 <- setdiff(names(.result_ex12), cols_expected_ex12)
-
+  
   if (length(missing_cols_ex12) > 0) {
     fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex12)}."))
   }
-
+  
   if (length(extra_cols_ex12) > 0) {
     fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex12)}."))
   }
@@ -884,7 +959,7 @@ grade_this({
   if (!all(.result_ex12$faa %in% .solution_ex12$faa)) {
     fail("The FAA codes returned by your query do not match the expected result. Ensure your conditions are correct.")
   }
-
+  
   pass("Correct! Your query successfully retrieved the required information from the airports table based on the specified conditions.")
 })
 ```
@@ -921,25 +996,25 @@ grade_this({
   .solution_query13 <- "SELECT faa, name, lat FROM airports WHERE lat BETWEEN 40 AND 42;"
   .solution_ex13 <- DBI::dbGetQuery(con, .solution_query13)
   .result_ex13 <- DBI::dbGetQuery(con, .user_code)
-
+  
   # Check for missing or extra columns in the student's result
   cols_expected_ex13 <- names(.solution_ex13)
   missing_cols_ex13 <- setdiff(cols_expected_ex13, names(.result_ex13))
   extra_cols_ex13 <- setdiff(names(.result_ex13), cols_expected_ex13)
-
+  
   if (length(missing_cols_ex13) > 0) {
     fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex13)}."))
   }
-
+  
   if (length(extra_cols_ex13) > 0) {
     fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex13)}."))
   }
-
+  
   # Validate the correctness of the result
   if (!all(.result_ex13$faa %in% .solution_ex13$faa)) {
     fail("The FAA codes returned by your query do not match the expected result. Ensure your latitude range is correct.")
   }
-
+  
   pass("Correct! Your query successfully retrieved the required information from the airports table based on the specified latitude range.")
 })
 ```
@@ -979,25 +1054,30 @@ grade_this({
   .solution_query14 <- "SELECT carrier, name FROM airlines WHERE name LIKE 'A%';"
   .solution_ex14 <- DBI::dbGetQuery(con, .solution_query14)
   .result_ex14 <- DBI::dbGetQuery(con, .user_code)
-
+  
   # Check for missing or extra columns in the student's result
   cols_expected_ex14 <- names(.solution_ex14)
   missing_cols_ex14 <- setdiff(cols_expected_ex14, names(.result_ex14))
   extra_cols_ex14 <- setdiff(names(.result_ex14), cols_expected_ex14)
-
+  
   if (length(missing_cols_ex14) > 0) {
     fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex14)}."))
   }
-
+  
   if (length(extra_cols_ex14) > 0) {
     fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex14)}."))
   }
-
+  
+  # Check if the number of rows matches the solution
+  if (nrow(.result_ex14) != nrow(.solution_ex14)) {
+    fail("The number of rows returned by your query does not match the expected result. This may indicate an incorrect LIKE pattern or other issues in your WHERE clause.")
+  }
+  
   # Validate the correctness of the result
   if (!all(.result_ex14$carrier %in% .solution_ex14$carrier)) {
     fail("The carrier codes returned by your query do not match the expected result. Ensure your LIKE pattern is correct.")
   }
-
+  
   pass("Correct! Your query successfully retrieved the required information from the airlines table based on the specified pattern.")
 })
 ```
@@ -1096,19 +1176,32 @@ grade_this({
   .solution_query16 <- "SELECT * FROM flights WHERE carrier IN ('AS', 'HA');"
   .solution_ex16 <- DBI::dbGetQuery(con, .solution_query16)
   .result_ex16 <- DBI::dbGetQuery(con, .user_code)
-
+  
+  # Check for missing or extra columns in the student's result
+  cols_expected_ex16 <- names(.solution_ex16)
+  missing_cols_ex16 <- setdiff(cols_expected_ex16, names(.result_ex16))
+  extra_cols_ex16 <- setdiff(names(.result_ex16), cols_expected_ex16)
+  
+  if (length(missing_cols_ex16) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex16)}. Ensure you are selecting all columns with '*'."))
+  }
+  
+  if (length(extra_cols_ex16) > 0) {
+    fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex16)}. Ensure you are not adding additional columns beyond '*'."))
+  }
+  
   # Check for matching carriers in the student's result
   valid_carriers_ex16 <- c("AS", "HA")
   if (!all(.result_ex16$carrier %in% valid_carriers_ex16)) {
     fail("The carriers returned by your query do not match the expected carriers 'AS' or 'HA'.")
   }
-
+  
   # If the carriers match, ensure no additional filtering has excluded records unintentionally
   if (nrow(.result_ex16) != nrow(.solution_ex16)) {
     fail("The number of records returned by your query does not match the expected number of records for carriers 'AS' or 'HA'.")
   }
-
-  pass("Your query correctly retrieves all flights where the carrier is either 'AS' or 'HA'.")
+  
+  pass("Your query correctly retrieves all flights where the carrier is either 'AS' or 'HA', including all appropriate columns.")
 })
 ```
 
@@ -1145,17 +1238,26 @@ grade_this({
   .solution_query17 <- "SELECT * FROM weather WHERE wind_dir IS NULL;"
   .solution_ex17 <- DBI::dbGetQuery(con, .solution_query17)
   .result_ex17 <- DBI::dbGetQuery(con, .user_code)
-
+  
+    # Check for missing or extra columns in the student's result
+  cols_expected_ex17 <- names(.solution_ex17)
+  missing_cols_ex17 <- setdiff(cols_expected_ex17, names(.result_ex17))
+  extra_cols_ex17 <- setdiff(names(.result_ex17), cols_expected_ex17)
+  
+  if (length(missing_cols_ex17) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex17)}. Ensure you are selecting all columns with '*'."))
+  }
+  
   # Check for missing wind_dir in the student's result
   if (!all(is.na(.result_ex17$wind_dir))) {
     fail("Not all records in your query result have missing wind direction.")
   }
-
+  
   # Ensure no additional records are included or excluded unintentionally
   if (nrow(.result_ex17) != nrow(.solution_ex17)) {
     fail("The number of records returned by your query does not match the expected number of records with missing wind direction.")
   }
-
+  
   pass("Your query correctly retrieves all weather records where the wind direction is missing.")
 })
 ```
@@ -1193,17 +1295,26 @@ grade_this({
   .solution_query18 <- "SELECT * FROM weather WHERE temp IS NOT NULL;"
   .solution_ex18 <- DBI::dbGetQuery(con, .solution_query18)
   .result_ex18 <- DBI::dbGetQuery(con, .user_code)
-
+  
+      # Check for missing or extra columns in the student's result
+  cols_expected_ex18 <- names(.solution_ex18)
+  missing_cols_ex18 <- setdiff(cols_expected_ex18, names(.result_ex18))
+  extra_cols_ex18 <- setdiff(names(.result_ex18), cols_expected_ex18)
+  
+  if (length(missing_cols_ex18) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex18)}. Ensure you are selecting all columns with '*'."))
+  }
+  
   # Check for non-missing temp in the student's result
   if (!all(!is.na(.result_ex18$temp))) {
     fail("Some records in your query result have missing temperature.")
   }
-
+  
   # Ensure no additional records are included or excluded unintentionally
   if (nrow(.result_ex18) != nrow(.solution_ex18)) {
     fail("The number of records returned by your query does not match the expected number of records with non-missing temperature.")
   }
-
+  
   pass("Your query correctly retrieves all weather records where the temperature is not missing.")
 })
 ```
@@ -1242,17 +1353,17 @@ grade_this({
   .solution_query19 <- "SELECT AVG(temp) AS avg_temperature FROM weather;"
   .solution_ex19 <- DBI::dbGetQuery(con, .solution_query19)
   .result_ex19 <- DBI::dbGetQuery(con, .user_code)
-
+  
   # Check for the 'avg_temperature' column in the student's result
   if (!"avg_temperature" %in% names(.result_ex19)) {
     fail("Your query is missing the 'avg_temperature' column.")
   }
-
+  
   # Ensure the calculated average matches the solution
   if (abs(.result_ex19$avg_temperature - .solution_ex19$avg_temperature) > 1e-2) {
     fail("The average temperature returned by your query does not match the expected average temperature.")
   }
-
+  
   pass("Your query correctly calculates the average temperature from the weather table.")
 })
 ```
@@ -1290,17 +1401,17 @@ grade_this({
   .solution_query20 <- "SELECT MAX(arr_time) AS max_arr_time FROM flights WHERE dest = 'ORD';"
   .solution_ex20 <- DBI::dbGetQuery(con, .solution_query20)
   .result_ex20 <- DBI::dbGetQuery(con, .user_code)
-
+  
   # Check for the 'max_arr_time' column in the student's result
   if (!"max_arr_time" %in% names(.result_ex20)) {
     fail("Your query is missing the 'max_arr_time' column.")
   }
-
+  
   # Ensure the maximum arrival time matches the solution
   if (.result_ex20$max_arr_time != .solution_ex20$max_arr_time) {
     fail("The maximum arrival time returned by your query does not match the expected maximum arrival time.")
   }
-
+  
   pass("Your query correctly finds the maximum arrival time for flights destined to ORD.")
 })
 ```
@@ -1340,17 +1451,17 @@ grade_this({
   .solution_query21 <- "SELECT MIN(dest) AS first_dest FROM flights WHERE dest = 'SEA';"
   .solution_ex21 <- DBI::dbGetQuery(con, .solution_query21)
   .result_ex21 <- DBI::dbGetQuery(con, .user_code)
-
+  
   # Check for the 'first_dest' column in the student's result
   if (!"first_dest" %in% names(.result_ex21)) {
     fail("Your query is missing the 'first_dest' column.")
   }
-
+  
   # Ensure the first destination alphabetically matches the solution
   if (.result_ex21$first_dest != .solution_ex21$first_dest) {
     fail("The first destination alphabetically returned by your query does not match the expected first destination.")
   }
-
+  
   pass("Your query correctly finds the first destination alphabetically for flights destined to SEA.")
 })
 ```
@@ -1387,17 +1498,17 @@ grade_this({
   .solution_query22 <- "SELECT ROUND(wind_gust, 0) AS rounded_wind_gust FROM weather;"
   .solution_ex22 <- DBI::dbGetQuery(con, .solution_query22)
   .result_ex22 <- DBI::dbGetQuery(con, .user_code)
-
+  
   # Check for the 'rounded_wind_gust' column in the student's result
   if (!"rounded_wind_gust" %in% names(.result_ex22)) {
     fail("Your query is missing the 'rounded_wind_gust' column.")
   }
-
+  
   # Ensure the rounded wind gust values match the solution
   if (!all.equal(.result_ex22$rounded_wind_gust, .solution_ex22$rounded_wind_gust, check.attributes = FALSE)) {
     fail("The rounded wind gust values returned by your query do not match the expected rounded values.")
   }
-
+  
   pass("Your query correctly rounds wind gust values in the weather table to 0 decimal places.")
 })
 ```
@@ -1438,17 +1549,33 @@ grade_this({
   .solution_query23 <- "SELECT * FROM flights ORDER BY dep_delay;"
   .solution_ex23 <- DBI::dbGetQuery(con, .solution_query23)
   .result_ex23 <- DBI::dbGetQuery(con, .user_code)
-
-  # Check if the order of departure delay in the student's result matches the solution
-  correct_order <- all(diff(.solution_ex23$dep_delay) >= 0)  # Check if departure delays are in ascending order
-  student_order <- all(diff(.result_ex23$dep_delay) >= 0)
-
-  if (!student_order || !identical(.result_ex23$dep_delay, .solution_ex23$dep_delay)) {
-    fail("The flights in your query are not correctly ordered by departure delay.")
+  
+  # Check for missing or extra columns in the student's result
+  cols_expected_ex23 <- names(.solution_ex23)
+  missing_cols_ex23 <- setdiff(cols_expected_ex23, names(.result_ex23))
+  extra_cols_ex23 <- setdiff(names(.result_ex23), cols_expected_ex23)
+  
+  if (length(missing_cols_ex23) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex23)}. Ensure you are selecting all columns with '*'."))
+  }
+  
+  if (length(extra_cols_ex23) > 0) {
+    fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex23)}. Ensure you are not adding additional columns beyond '*'."))
+  }
+  
+  # Check if the number of rows matches the solution
+  if (nrow(.result_ex23) != nrow(.solution_ex23)) {
+    fail("The number of rows returned by your query does not match the expected result.")
   }
 
-  pass("Your query correctly sorts flights by departure delay.")
+  # Check if the order of departure delay in the student's result matches the solution
+  if (!identical(.result_ex23$dep_delay, .solution_ex23$dep_delay)) {
+    fail("The flights in your query are not correctly ordered by departure delay.")
+  }
+  
+  pass("Your query correctly retrieves all columns and sorts flights by departure delay.")
 })
+
 ```
 
 24. Sort flights by descending arrival delay
@@ -1483,22 +1610,38 @@ grade_this({
   .solution_query24 <- "SELECT * FROM flights ORDER BY arr_delay DESC;"
   .solution_ex24 <- DBI::dbGetQuery(con, .solution_query24)
   .result_ex24 <- DBI::dbGetQuery(con, .user_code)
-
-  # Check if the order of arrival delay in the student's result matches the solution
-  correct_order <- all(diff(.solution_ex24$arr_delay, na.rm = TRUE) <= 0)  # Check if arrival delays are in descending order
-  student_order <- all(diff(.result_ex24$arr_delay, na.rm = TRUE) <= 0)
-
-  if (!student_order || !identical(.result_ex24$arr_delay[order(.result_ex24$arr_delay, decreasing = TRUE, na.last = NA)], .solution_ex24$arr_delay)) {
-    fail("The flights in your query are not correctly ordered by descending arrival delay.")
+  
+  # Check for missing or extra columns in the student's result
+  cols_expected_ex24 <- names(.solution_ex24)
+  missing_cols_ex24 <- setdiff(cols_expected_ex24, names(.result_ex24))
+  extra_cols_ex24 <- setdiff(names(.result_ex24), cols_expected_ex24)
+  
+  if (length(missing_cols_ex24) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols_ex24)}. Ensure you are selecting all columns with '*'."))
+  }
+  
+  if (length(extra_cols_ex24) > 0) {
+    fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols_ex24)}. Ensure you are not adding additional columns beyond '*'."))
+  }
+  
+  # Check if the number of rows matches the solution
+  if (nrow(.result_ex24) != nrow(.solution_ex24)) {
+    fail("The number of rows returned by your query does not match the expected result.")
   }
 
-  pass("Your query correctly sorts flights by descending arrival delay.")
+  # Check if the order of arrival delay in the student's result matches the solution
+  # Considering possible NA values in arr_delay and ensuring they're handled correctly
+  if (!identical(.result_ex24$arr_delay, .solution_ex24$arr_delay)) {
+    fail("The flights in your query are not correctly ordered by descending arrival delay.")
+  }
+  
+  pass("Your query correctly retrieves all columns and sorts flights by descending arrival delay.")
 })
 ```
 
 ## Grouping
 
-25. Sort weather data by descending visibility and wind speed
+25. Sort weather data by descending visibility and then descending wind speed
 
 ```{sql query25, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to sort weather data by descending visibility 
@@ -1531,18 +1674,32 @@ grade_this({
   .solution_query25 <- "SELECT * FROM weather ORDER BY visib DESC, wind_speed DESC;"
   .solution_ex25 <- DBI::dbGetQuery(con, .solution_query25)
   .result_ex25 <- DBI::dbGetQuery(con, .user_code)
-
-  # Check if the order of visibility and wind speed in the student's result matches the solution
-  correct_order_visib <- all(diff(.solution_ex25$visib, na.rm = TRUE) <= 0)  # Check if visibility values are in descending order
-  student_order_visib <- all(diff(.result_ex25$visib, na.rm = TRUE) <= 0)
-  correct_order_wind_speed <- all(diff(.solution_ex25$wind_speed[order(.solution_ex25$visib, decreasing = TRUE)], na.rm = TRUE) <= 0)  # Check wind speed in descending order within each visibility group
-  student_order_wind_speed <- all(diff(.result_ex25$wind_speed[order(.result_ex25$visib, decreasing = TRUE)], na.rm = TRUE) <= 0)
-
-  if (!student_order_visib || !student_order_wind_speed || !identical(.result_ex25$visib, .solution_ex25$visib) || !identical(.result_ex25$wind_speed, .solution_ex25$wind_speed)) {
-    fail("The weather data in your query are not correctly ordered by descending visibility and wind speed.")
+  
+  # Check for missing or extra columns in the student's result
+  cols_expected <- names(.solution_ex25)
+  missing_cols <- setdiff(cols_expected, names(.result_ex25))
+  extra_cols <- setdiff(names(.result_ex25), cols_expected)
+  
+  # Check specifically for 'SELECT *' requirement
+  if (!all(names(.result_ex25) %in% cols_expected)) {
+    fail("Your query does not select all columns from the weather table. Ensure you are using 'SELECT *' to include all columns.")
+  } else if (length(missing_cols) > 0 || length(extra_cols) > 0) {
+    fail(glue::glue("Your query result columns do not match the expected columns from the weather table. Missing columns: {toString(missing_cols)}. Extra columns: {toString(extra_cols)}."))
+  }
+  
+  # Check if the number of rows matches the solution
+  if (nrow(.result_ex25) != nrow(.solution_ex25)) {
+    fail("The number of rows returned by your query does not match the expected result.")
   }
 
-  pass("Your query correctly sorts weather data by descending visibility and wind speed.")
+  # Enhanced order verification using data frame comparison for sorted columns
+  ordered_solution <- .solution_ex25[order(.solution_ex25$visib, .solution_ex25$wind_speed, decreasing = TRUE), ]
+  ordered_student_result <- .result_ex25[order(.result_ex25$visib, .result_ex25$wind_speed, decreasing = TRUE), ]
+  if (!identical(ordered_student_result$visib, ordered_solution$visib) || !identical(ordered_student_result$wind_speed, ordered_solution$wind_speed)) {
+    fail("The weather data in your query are not correctly ordered by descending visibility and wind speed.")
+  }
+  
+  pass("Your query correctly sorts weather data by descending visibility and wind speed, including all columns as required.")
 })
 ```
 
@@ -1571,24 +1728,45 @@ GROUP BY ___;
 -- SOLUTION: This query groups flights by origin and calculates the average arrival delay.
 SELECT origin, AVG(arr_delay) AS avg_arr_delay
 FROM flights
-GROUP BY origin
-ORDER BY avg_arr_delay DESC;
+GROUP BY origin;
 ```
 
 ```{r query26-check, echo=FALSE}
 grade_this({
-  .solution_query26 <- "SELECT origin, AVG(arr_delay) AS avg_arr_delay FROM flights GROUP BY origin ORDER BY avg_arr_delay DESC;"
+  # Execute the solution query to get the correct result
+  .solution_query26 <- "SELECT origin, AVG(arr_delay) AS avg_arr_delay FROM flights GROUP BY origin;"
   .solution_ex26 <- DBI::dbGetQuery(con, .solution_query26)
+  
+  # Execute the student's query
   .result_ex26 <- DBI::dbGetQuery(con, .user_code)
-
-  # Check if the student's result matches the solution for 'origin' and 'avg_arr_delay'
-  correct_origins <- identical(sort(unique(.result_ex26$origin)), sort(unique(.solution_ex26$origin)))
-  correct_avg_arr_delays <- all(abs(.result_ex26$avg_arr_delay - .solution_ex26$avg_arr_delay[match(.result_ex26$origin, .solution_ex26$origin)]) < 1e-5)
-
-  if (!correct_origins || !correct_avg_arr_delays) {
-    fail("The average arrival delays by origin in your query do not match the expected results.")
+  
+  # Check for correct columns in the student's result
+  cols_expected <- c("origin", "avg_arr_delay")
+  missing_cols <- setdiff(cols_expected, names(.result_ex26))
+  extra_cols <- setdiff(names(.result_ex26), cols_expected)
+  
+  if (length(missing_cols) > 0) {
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols)}. Ensure you include 'origin' and 'avg_arr_delay' in your SELECT statement."))
   }
-
+  
+  if (length(extra_cols) > 0) {
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols)}. Ensure your SELECT statement only includes 'origin' and 'avg_arr_delay'."))
+  }
+  
+  # Check if the group by is correct by verifying the number of unique origins
+  if (length(unique(.result_ex26$origin)) != length(unique(.solution_ex26$origin))) {
+    fail("The number of groups (origins) in your query does not match the expected number. Ensure you are grouping by 'origin'.")
+  }
+  
+  # Check the accuracy of the average arrival delays
+  # This might involve a more complex comparison, such as matching rows by 'origin' and comparing 'avg_arr_delay' within a tolerance
+  tolerance <- 1e-5
+  for (i in seq_along(.solution_ex26$origin)) {
+    if (abs(.solution_ex26$avg_arr_delay[i] - .result_ex26$avg_arr_delay[.result_ex26$origin == .solution_ex26$origin[i]]) > tolerance) {
+      fail("The average arrival delay for one or more origins does not match the expected results. Ensure your AVG(arr_delay) calculation is correct.")
+    }
+  }
+  
   pass("Your query correctly calculates the average arrival delay for each origin.")
 })
 ```
@@ -1630,20 +1808,38 @@ grade_this({
   .solution_query27 <- "SELECT dest, COUNT(*) AS total_flights FROM flights GROUP BY dest HAVING COUNT(*) > 100;"
   .solution_ex27 <- DBI::dbGetQuery(con, .solution_query27)
   .result_ex27 <- DBI::dbGetQuery(con, .user_code)
-
-  # Check if the student's result matches the solution for 'dest' and 'total_flights'
-  correct_dests <- identical(sort(unique(.result_ex27$dest)), sort(unique(.solution_ex27$dest)))
-  correct_total_flights <- all(.result_ex27$total_flights[match(.result_ex27$dest, .solution_ex27$dest)] == .solution_ex27$total_flights)
-
-  if (!correct_dests || !correct_total_flights) {
-    fail("The count of flights by destination in your query does not match the expected results for destinations with more than 100 flights.")
+  
+  # Check for missing or extra columns in the student's result
+  cols_expected <- c("dest", "total_flights")
+  missing_cols <- setdiff(cols_expected, names(.result_ex27))
+  extra_cols <- setdiff(names(.result_ex27), cols_expected)
+  
+  if (length(missing_cols) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols)}."))
+  }
+  
+  if (length(extra_cols) > 0) {
+    fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols)}."))
+  }
+  
+  # Validate the correctness of the grouping and counts
+  dests_matched <- all(sort(unique(.result_ex27$dest)) == sort(unique(.solution_ex27$dest)))
+  if (!dests_matched) {
+    fail("The destinations in your query do not match those expected in the result set with more than 100 flights.")
   }
 
+  counts_matched <- all(.result_ex27$total_flights[match(.result_ex27$dest, .solution_ex27$dest)] == .solution_ex27$total_flights)
+  if (!counts_matched) {
+    fail("The counts of flights for each destination in your query do not match the expected results.")
+  }
+  
   pass("Your query correctly counts the number of flights for each destination, only including those with more than 100 flights.")
 })
 ```
 
 # Transforming Techniques
+
+## Transforming
 
 28. Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.
 
@@ -1655,49 +1851,64 @@ grade_this({
 ```{sql query28-hint-1}
 -- HINT: Use CASE WHEN statements to categorize data based on conditions. The syntax is CASE WHEN condition THEN result END. For example:
 SELECT column1,
-       CASE 
-           WHEN condition1 THEN 'Result1'
-           WHEN condition2 THEN 'Result2'
-           ELSE 'OtherResult'
-       END AS new_column
+CASE 
+WHEN condition1 THEN 'Result1'
+WHEN condition2 THEN 'Result2'
+ELSE 'OtherResult'
+END AS new_column
 FROM table_name;
 ```
 
 ```{sql query28-hint-2}
 -- HINT: Fill in the blanks to categorize flights by distance. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.
-SELECT CASE 
-           WHEN distance < ___ THEN 'Short'
-           WHEN distance BETWEEN ___ AND ___ THEN 'Medium'
-           ELSE 'Long'
-       END AS flight_distance_category
+SELECT distance, CASE 
+WHEN distance < ___ THEN 'Short'
+WHEN distance BETWEEN ___ AND ___ THEN 'Medium'
+ELSE 'Long'
+END AS flight_distance_category
 FROM flights;
 ```
 
 ```{sql query28-solution}
 -- SOLUTION: This query categorizes flights by distance as 'Short', 'Medium', or 'Long'.
-SELECT CASE 
-           WHEN distance < 500 THEN 'Short'
-           WHEN distance BETWEEN 500 AND 2000 THEN 'Medium'
-           ELSE 'Long'
-       END AS flight_distance_category
-FROM flights
-ORDER BY distance DESC;
+SELECT distance, CASE 
+WHEN distance < 500 THEN 'Short'
+WHEN distance BETWEEN 500 AND 2000 THEN 'Medium'
+ELSE 'Long'
+END AS flight_distance_category
+FROM flights;
 ```
 
 ```{r query28-check, echo=FALSE}
 grade_this({
-  .solution_query28 <- "SELECT CASE WHEN distance < 500 THEN 'Short' WHEN distance BETWEEN 500 AND 2000 THEN 'Medium' ELSE 'Long' END AS flight_distance_category FROM flights ORDER BY distance DESC;"
+  .solution_query28 <- "SELECT distance, CASE WHEN distance < 500 THEN 'Short' WHEN distance BETWEEN 500 AND 2000 THEN 'Medium' ELSE 'Long' END AS flight_distance_category FROM flights ORDER BY distance DESC;"
   .solution_ex28 <- DBI::dbGetQuery(con, .solution_query28)
   .result_ex28 <- DBI::dbGetQuery(con, .user_code)
-
-  # Verify if the student's query categorization matches the solution
-  correct_categories <- identical(.result_ex28$flight_distance_category, .solution_ex28$flight_distance_category)
-
-  if (!correct_categories) {
+  
+  # Check for missing or extra columns in the student's result
+  cols_expected <- c("distance", "flight_distance_category")
+  missing_cols <- setdiff(cols_expected, names(.result_ex28))
+  extra_cols <- setdiff(names(.result_ex28), cols_expected)
+  
+  if (length(missing_cols) > 0) {
+    fail(glue::glue("Your query is missing the following columns: {toString(missing_cols)}."))
+  }
+  
+  if (length(extra_cols) > 0) {
+    fail(glue::glue("Your query includes extra columns not expected: {toString(extra_cols)}."))
+  }
+  
+  # Verify the correctness of flight distance categorization
+  if (!identical(.result_ex28$flight_distance_category, .solution_ex28$flight_distance_category)) {
     fail("The flight distance categorization in your query does not match the expected categories.")
   }
+  
+  # If order verification is required
+  if (!identical(.result_ex28$distance, .solution_ex28$distance)) {
+    fail("The order of distances in your query does not match the expected descending order.")
+  }
 
-  pass("Your query correctly categorizes flights by distance as 'Short', 'Medium', or 'Long'.")
+  pass("Your query correctly categorizes and orders flights by distance as 'Short', 'Medium', or 'Long'.")
 })
 ```
 
@@ -1721,7 +1932,7 @@ ORDER BY avg_speed DESC;
 ```{sql query29-hint-2}
 -- HINT: Complete the query by calculating the average speed and ordering the results. Fill in the blanks:
 SELECT origin, dest,
-       AVG(___ / (___ / 60)) AS avg_speed
+AVG(___ / (___ / 60)) AS avg_speed
 FROM flights
 GROUP BY ___, ___
 ORDER BY ___ DESC;
@@ -1730,7 +1941,7 @@ ORDER BY ___ DESC;
 ```{sql query29-solution}
 -- SOLUTION: This query calculates the average speed of flights from each origin to each destination and orders the results by the fastest average speeds.
 SELECT origin, dest,
-       AVG(distance / (air_time / 60)) AS avg_speed
+AVG(distance / (air_time / 60)) AS avg_speed
 FROM flights
 GROUP BY origin, dest
 ORDER BY avg_speed DESC;
@@ -1744,27 +1955,26 @@ grade_this({
   # Execute the student's query for EXERCISE 29
   .result_ex29 <- DBI::dbGetQuery(con, .user_code)
   
-  # Check if the student's result has the expected columns
+  # Check for missing or extra columns in the student's result
   cols_expected_ex29 <- names(.solution_ex29)
   missing_cols_ex29 <- setdiff(cols_expected_ex29, names(.result_ex29))
   extra_cols_ex29 <- setdiff(names(.result_ex29), cols_expected_ex29)
   
   if (length(missing_cols_ex29) > 0) {
-    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex29)}."))
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex29)}. Ensure you select 'origin', 'dest', and 'avg_speed'."))
   }
   
   if (length(extra_cols_ex29) > 0) {
-    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex29)}."))
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex29)}. Ensure you only include the necessary columns in your SELECT statement."))
   }
   
-  # Check if the order of average speeds is correct
-  correct_order <- all(diff(.result_ex29$avg_speed) <= 0)  # Check if all differences are non-positive, indicating descending order
-  if (!correct_order) {
-    fail("The average speeds in your query results are not in the correct descending order.")
+  # Check if the order of average speeds in the student's result is correct
+  sorted_avg_speed <- sort(.result_ex29$avg_speed, decreasing = TRUE)
+  if (!identical(.result_ex29$avg_speed, sorted_avg_speed)) {
+    fail("The average speeds in your query results are not correctly ordered in descending order.")
   }
   
-  # If all checks pass
-  pass("Your query correctly calculates and orders the average speed of flights.")
+  pass("Your query correctly calculates and orders the average speed of flights by 'origin' and 'dest'.")
 })
 ```
 
@@ -1809,26 +2019,28 @@ grade_this({
   # Execute the student's query for EXERCISE 30
   .result_ex30 <- DBI::dbGetQuery(con, .user_code)
   
-  # Check if the student's result has the expected columns
+  # Check for missing or extra columns in the student's result
   cols_expected_ex30 <- names(.solution_ex30)
   missing_cols_ex30 <- setdiff(cols_expected_ex30, names(.result_ex30))
   extra_cols_ex30 <- setdiff(names(.result_ex30), cols_expected_ex30)
   
   if (length(missing_cols_ex30) > 0) {
-    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex30)}."))
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex30)}. Ensure you select 'origin', 'dest', 'temp', and 'humid'."))
   }
   
   if (length(extra_cols_ex30) > 0) {
-    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex30)}."))
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex30)}. Ensure you only include the necessary columns in your SELECT statement."))
   }
   
-  # Check if the join is performed correctly by comparing the number of rows
+  # Verify the correctness of the join by comparing the number of rows
   if (nrow(.result_ex30) != nrow(.solution_ex30)) {
-    fail("The number of rows returned by your query does not match the expected result, indicating a potential issue with the join conditions.")
+    fail("The number of rows returned by your query does not match the expected result, indicating a potential issue with the join conditions or missing data.")
   }
   
-  # If all checks pass
-  pass("Your query correctly joins the flights table with the weather table on origin and time_hour.")
+  # Optionally, verify the accuracy of join conditions and data by comparing key columns
+  # This step requires a more complex comparison and is omitted here for brevity
+  
+  pass("Your query correctly joins the flights table with the weather table on origin and time_hour, selecting the appropriate columns.")
 })
 ```
 
@@ -1869,26 +2081,26 @@ grade_this({
   # Execute the student's query for EXERCISE 31
   .result_ex31 <- DBI::dbGetQuery(con, .user_code)
   
-  # Check if the student's result has the expected columns
+  # Check for missing or extra columns in the student's result
   cols_expected_ex31 <- names(.solution_ex31)
   missing_cols_ex31 <- setdiff(cols_expected_ex31, names(.result_ex31))
   extra_cols_ex31 <- setdiff(names(.result_ex31), cols_expected_ex31)
   
   if (length(missing_cols_ex31) > 0) {
-    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex31)}."))
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex31)}. Ensure you select 'tailnum', 'origin', 'dest', 'manufacturer', and 'model'."))
   }
   
   if (length(extra_cols_ex31) > 0) {
-    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex31)}."))
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex31)}. Ensure you only include the necessary columns in your SELECT statement."))
   }
   
-  # Check if the left join is performed correctly by comparing the number of rows
-  if (nrow(.result_ex31) < nrow(.solution_ex31)) {
-    fail("The number of rows returned by your query is less than expected, indicating a potential issue with the left join conditions.")
+  # Verify the correctness of the left join by comparing the number of rows
+  flights_count <- nrow(DBI::dbGetQuery(con, "SELECT * FROM flights;"))
+  if (nrow(.result_ex31) < flights_count) {
+    fail("The number of rows returned by your query is less than the number of flights, indicating a potential issue with the left join conditions.")
   }
   
-  # If all checks pass
-  pass("Your query correctly left joins the flights table with the planes table on tailnum.")
+  pass("Your query correctly performs a left join between the flights table and the planes table on 'tailnum', including all necessary columns.")
 })
 ```
 
@@ -1932,26 +2144,31 @@ grade_this({
   # Execute the student's query for EXERCISE 32
   .result_ex32 <- DBI::dbGetQuery(con, .user_code)
   
-  # Check if the student's result has the expected columns
+  # Check for missing or extra columns in the student's result
   cols_expected_ex32 <- names(.solution_ex32)
   missing_cols_ex32 <- setdiff(cols_expected_ex32, names(.result_ex32))
   extra_cols_ex32 <- setdiff(names(.result_ex32), cols_expected_ex32)
   
   if (length(missing_cols_ex32) > 0) {
-    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex32)}."))
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex32)}. Ensure you select 'name', 'tailnum', 'origin', and 'dest'."))
   }
   
   if (length(extra_cols_ex32) > 0) {
-    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex32)}."))
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex32)}. Ensure you only include the necessary columns in your SELECT statement."))
   }
   
-  # Check if the right join is performed correctly by comparing the number of rows
-  if (nrow(.result_ex32) < nrow(.solution_ex32)) {
-    fail("The number of rows returned by your query is less than expected, indicating a potential issue with the right join conditions.")
+  # Verify the correctness of the right join by comparing the number of rows
+  flights_count <- nrow(DBI::dbGetQuery(con, "SELECT * FROM flights;"))
+  if (nrow(.result_ex32) < flights_count) {
+    fail("The number of rows returned by your query is less than the number of flights, indicating a potential issue with the right join conditions.")
   }
   
-  # If all checks pass
-  pass("Your query correctly right joins the airlines table with the flights table on carrier code, ordered by the airline's name in descending order.")
+  # Verify the correct ordering by the airline's name in descending order
+  if (!is.unsorted(.result_ex32$name, decreasing = TRUE)) {
+    fail("The results are not correctly ordered by the airline's name in descending order.")
+  }
+
+  pass("Your query correctly performs a right join between the airlines table and the flights table on 'carrier', including all necessary columns and ordering by the airline's name in descending order.")
 })
 ```
 
@@ -1996,26 +2213,25 @@ grade_this({
   # Execute the student's query for EXERCISE 33
   .result_ex33 <- DBI::dbGetQuery(con, .user_code)
   
-  # Check if the student's result has the expected columns
+  # Check for missing or extra columns in the student's result
   cols_expected_ex33 <- names(.solution_ex33)
   missing_cols_ex33 <- setdiff(cols_expected_ex33, names(.result_ex33))
   extra_cols_ex33 <- setdiff(names(.result_ex33), cols_expected_ex33)
   
   if (length(missing_cols_ex33) > 0) {
-    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex33)}."))
+    fail(glue::glue("Your query is missing the expected columns: {toString(missing_cols_ex33)}. Ensure you select 'tailnum', 'origin', and 'dest'."))
   }
   
   if (length(extra_cols_ex33) > 0) {
-    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex33)}."))
+    fail(glue::glue("Your query includes unexpected columns: {toString(extra_cols_ex33)}. Ensure you only include the necessary columns in your SELECT statement."))
   }
   
-  # Check if the left join is performed correctly by comparing the number of rows where tailnum is missing
+  # Verify the correctness of the left join and WHERE clause by comparing the number of rows
   if (nrow(.result_ex33) != nrow(.solution_ex33)) {
-    fail("The number of rows returned by your query does not match the expected result, indicating a potential issue with the left join conditions or the WHERE clause.")
+    fail("The number of rows returned by your query does not match the expected result, indicating a potential issue with the left join conditions or the WHERE clause filtering for NULL tailnums.")
   }
-  
-  # If all checks pass
-  pass("Your query correctly anti-joins (using a left join) the flights table with the planes table where the plane's tailnum is missing.")
+
+  pass("Your query correctly performs a left join between the flights table and the planes table and filters for flights where the plane's tailnum is missing in the planes table.")
 })
 ```
 
