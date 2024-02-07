@@ -5,8 +5,9 @@ account: chester-ismay
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 11141500
-bundleId: 8223047
+bundleId: 8225695
 url: https://chester-ismay.shinyapps.io/pnw-sql-exercises4/
 version: 1
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: .RData|.Rprofile|01-get_data.R|02-sql_tables_tutorial.R|examples.html|examples.Rmd|exercise-answers.html|exercise-answers.qmd|exercises_example.Rmd|exercises-difficulty.Rmd|exercises.html|pnw_database.sqlite|pnw_flights_database.sqlite|queries.html|queries.qmd|README.md|exercise-answers_files|queries_files
