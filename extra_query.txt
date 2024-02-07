@@ -1,0 +1,22 @@
+-- Write your own query here determining a different result from these tables
+SELECT flights.flight AS "Flight",
+     flights.dep_time AS "Departure",
+     airlines.name AS "Airline",
+     airports.name AS "Origin Name",
+     airports2.name AS "Destination Name",
+     flights.air_time AS "Duration",
+     flights.distance AS "Distance",
+     planes.manufacturer AS "Manufacturer",
+     planes.model AS "Model",
+     planes.seats AS "Seats"
+
+     FROM flights
+          JOIN airlines ON flights.carrier = airlines.carrier
+          JOIN planes ON flights.tailnum = planes.tailnum
+          JOIN airports ON flights.origin = airports.faa
+          JOIN airports AS airports2 ON flights.dest = airports.faa
+
+     WHERE flights.dep_time NOT NULL
+         AND (airlines.name LIKE 'United%' OR airlines.name LIKE 'American%')
+
+     ORDER BY flights.dep_time;
