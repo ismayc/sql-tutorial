@@ -23,7 +23,9 @@ runtime: shiny_prerendered
   <h3>Author: Dr. Chester Ismay</h3>
 </div>
 
+<!--
 Note that query results are capped at 20 records maximum to avoid the page being unable to load.
+-->
 
 ```{r setup, include=FALSE}
 library(learnr)
@@ -63,8 +65,8 @@ dbWriteTable(con, "pnw_counties", pnw_counties_df, overwrite = TRUE)
 dbWriteTable(con, "pnw_towns", pnw_towns_df, overwrite = TRUE)
 dbWriteTable(con, "fips", fips, overwrite = TRUE)
 
-knitr::opts_chunk$set(connection = "con", 
-                      max.print = 20)
+knitr::opts_chunk$set(connection = "con")# , 
+#                      max.print = 20)
 ```
 
 ```{r setup2, echo=FALSE, out.width='100%', fig.align='center'}
