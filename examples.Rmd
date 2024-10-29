@@ -51,9 +51,9 @@ library(RSQLite)
 library(tidyverse)
 
 # Read data from RDS files
-pnw_counties_df <- as.data.frame(read_rds("data/pnw_counties.rds"))
-pnw_towns_df <- as.data.frame(read_rds("data/pnw_towns.rds"))
-fips <- as.data.frame(read_rds("data/fips.rds"))
+pnw_counties_df <- as.data.frame(read_rds("exercises/data/pnw_counties.rds"))
+pnw_towns_df <- as.data.frame(read_rds("exercises/data/pnw_towns.rds"))
+fips <- as.data.frame(read_rds("exercises/data/fips.rds"))
 
 # Connect to the SQLite database
 con <- dbConnect(SQLite(), ":memory:")
