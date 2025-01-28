@@ -7,6 +7,8 @@ output:
 runtime: shiny_prerendered
 ---
 
+
+
 <style>
 .title {
 margin-bottom: 0; /* Reduces space below the title */
@@ -23,7 +25,11 @@ margin-top: 0; /* Reduces space above the author */
 <h3>Author: Dr. Chester Ismay</h3>
 </div>
 
+
+
 ```{r setup, include=FALSE}
+# shiny apps account logs in through GitHub (chester-ismay)
+
 library(learnr)
 suppressPackageStartupMessages(library(gradethis))
 library(DBI)
@@ -31,16 +37,18 @@ library(RSQLite)
 suppressPackageStartupMessages(library(tidyverse))
 
 # Copy data over into this folder
-# file.copy(from = "../flights2023/pnwflights23/data/airlines.rda", 
-#           to = "data/airlines.rda")
+# file.copy(from = "../flights2023/pnwflights23/data/airlines.rda",
+#           to = "exercises/data/airlines.rda")
 # file.copy(from = "../flights2023/pnwflights23/data/airports.rda",
-#           to = "data/airports.rda")
+#           to = "exercises/data/airports.rda")
 # file.copy(from = "../flights2023/pnwflights23/data/flights.rda",
-#           to = "data/flights.rda")
+#           to = "exercises/data/flights.rda")
 # file.copy(from = "../flights2023/pnwflights23/data/planes.rda",
-#           to = "data/planes.rda")
+#           to = "exercises/data/planes.rda")
 # file.copy(from = "../flights2023/pnwflights23/data/weather.rda",
-#           to = "data/weather.rda")
+#           to = "exercises/data/weather.rda")
+
+#setwd(paste0(getwd(), "/exercises"))
 
 # Read data in from RDA files
 load("data/airlines.rda")
@@ -60,8 +68,10 @@ dbWriteTable(con, "planes", planes, overwrite = TRUE)
 dbWriteTable(con, "weather", weather, overwrite = TRUE)
 
 knitr::opts_chunk$set(connection = "con", 
-                      max.print = 20)
+                      max.print = 500)
 ```
+
+
 
 ```{r setup2, echo=FALSE, out.width='100%', fig.align='center'}
 tutorial_options(exercise.cap = "Query", 
@@ -105,6 +115,10 @@ border: 1px solid darkgray; /* Optional: add border */
 margin-left: 40px; /* Adjust indentation as needed */
 }
 </style>
+
+<br>
+
+**Note that query results are limited to 500 records maximum to ensure the exercises run efficiently.**
 
 # Selection Techniques
 
@@ -532,7 +546,7 @@ grade_this({
 })
 ```
 
-
+<!--
 ## View creation
 
 7. Create a view named `flight_details` to select carrier and destination from the flights table
@@ -727,9 +741,11 @@ grade_this({
 })
 ```
 
+-->
+
 ## Counting
 
-9. Count the records in the flights table (aliased as `total_flights`)
+7. Count the records in the flights table (aliased as `total_flights`)
 
 
 ```{sql query9, exercise=TRUE, exercise.eval=FALSE}
@@ -790,7 +806,7 @@ grade_this({
 })
 ```
 
-10. Count all distinct carriers in the flights table as `total_distinct_carriers`
+8. Count all distinct carriers in the flights table as `total_distinct_carriers`
 
 ```{sql query10, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to count all distinct carriers in the flights table
@@ -851,7 +867,7 @@ grade_this({
 
 ## Filtering rows/records
 
-11. Select Boeing Planes' Tail Numbers and Models
+9. Select Boeing Planes' Tail Numbers and Models
 
 ```{sql query11, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select tail numbers and models 
@@ -907,7 +923,7 @@ grade_this({
 })
 ```
 
-12. Select airports above 40 latitude and in the America/New_York time zone.
+10. Select airports above 40 latitude and in the America/New_York time zone.
 
 ```{sql query12, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select airports that meet specific criteria.
@@ -964,7 +980,7 @@ grade_this({
 })
 ```
 
-13. Select airports (faa code and name) within 40 to 42 degrees latitude.
+11. Select airports (faa code and name) within 40 to 42 degrees latitude.
 
 ```{sql query13, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select airports within a specific latitude range
@@ -1021,7 +1037,7 @@ grade_this({
 
 ## Filtering text
 
-14. Select airlines (carrier code and name) with name starting with an "A"
+12. Select airlines (carrier code and name) with name starting with an "A"
 
 ```{sql query14, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select airlines with names starting with a 
@@ -1082,7 +1098,7 @@ grade_this({
 })
 ```
 
-15. Select flights having 101 as the third, fourth, and fifth characters of the tail number.
+13. Select flights having 101 as the third, fourth, and fifth characters of the tail number.
 
 ```{sql query15, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select flights with tail numbers matching 
@@ -1143,7 +1159,7 @@ grade_this({
 })
 ```
 
-16. Select flights (all columns) where the carrier is either "AS" or "HA"
+14. Select flights (all columns) where the carrier is either "AS" or "HA"
 
 ```{sql query16, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select flights where the carrier is either 
@@ -1205,7 +1221,7 @@ grade_this({
 })
 ```
 
-17. Select weather records (all columns) where wind direction is missing
+15. Select weather records (all columns) where wind direction is missing
 
 ```{sql query17, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select weather records where the 
@@ -1262,7 +1278,7 @@ grade_this({
 })
 ```
 
-18. Select weather records where temperature is not missing
+16. Select weather records where temperature is not missing
 
 ```{sql query18, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select weather records where the temperature 
@@ -1323,7 +1339,7 @@ grade_this({
 
 ## Numerical summaries
 
-19. Calculate the average temperature from the weather table as `avg_temperature`
+17. Calculate the average temperature from the weather table as `avg_temperature`
 
 ```{sql query19, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to calculate the average temperature from 
@@ -1368,7 +1384,7 @@ grade_this({
 })
 ```
 
-20. Find the maximum arrival time for flights destined to ORD as `max_arr_time`
+18. Find the maximum arrival time for flights destined to ORD as `max_arr_time`
 
 ```{sql query20, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to find the maximum arrival time for flights 
@@ -1418,7 +1434,7 @@ grade_this({
 
 ## Categorical summaries
 
-21. Find the first destination alphabetically for flights destined to SEA as `first_sea_dest`
+19. Find the first destination alphabetically for flights destined to SEA as `first_sea_dest`
 
 ```{sql query21, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to find the first destination alphabetically 
@@ -1468,7 +1484,7 @@ grade_this({
 
 ## Rounding summaries
 
-22. Round wind gust values in the weather table to 0 decimal places as `rounded_wind_gust`
+20. Round wind gust values in the weather table to 0 decimal places as `rounded_wind_gust`
 
 ```{sql query22, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to round wind gust values in the weather 
@@ -1517,7 +1533,7 @@ grade_this({
 
 ## Sorting
 
-23. Sort flights by departure delay
+21. Sort flights by departure delay
 
 ```{sql query23, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to sort flights by departure delay.
@@ -1578,7 +1594,7 @@ grade_this({
 
 ```
 
-24. Sort flights by descending arrival delay
+22. Sort flights by descending arrival delay
 
 ```{sql query24, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to sort flights by descending arrival delay.
@@ -1641,7 +1657,7 @@ grade_this({
 
 ## Grouping
 
-25. Sort weather data by descending visibility and then descending wind speed
+23. Sort weather data by descending visibility and then descending wind speed
 
 ```{sql query25, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to sort weather data by descending visibility 
@@ -1703,7 +1719,7 @@ grade_this({
 })
 ```
 
-26. Group flights by origin and calculate the average arrival delay as `avg_arr_delay`
+24. Group flights by origin and calculate the average arrival delay as `avg_arr_delay`
 
 ```{sql query26, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to group flights by origin and 
@@ -1771,7 +1787,7 @@ grade_this({
 })
 ```
 
-27. Group flights by destination and count the number of flights for each destination having more than 100 flights as `total_flights`
+25. Group flights by destination and count the number of flights for each destination having more than 100 flights as `total_flights`
 
 ```{sql query27, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to group flights by destination and count the 
@@ -1841,7 +1857,7 @@ grade_this({
 
 ## Transforming
 
-28. Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.
+26. Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.
 
 ```{sql query28, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to categorize flights by distance as 'Short', 
@@ -1912,7 +1928,7 @@ grade_this({
 })
 ```
 
-29. Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed
+27. Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed
 
     To calculate the average speed, use the `dist` and `air_time` columns. Remember to convert `air_time` from minutes to hours for speed in miles per hour.
 
@@ -1982,7 +1998,7 @@ grade_this({
 
 ## INNER JOIN
 
-30. Join flights (as `f`) with weather (as `w`) on `origin` and `time_hour` (returning only the rows matching between both tables). Select the `origin`, `dest`,
+28. Join flights (as `f`) with weather (as `w`) on `origin` and `time_hour` (returning only the rows matching between both tables). Select the `origin`, `dest`,
 `temp`, and `humid` fields.
 
 ```{sql query30, exercise=TRUE, exercise.eval=FALSE}
@@ -2046,7 +2062,7 @@ grade_this({
 
 ## LEFT JOIN
 
-31. Left join flights with planes on tailnum (returning all rows from flights and only the rows from planes that match). Select the `tailnum`, `origin`, `dest`, `manufacturer`, and `model` fields.
+29. Left join flights with planes on tailnum (returning all rows from flights and only the rows from planes that match). Select the `tailnum`, `origin`, `dest`, `manufacturer`, and `model` fields.
 
 ```{sql query31, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to left join flights with planes on tailnum.
@@ -2104,6 +2120,7 @@ grade_this({
 })
 ```
 
+<!--
 ## RIGHT JOIN
 
 32. Right join airlines (as `a`) with flights (as `f`) on carrier code (returning all rows from airlines and only the rows from flights that match). Select the `name`, `tailnum`, `origin`, and `dest` fields.
@@ -2171,10 +2188,11 @@ grade_this({
   pass("Your query correctly performs a right join between the airlines table and the flights table on 'carrier', including all necessary columns and ordering by the airline's name in descending order.")
 })
 ```
+-->
 
 ## Anti-Join
 
-33. Anti-join flights (as `f`) with planes (as `p`) where plane's tailnum is missing. Select the `tailnum`, `origin`, and `dest` fields.
+30. Anti-join flights (as `f`) with planes (as `p`) where plane's tailnum is missing. Select the `tailnum`, `origin`, and `dest` fields.
 
 ```{sql query33, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to left join flights with planes where the 
@@ -2239,9 +2257,11 @@ grade_this({
 
 
 ```{sql query34, exercise=TRUE, exercise.eval=FALSE}
--- Write your own query here determining a different result from these tables
+-- Write your own query here determining a different result than what
+-- has been done so far from these tables
 ```
 
 ```{sql query35, exercise=TRUE, exercise.eval=FALSE}
--- Write another query here determining a different result from these tables
+-- Write another query here determining a different result than what
+-- has been done so far from these tables
 ```

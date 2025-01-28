@@ -201,6 +201,7 @@ SELECT DISTINCT state
   FROM pnw_towns;
 ```
 
+<!--
 ## View creation
 
 ### View 1: Create a view that lists towns along with their primary counties
@@ -225,6 +226,8 @@ SELECT town, primary_county
 SELECT * 
   FROM towns_with_county;
 ```
+
+-->
 
 ## Counting
 
@@ -736,6 +739,7 @@ SELECT c.county, c.county_seat, t.population_2020_census
   LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;
 ```
 
+<!-- 
 ## RIGHT JOIN
 
 ### Joining 3: List all counties and their corresponding town data (including counties without town data)
@@ -751,9 +755,11 @@ RIGHT JOIN pnw_counties AS c ON t.primary_county = c.county
   ORDER BY c.county DESC;
 ```
 
+-->
+
 ## Anti-Join
 
-### Joining 4: Find counties that don't have any towns listed
+### Joining 3: Find counties that don't have any towns listed
 
 ```{sql example47, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here

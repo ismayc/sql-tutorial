@@ -1,0 +1,3 @@
+load("/Users/chesterismay/Stats Consulting Dropbox/fireball/rds/2024-02/Meta-2024-02.rds")
+load("/Users/chesterismay/Stats Consulting Dropbox/Chester Ismay/PSU CEPE/Data Warehousing/sql-tutorial/exercises/data/pnw_counties.rds")
+load("/Users/chesterismay/Stats Consulting Dropbox/Chester Ismay/PSU CEPE/Data Warehousing/sql-tutorial/exercises/data/flights.rda")
