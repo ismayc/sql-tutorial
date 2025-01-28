@@ -711,7 +711,18 @@ SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
 
 # Joining Techniques
 
+![](images/00-setup.png)
+
 ## INNER JOIN
+
+![](images/01a-INNER JOIN.png)
+<!-- Horizontal line -->
+---
+
+![](images/01b-INNER JOIN.png)
+---
+
+![](images/01c-INNER JOIN.png)
 
 ### Joining 1: Join towns with counties where the primary county matches
 
@@ -726,6 +737,17 @@ SELECT c.county, c.county_seat, t.population_2020_census
 ```
 
 ## LEFT JOIN
+
+![](images/02a-LEFT JOIN.png)
+---
+
+![](images/02b-LEFT JOIN.png)
+
+---
+
+### If multiple matches
+
+![](images/02c-LEFT JOIN multiple.png)
 
 ### Joining 2: Are there any towns without county data listed?
 
@@ -758,6 +780,8 @@ RIGHT JOIN pnw_counties AS c ON t.primary_county = c.county
 -->
 
 ## Anti-Join
+
+![](images/12-Anti join.png)
 
 ### Joining 3: Find counties that don't have any towns listed
 

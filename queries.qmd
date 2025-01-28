@@ -693,6 +693,7 @@ DT::datatable(sql_results)
 ![](images/12-Anti join.png)
 
 ### Joining 3: Find counties that don't have any towns listed:
+
 ```{sql, output.var="sql_results"}
 SELECT c.county
  FROM pnw_counties AS c

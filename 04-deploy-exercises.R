@@ -8,7 +8,7 @@ deployApp(appDir = "exercises",
           appName = paste0("pnw-sql-exercises"),
           account = "chester-ismay")
 
-for (i in 2:9) {
+for (i in 2:8) { #Up to 11
   deployApp(appDir = "exercises",
             appName = paste0("pnw-sql-exercises", i),
             account = "chester-ismay")
