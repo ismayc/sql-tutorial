@@ -9,6 +9,8 @@ format:
 
 This document contains SQL queries to explore the `pnw_counties` and `pnw_towns` tables in our SQLite database.
 
+![](towns-counties-rough-erd.png)
+
 # Selection Techniques
 
 ## Selecting columns/fields
