@@ -1012,7 +1012,7 @@ grade_this({
 })
 ```
 
-10. Select airports above 40 latitude and in the America/New_York time zone.
+10. Select airports (faa, name, lat) above 40 latitude and in the America/New_York time zone.
 
 ```{sql query12, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select airports that meet specific criteria.
@@ -1074,7 +1074,7 @@ grade_this({
 })
 ```
 
-11. Select airports (faa code and name) within 40 to 42 degrees latitude.
+11. Select airports (faa code, name, and lat) within 40 to 42 degrees latitude.
 
 ```{sql query13, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select airports within a specific latitude range
@@ -1219,7 +1219,7 @@ WHERE tailnum LIKE '___';
 ```
 
 ```{sql query15-solution}
--- SOLUTION: This query selects flights with tail numbers that have 'ar' as the third and fourth characters.
+-- SOLUTION: This query selects flights with tail numbers that have '101' as the third, fourth, and fifth characters.
 SELECT tailnum 
 FROM flights 
 WHERE tailnum LIKE '__101%';
