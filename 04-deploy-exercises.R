@@ -6,10 +6,12 @@ setAccountInfo(name='chester-ismay',
 
 deployApp(appDir = "exercises",
           appName = paste0("pnw-sql-exercises"),
-          account = "chester-ismay")
+          account = "chester-ismay",
+          forceUpdate = TRUE)
 
-for (i in 2:8) { #Up to 11
+for (i in 2:8) {
   deployApp(appDir = "exercises",
             appName = paste0("pnw-sql-exercises", i),
-            account = "chester-ismay")
+            account = "chester-ismay",
+            forceUpdate = TRUE)
 }

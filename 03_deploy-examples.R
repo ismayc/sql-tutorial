@@ -10,7 +10,7 @@ deployApp(appDir = ".",
           account = "chester-ismay",
           forceUpdate = TRUE)
 
-for (i in 2:8) { # Up to 11
+for (i in 2:8) {
   deployApp(appDir = ".",
             appFiles = c("examples.Rmd", "renv.lock", "exercises/", "images/"),
             appName = paste0("pnw-sql-examples", i),

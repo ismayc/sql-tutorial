@@ -73,7 +73,9 @@ knitr::opts_chunk$set(connection = "con")# ,
 tutorial_options(exercise.cap = "Query", 
                  exercise.eval = FALSE,
                  exercise.reveal_solution = TRUE)
+```
 
+```{r eval=FALSE}
 library(DiagrammeR)
 # https://github.com/bergant/datamodelr
 library(datamodelr)
@@ -94,6 +96,58 @@ graph <- dm_create_graph(dm_f, rankdir = "BT", col_attr = c("column", "type"))
 
 dm_render_graph(graph)
 ```
+
+```{r eval=FALSE}
+build_mermaid_er <- function(df_list, pk_cols, fk_cols) {
+  # df_list: named list of data frames
+  # pk_cols: named list like list(table_name = c("col1", "col2"))
+  # fk_cols: named list like list(table_name = c("col1", "col2"))
+  
+  lines <- "erDiagram"
+  
+  for (tbl_name in names(df_list)) {
+    df <- df_list[[tbl_name]]
+    lines <- c(lines, paste0("    ", tbl_name, " {"))
+    
+    for (col in names(df)) {
+      col_type <- class(df[[col]])[1]
+      
+      # Determine key status
+      key_marker <- ""
+      if (col %in% pk_cols[[tbl_name]]) {
+        key_marker <- " PK"
+      } else if (col %in% fk_cols[[tbl_name]]) {
+        key_marker <- " FK"
+      }
+      
+      lines <- c(lines, paste0("        ", col_type, " ", col, key_marker))
+    }
+    
+    lines <- c(lines, "    }")
+  }
+  
+  # Add relationship
+  lines <- c(lines, '    pnw_counties ||--o{ pnw_towns : "contains"')
+  
+  paste(lines, collapse = "\n")
+}
+
+# Usage
+mermaid_code <- build_mermaid_er(
+  df_list = list(pnw_counties = pnw_counties, pnw_towns = pnw_towns),
+  pk_cols = list(pnw_counties = c("county", "state"), pnw_towns = NULL),
+  fk_cols = list(pnw_counties = NULL, pnw_towns = c("primary_county", "state"))
+)
+
+cat(mermaid_code)
+# https://mermaid.ai/app/projects/b63a9376-3040-4666-a51d-2dafa52b02a7/diagrams/3ba33e9c-5d22-4bc8-97f5-8a7bed66825c/version/v0.1/edit
+```
+
+
+```{r}
+knitr::include_graphics("images/pnw_towns_counties_mermaid.png")
+```
+
 
 <style>
 .small-yellow-btn {
@@ -711,18 +765,22 @@ SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
 
 # Joining Techniques
 
-![](images/00-setup.png)
+![](images/00-setup.png){ width=60% }
 
 ## INNER JOIN
 
-![](images/01a-INNER JOIN.png)
+### Setup
+
+![](images/01a-INNER JOIN.png){ width=60% }
 <!-- Horizontal line -->
----
 
-![](images/01b-INNER JOIN.png)
----
+### Action
 
-![](images/01c-INNER JOIN.png)
+![](images/01b-INNER JOIN.png){ width=60% }
+
+### Output
+
+![](images/01c-INNER JOIN.png){ width=60% }
 
 ### Joining 1: Join towns with counties where the primary county matches
 
@@ -738,16 +796,18 @@ SELECT c.county, c.county_seat, t.population_2020_census
 
 ## LEFT JOIN
 
-![](images/02a-LEFT JOIN.png)
----
+### Action
 
-![](images/02b-LEFT JOIN.png)
+![](images/02a-LEFT JOIN.png){ width=60% }
+### Output
 
----
+![](images/02b-LEFT JOIN.png){ width=60% }
 
 ### If multiple matches
 
-![](images/02c-LEFT JOIN multiple.png)
+### Output
+
+![](images/02c-LEFT JOIN multiple.png){ width=60% }
 
 ### Joining 2: Are there any towns without county data listed?
 
@@ -781,7 +841,9 @@ RIGHT JOIN pnw_counties AS c ON t.primary_county = c.county
 
 ## Anti-Join
 
-![](images/12-Anti join.png)
+### Output
+
+![](images/12-Anti join.png){ width=60% }
 
 ### Joining 3: Find counties that don't have any towns listed
 
