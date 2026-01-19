@@ -75,7 +75,7 @@ tutorial_options(exercise.cap = "Query",
                  exercise.reveal_solution = TRUE)
 ```
 
-```{r eval=FALSE}
+```{r eval=FALSE, echo=FALSE}
 library(DiagrammeR)
 # https://github.com/bergant/datamodelr
 library(datamodelr)
@@ -97,7 +97,7 @@ graph <- dm_create_graph(dm_f, rankdir = "BT", col_attr = c("column", "type"))
 dm_render_graph(graph)
 ```
 
-```{r eval=FALSE}
+```{r eval=FALSE, echo=FALSE}
 build_mermaid_er <- function(df_list, pk_cols, fk_cols) {
   # df_list: named list of data frames
   # pk_cols: named list like list(table_name = c("col1", "col2"))
@@ -144,10 +144,11 @@ cat(mermaid_code)
 ```
 
 
-```{r}
-knitr::include_graphics("images/pnw_towns_counties_mermaid.png")
-```
-
+<details open>
+<summary style="display: inline-block; padding: 8px 16px; background-color: #337ab7; color: white; border-radius: 4px; cursor: pointer; font-weight: bold;">Click to show/hide ER Diagram</summary>
+<br><br>
+<img src="images/pnw_towns_counties_mermaid.png" width="60%" alt="Pacific Northwest Counties and Towns ER Diagram">
+</details>
 
 <style>
 .small-yellow-btn {
