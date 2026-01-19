@@ -77,7 +77,9 @@ knitr::opts_chunk$set(connection = "con",
 tutorial_options(exercise.cap = "Query", 
                  exercise.eval = FALSE,
                  exercise.reveal_solution = TRUE)
+```
 
+```{r echo=FALSE}
 library(DiagrammeR)
 # https://github.com/bergant/datamodelr
 library(datamodelr)
@@ -96,8 +98,90 @@ dm_f <- dm_add_references(
 
 graph <- dm_create_graph(dm_f, rankdir = "BT", col_attr = c("column", "type"))
 
-dm_render_graph(graph)
+#dm_render_graph(graph)
 ```
+
+```{r echo=FALSE}
+build_mermaid_from_dm <- function(dm_obj, df_list, primary_keys = list()) {
+  # Extract references
+  refs <- dm_obj$references
+  
+  # Build FK lookup from references
+  fk_cols <- list()
+  
+  for (i in seq_len(nrow(refs))) {
+    ref_tbl <- refs$table[i]
+    ref_col <- refs$column[i]
+    fk_cols[[ref_tbl]] <- c(fk_cols[[ref_tbl]], ref_col)
+  }
+  
+  fk_cols <- lapply(fk_cols, unique)
+  
+  # Build mermaid output
+  lines <- "erDiagram"
+  
+  for (tbl_name in names(df_list)) {
+    df <- df_list[[tbl_name]]
+    lines <- c(lines, paste0("    ", tbl_name, " {"))
+    
+    for (col in names(df)) {
+      col_type <- class(df[[col]])[1]
+      
+      key_marker <- ""
+      if (col %in% primary_keys[[tbl_name]]) {
+        key_marker <- " PK"
+      } else if (col %in% fk_cols[[tbl_name]]) {
+        key_marker <- " FK"
+      }
+      
+      lines <- c(lines, paste0("        ", col_type, " ", col, key_marker))
+    }
+    
+    lines <- c(lines, "    }")
+  }
+  
+  # Add relationships
+  for (i in seq_len(nrow(refs))) {
+    ref_tbl <- refs$table[i]
+    ref_col <- refs$column[i]
+    pk_tbl <- refs$ref[i]
+    
+    label <- ""
+    if (sum(refs$ref == pk_tbl & refs$table == ref_tbl) > 1) {
+      label <- ref_col
+    }
+    
+    lines <- c(lines, paste0('    ', pk_tbl, ' ||--o{ ', ref_tbl, ' : "', label, '"'))
+  }
+  
+  paste(lines, collapse = "\n")
+}
+
+# Usage with explicit primary keys
+mermaid_code <- build_mermaid_from_dm(
+  dm_obj = dm_f,
+  df_list = list(
+    airlines = airlines,
+    airports = airports,
+    flights = flights,
+    planes = planes,
+    weather = weather
+  ),
+  primary_keys = list(
+    airlines = "carrier",
+    airports = "faa",
+    planes = "tailnum"
+  )
+)
+
+#cat(mermaid_code)
+```
+
+<details open>
+<summary style="display: inline-block; padding: 8px 16px; background-color: #337ab7; color: white; border-radius: 4px; cursor: pointer; font-weight: bold;">Click to show/hide ER Diagram</summary>
+<br><br>
+<img src="www/pnwflights_mermaid.png" width="60%" alt="Pacific Northwest Flights ER Diagram">
+</details>
 
 <style>
 .small-yellow-btn {
