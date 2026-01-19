@@ -7,6 +7,8 @@ format:
     toc-location: left
 ---
 
+<!-- https://ismay-sql-tutorial.netlify.app/queries.html -->
+
 This document contains SQL queries to explore the `pnw_counties` and `pnw_towns` tables in our SQLite database.
 
 # Selection Techniques
@@ -117,7 +119,7 @@ DT::datatable(sql_results)
 ### View 1: Create a view that lists towns along with their primary counties:
 
 ```{sql}
-#| include: false
+--| include: false
 DROP VIEW IF EXISTS towns_with_county;
 ```
 

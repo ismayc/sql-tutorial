@@ -1197,7 +1197,7 @@ grade_this({
 })
 ```
 
-13. Select flights having 101 as the third, fourth, and fifth characters of the tail number.
+13. Select flights having 101 as the second, third, and fourth characters of the tail number.
 
 ```{sql query15, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select flights with tail numbers matching 
@@ -1208,27 +1208,27 @@ grade_this({
 -- HINT: Use LIKE with underscores (_) to represent single characters in a pattern. For example:
 SELECT column 
 FROM table_name 
-WHERE column LIKE '__pattern%';
+WHERE column LIKE '_pattern%';
 ```
 
 ```{sql query15-hint-2}
 -- HINT: Fill in the blanks to complete the query for selecting flights by their tail number pattern.
 SELECT ___ 
 FROM flights 
-WHERE tailnum LIKE '___';
+WHERE tailnum LIKE '_pattern%';
 ```
 
 ```{sql query15-solution}
--- SOLUTION: This query selects flights with tail numbers that have '101' as the third, fourth, and fifth characters.
+-- SOLUTION: This query selects flights with tail numbers that have '101' as the second, third, and fourth characters.
 SELECT tailnum 
 FROM flights 
-WHERE tailnum LIKE '__101%';
+WHERE tailnum LIKE '_101%';
 ```
 
 ```{r query15-check, echo=FALSE}
 grade_this({
   # Execute the solution query to get the correct result for EXERCISE 15
-  .solution_ex15 <- DBI::dbGetQuery(con, "SELECT tailnum FROM flights WHERE tailnum LIKE '__101%';")
+  .solution_ex15 <- DBI::dbGetQuery(con, "SELECT tailnum FROM flights WHERE tailnum LIKE '_101%';")
   
   # Execute the student's query for EXERCISE 15
   .result_ex15 <- DBI::dbGetQuery(con, .user_code)
@@ -1248,8 +1248,13 @@ grade_this({
     fail(glue::glue("Your query should not include extra columns not present in the expected result."))
   }
   
-  # Check if the result set matches the expected pattern
-  if (!all(grepl('^..101', .result_ex15$tailnum))) {
+  # Check row count matches
+  if (nrow(.result_ex15) != nrow(.solution_ex15)) {
+    fail("The number of rows returned by your query does not match the expected result. Check your LIKE pattern.")
+  }
+  
+  # Check if the result set matches the expected pattern (101 at positions 2,3,4)
+  if (!all(grepl('^.101', .result_ex15$tailnum))) {
     fail("The tail numbers returned by your query do not match the expected pattern.")
   }
   
@@ -1533,11 +1538,11 @@ grade_this({
 
 ## Categorical summaries
 
-19. Find the first destination alphabetically for flights destined to SEA as `first_sea_dest`
+19. Find the first destination alphabetically for flights from SEA as `first_sea_dest`
 
 ```{sql query21, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to find the first destination alphabetically 
--- for flights destined to SEA.
+-- for flights from SEA.
 ```
 
 ```{sql query21-hint-1}
@@ -1551,19 +1556,19 @@ WHERE condition;
 -- HINT: Complete this query to find the first destination alphabetically where flights are destined to SEA. Fill in the blanks:
 SELECT MIN(___) AS first_sea_dest
 FROM flights
-WHERE dest = 'SEA';
+WHERE origin = 'SEA';
 ```
 
 ```{sql query21-solution}
 -- SOLUTION: This query finds the first destination alphabetically for flights destined to SEA.
 SELECT MIN(dest) AS first_sea_dest
 FROM flights
-WHERE dest = 'SEA';
+WHERE origin = 'SEA';
 ```
 
 ```{r query21-check, echo=FALSE}
 grade_this({
-  .solution_query21 <- "SELECT MIN(dest) AS first_sea_dest FROM flights WHERE dest = 'SEA';"
+  .solution_query21 <- "SELECT MIN(dest) AS first_sea_dest FROM flights WHERE origin = 'SEA';"
   .solution_ex21 <- DBI::dbGetQuery(con, .solution_query21)
   .result_ex21 <- DBI::dbGetQuery(con, .user_code)
   
@@ -1577,7 +1582,7 @@ grade_this({
     fail("The first destination alphabetically returned by your query does not match the expected first destination.")
   }
   
-  pass("Your query correctly finds the first destination alphabetically for flights destined to SEA.")
+  pass("Your query correctly finds the first destination alphabetically for flights from SEA.")
 })
 ```
 

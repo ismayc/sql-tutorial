@@ -7,6 +7,8 @@ format:
     toc-location: left
 ---
 
+<!-- https://ismay-sql-tutorial.netlify.app/exercise-answers.html -->
+
 This document contains SQL queries to explore the flights related tables from 2023 flights departing the SEA and PDX airports in our SQLite database. Note that query results are capped at 1000 records maximum to avoid the page being unable to load. There are more than 222,000 flights in the `flights` table covering all of 2023!
 
 ```{r setup}
@@ -75,7 +77,12 @@ graph <- dm_create_graph(dm_f, rankdir = "BT", col_attr = c("column", "type"))
 dm_render_graph(graph)
 ```
 
-![](basic-erd.png)
+<details open>
+<summary style="display: inline-block; padding: 8px 16px; background-color: #337ab7; color: white; border-radius: 4px; cursor: pointer; font-weight: bold;">Click to show/hide ER Diagram</summary>
+<br><br>
+<img src="exercises/www/pnwflights_mermaid.png" width="60%" alt="Pacific Northwest Flights ER Diagram">
+</details>
+
 
 # Selection Techniques
 
@@ -301,12 +308,12 @@ if(nrow(sql_results) > 1000) {
 DT::datatable(sql_results)
 ```
 
-### 13. Select flights having 101 as the third, fourth, and fifth characters of the tail number.
+### 13. Select flights having 101 as the second, third, and fourth characters of the tail number.
 
 ```{sql, output.var="sql_results"}
 SELECT tailnum 
 FROM flights 
-WHERE tailnum LIKE '__101%';
+WHERE tailnum LIKE '_101%';
 ```
 
 ```{r, echo=FALSE}
@@ -396,12 +403,12 @@ DT::datatable(sql_results)
 
 ## Categorical summaries
 
-### 19. Find the first destination alphabetically for flights destined to SEA as `first_sea_dest`
+### 19. Find the first destination alphabetically for flights from SEA as `first_sea_dest`
 
 ```{sql, output.var="sql_results"}
 SELECT MIN(dest) AS first_sea_dest
 FROM flights
-WHERE dest = 'SEA';
+WHERE origin = 'SEA';
 ```
 
 ```{r, echo=FALSE}

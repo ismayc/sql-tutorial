@@ -9,7 +9,7 @@ deployApp(appDir = "exercises",
           account = "chester-ismay",
           forceUpdate = TRUE)
 
-for (i in 2:8) {
+for (i in 2:11) {
   deployApp(appDir = "exercises",
             appName = paste0("pnw-sql-exercises", i),
             account = "chester-ismay",

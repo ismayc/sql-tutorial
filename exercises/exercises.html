@@ -1031,8 +1031,8 @@ FROM planes
 WHERE manufacturer = &#39;BOEING&#39;;</code></pre>
 </div>
 <ol start="10" style="list-style-type: decimal">
-<li>Select airports above 40 latitude and in the America/New_York time
-zone.</li>
+<li>Select airports (faa, name, lat) above 40 latitude and in the
+America/New_York time zone.</li>
 </ol>
 <div class="tutorial-exercise" data-label="query12" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
@@ -1067,7 +1067,7 @@ WHERE lat &gt; 40
 AND tzone = &#39;America/New_York&#39;;</code></pre>
 </div>
 <ol start="11" style="list-style-type: decimal">
-<li>Select airports (faa code and name) within 40 to 42 degrees
+<li>Select airports (faa code, name, and lat) within 40 to 42 degrees
 latitude.</li>
 </ol>
 <div class="tutorial-exercise" data-label="query13" data-completion="1"
@@ -1139,8 +1139,8 @@ FROM airlines
 WHERE name LIKE &#39;A%&#39;;</code></pre>
 </div>
 <ol start="13" style="list-style-type: decimal">
-<li>Select flights having 101 as the third, fourth, and fifth characters
-of the tail number.</li>
+<li>Select flights having 101 as the second, third, and fourth
+characters of the tail number.</li>
 </ol>
 <div class="tutorial-exercise" data-label="query15" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
@@ -1155,7 +1155,7 @@ data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>-- HINT: Use LIKE with underscores (_) to represent single characters in a pattern. For example:
 SELECT column 
 FROM table_name 
-WHERE column LIKE &#39;__pattern%&#39;;</code></pre>
+WHERE column LIKE &#39;_pattern%&#39;;</code></pre>
 </div>
 <div class="tutorial-exercise-support" data-label="query15-hint-2"
 data-completion="1" data-diagnostics="1" data-startover="1"
@@ -1163,15 +1163,15 @@ data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>-- HINT: Fill in the blanks to complete the query for selecting flights by their tail number pattern.
 SELECT ___ 
 FROM flights 
-WHERE tailnum LIKE &#39;___&#39;;</code></pre>
+WHERE tailnum LIKE &#39;_pattern%&#39;;</code></pre>
 </div>
 <div class="tutorial-exercise-support" data-label="query15-solution"
 data-completion="1" data-diagnostics="1" data-startover="1"
 data-lines="0" data-pipe="|&gt;">
-<pre class="text"><code>-- SOLUTION: This query selects flights with tail numbers that have &#39;ar&#39; as the third and fourth characters.
+<pre class="text"><code>-- SOLUTION: This query selects flights with tail numbers that have &#39;101&#39; as the second, third, and fourth characters.
 SELECT tailnum 
 FROM flights 
-WHERE tailnum LIKE &#39;__101%&#39;;</code></pre>
+WHERE tailnum LIKE &#39;_101%&#39;;</code></pre>
 </div>
 <ol start="14" style="list-style-type: decimal">
 <li>Select flights (all columns) where the carrier is either “AS” or
@@ -1354,14 +1354,14 @@ WHERE dest = &#39;ORD&#39;;</code></pre>
 <div id="section-categorical-summaries" class="section level2">
 <h2>Categorical summaries</h2>
 <ol start="19" style="list-style-type: decimal">
-<li>Find the first destination alphabetically for flights destined to
-SEA as <code>first_sea_dest</code></li>
+<li>Find the first destination alphabetically for flights from SEA as
+<code>first_sea_dest</code></li>
 </ol>
 <div class="tutorial-exercise" data-label="query21" data-completion="1"
 data-diagnostics="1" data-startover="1" data-lines="0"
 data-pipe="|&gt;">
 <pre class="text"><code>-- Write your SQL query here to find the first destination alphabetically 
--- for flights destined to SEA.</code></pre>
+-- for flights from SEA.</code></pre>
 <script type="application/json" data-ui-opts="1">{"engine":"sql","has_checker":true,"caption":"Query"}</script>
 </div>
 <div class="tutorial-exercise-support" data-label="query21-hint-1"
@@ -1378,7 +1378,7 @@ data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>-- HINT: Complete this query to find the first destination alphabetically where flights are destined to SEA. Fill in the blanks:
 SELECT MIN(___) AS first_sea_dest
 FROM flights
-WHERE dest = &#39;SEA&#39;;</code></pre>
+WHERE origin = &#39;SEA&#39;;</code></pre>
 </div>
 <div class="tutorial-exercise-support" data-label="query21-solution"
 data-completion="1" data-diagnostics="1" data-startover="1"
@@ -1386,7 +1386,7 @@ data-lines="0" data-pipe="|&gt;">
 <pre class="text"><code>-- SOLUTION: This query finds the first destination alphabetically for flights destined to SEA.
 SELECT MIN(dest) AS first_sea_dest
 FROM flights
-WHERE dest = &#39;SEA&#39;;</code></pre>
+WHERE origin = &#39;SEA&#39;;</code></pre>
 </div>
 </div>
 <div id="section-rounding-summaries" class="section level2">
@@ -3012,7 +3012,7 @@ learnr:::store_exercise_cache(structure(list(label = "query15", global_setup = s
             exercise.eval = "FALSE", engine = "\"sql\""), engine = "sql")), 
     code_check = NULL, error_check = NULL, check = structure(c("grade_this({", 
     "  # Execute the solution query to get the correct result for EXERCISE 15", 
-    "  .solution_ex15 <- DBI::dbGetQuery(con, \"SELECT tailnum FROM flights WHERE tailnum LIKE '__101%';\")", 
+    "  .solution_ex15 <- DBI::dbGetQuery(con, \"SELECT tailnum FROM flights WHERE tailnum LIKE '_101%';\")", 
     "  ", "  # Execute the student's query for EXERCISE 15", 
     "  .result_ex15 <- DBI::dbGetQuery(con, .user_code)", "  ", 
     "  # Expecting only the 'tailnum' column in the result", 
@@ -3021,12 +3021,14 @@ learnr:::store_exercise_cache(structure(list(label = "query15", global_setup = s
     "  extra_cols_ex15 <- setdiff(names(.result_ex15), cols_expected_ex15)", 
     "  ", "  if (length(missing_cols_ex15) > 0) {", "    fail(glue::glue(\"Your query is missing the 'tailnum' column.\"))", 
     "  }", "  ", "  if (length(extra_cols_ex15) > 0) {", "    fail(glue::glue(\"Your query should not include extra columns not present in the expected result.\"))", 
-    "  }", "  ", "  # Check if the result set matches the expected pattern", 
-    "  if (!all(grepl('^..101', .result_ex15$tailnum))) {", "    fail(\"The tail numbers returned by your query do not match the expected pattern.\")", 
+    "  }", "  ", "  # Check row count matches", "  if (nrow(.result_ex15) != nrow(.solution_ex15)) {", 
+    "    fail(\"The number of rows returned by your query does not match the expected result. Check your LIKE pattern.\")", 
+    "  }", "  ", "  # Check if the result set matches the expected pattern (101 at positions 2,3,4)", 
+    "  if (!all(grepl('^.101', .result_ex15$tailnum))) {", "    fail(\"The tail numbers returned by your query do not match the expected pattern.\")", 
     "  }", "  ", "  # If all checks pass", "  pass(\"Your query correctly retrieves flights based on the specified tail number pattern.\")", 
     "})"), chunk_opts = list(label = "query15-check", echo = FALSE)), 
-    solution = structure(c("-- SOLUTION: This query selects flights with tail numbers that have 'ar' as the third and fourth characters.", 
-    "SELECT tailnum ", "FROM flights ", "WHERE tailnum LIKE '__101%';"
+    solution = structure(c("-- SOLUTION: This query selects flights with tail numbers that have '101' as the second, third, and fourth characters.", 
+    "SELECT tailnum ", "FROM flights ", "WHERE tailnum LIKE '_101%';"
     ), chunk_opts = list(label = "query15-solution", engine = "sql")), 
     tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
@@ -3455,11 +3457,11 @@ learnr:::store_exercise_cache(structure(list(label = "query21", global_setup = s
 "dbWriteTable(con, \"planes\", planes, overwrite = TRUE)", "dbWriteTable(con, \"weather\", weather, overwrite = TRUE)", 
 "", "knitr::opts_chunk$set(connection = \"con\", ", "                      max.print = 500)"
 ), chunk_opts = list(label = "setup", include = FALSE)), setup = NULL, 
-    chunks = list(list(label = "query21", code = "-- Write your SQL query here to find the first destination alphabetically \n-- for flights destined to SEA.", 
+    chunks = list(list(label = "query21", code = "-- Write your SQL query here to find the first destination alphabetically \n-- for flights from SEA.", 
         opts = list(label = "\"query21\"", exercise = "TRUE", 
             exercise.eval = "FALSE", engine = "\"sql\""), engine = "sql")), 
     code_check = NULL, error_check = NULL, check = structure(c("grade_this({", 
-    "  .solution_query21 <- \"SELECT MIN(dest) AS first_sea_dest FROM flights WHERE dest = 'SEA';\"", 
+    "  .solution_query21 <- \"SELECT MIN(dest) AS first_sea_dest FROM flights WHERE origin = 'SEA';\"", 
     "  .solution_ex21 <- DBI::dbGetQuery(con, .solution_query21)", 
     "  .result_ex21 <- DBI::dbGetQuery(con, .user_code)", "  ", 
     "  # Check for the 'first_sea_dest' column in the student's result", 
@@ -3468,10 +3470,10 @@ learnr:::store_exercise_cache(structure(list(label = "query21", global_setup = s
     "  }", "  ", "  # Ensure the first destination alphabetically matches the solution", 
     "  if (.result_ex21$first_sea_dest != .solution_ex21$first_sea_dest) {", 
     "    fail(\"The first destination alphabetically returned by your query does not match the expected first destination.\")", 
-    "  }", "  ", "  pass(\"Your query correctly finds the first destination alphabetically for flights destined to SEA.\")", 
+    "  }", "  ", "  pass(\"Your query correctly finds the first destination alphabetically for flights from SEA.\")", 
     "})"), chunk_opts = list(label = "query21-check", echo = FALSE)), 
     solution = structure(c("-- SOLUTION: This query finds the first destination alphabetically for flights destined to SEA.", 
-    "SELECT MIN(dest) AS first_sea_dest", "FROM flights", "WHERE dest = 'SEA';"
+    "SELECT MIN(dest) AS first_sea_dest", "FROM flights", "WHERE origin = 'SEA';"
     ), chunk_opts = list(label = "query21-solution", engine = "sql")), 
     tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
         tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
@@ -3494,8 +3496,8 @@ learnr:::store_exercise_cache(structure(list(label = "query21", global_setup = s
         connection = "con", exercise.cap = "Query", exercise.eval = FALSE, 
         exercise.reveal_solution = TRUE, label = "query21", exercise = TRUE, 
         code = c("-- Write your SQL query here to find the first destination alphabetically ", 
-        "-- for flights destined to SEA."), out.width.px = 624, 
-        out.height.px = 384, params.src = "query21, exercise=TRUE, exercise.eval=FALSE, engine=\"sql\"", 
+        "-- for flights from SEA."), out.width.px = 624, out.height.px = 384, 
+        params.src = "query21, exercise=TRUE, exercise.eval=FALSE, engine=\"sql\"", 
         exercise.df_print = "paged"), engine = "sql", version = "4"), class = c("sql", 
 "tutorial_exercise")))
 </script>
