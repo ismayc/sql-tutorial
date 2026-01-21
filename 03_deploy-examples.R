@@ -18,3 +18,15 @@ for (i in 2:11) {
             forceUpdate = TRUE)
 }
 
+# For 13th and 14th students
+rsconnect::setAccountInfo(name='chesterismay',
+                          token='588F1892E3C091B60EE85857E0618BA9',
+                          secret='OOV8es6R7RQvCT44gyYBp21MttvjzOpt1y6yTczd')
+
+for (i in 12:13) {
+  deployApp(appDir = ".",
+            appFiles = c("examples.Rmd", "renv.lock", "exercises/", "images/"),
+            appName = paste0("pnw-sql-examples", i),
+            account = "chesterismay",
+            forceUpdate = TRUE)
+}
