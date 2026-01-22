@@ -9,13 +9,6 @@ title: SQL Examples Talking Script
 
 ---
 
-## Before You Begin
-
-### Setup Notes
-- Have the examples.Rmd file open and rendered in RStudio
-- Ensure the ER diagram is visible to students
-- Keep this script on a second monitor or printed copy
-
 ### Key Teaching Philosophy
 - **Go slow** - SQL syntax is new to everyone
 - **Explain WHY** before showing HOW
@@ -42,7 +35,7 @@ These tables are on Canvas and correspond to information about counties and town
 
 > "This is an Entity-Relationship diagram, or ERD. It shows us what tables we have and how they connect.
 
-> First, let's look at `pnw_counties` - this has 75 rows representing every county in Oregon and Washington. Each county has:  
+> First, let's look at `pnw_counties` - this has 75 rows representing every county in Oregon and Washington. Each county has:   
 > - Its name and which state it's in   
 > - A FIPS code (that's a government identification number)   
 > - The county seat - that's the city where the county government is located   
@@ -654,23 +647,51 @@ SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
 
 ---
 
-## Joining Techniques (25-30 minutes)
+## Joining Techniques (35-45 minutes)
 
-> "This is where it all comes together. Real databases have data spread across multiple tables. JOINs let us combine them."
+> "This is where it all comes together. Real databases have data spread across multiple tables. JOINs let us combine them. This is often the trickiest part of SQL for beginners, so we're going to take our time here."
+
+### Why Do We Need JOINs?
+
+> "First, let's understand WHY data is split across tables in the first place.
+
+> Imagine if we stored everything in ONE giant table - every town would repeat the county's establishment year, etymology, population, etc. If a county's population estimate changed, we'd have to update it in hundreds of rows. That's error-prone and wasteful.
+
+> Instead, databases use **normalization** - storing each piece of information once, in the right place. Counties in one table, towns in another. But then we need a way to connect them back together when we need combined information. That's what JOINs do."
 
 ### Setup - Understanding the Relationship
 
-> "Look back at our ER diagram. The `primary_county` in towns matches the `county` in counties. This is called a foreign key relationship.
+> "Look back at our ER diagram. See the line connecting the tables? That represents a relationship.
 
-> JOINs work by finding matching values between tables."
+> The `primary_county` column in the towns table contains values like 'Multnomah', 'King', 'Lane'. The `county` column in the counties table ALSO contains those same values. This shared data is what lets us connect the tables.
+
+> In database terminology:   
+> - The `county` column in pnw_counties is a **primary key** - it uniquely identifies each row   
+> - The `primary_county` column in pnw_towns is a **foreign key** - it references the primary key in another table   
+
+> JOINs work by finding rows where these values match."
+
+### The Mental Model: JOINs as Matching
+
+> "Here's how I want you to think about JOINs:
+
+> Imagine you have two stacks of index cards. One stack has county information, one has town information. A JOIN is like going through the town cards one by one and finding the matching county card to staple together.
+
+> The **ON** clause tells SQL what 'matching' means - which columns to compare."
+
+---
 
 ### INNER JOIN
 
 **Show the visual diagrams for INNER JOIN**
 
-> "An INNER JOIN returns only rows where there's a match in BOTH tables. If a town's county doesn't exist in the counties table, that town won't appear in the results."
+> "An INNER JOIN is the most selective type of join. It only returns rows where there's a match in BOTH tables.
+
+> Think of it like a Venn diagram - INNER JOIN gives you only the overlap, only the rows that exist in both tables based on your matching condition."
 
 #### Example 44: Basic INNER JOIN
+
+> "Let's say we want to see each county alongside its county seat's population. The county seat name is stored in pnw_counties, but the population is stored in pnw_towns. We need to JOIN them."
 
 ```sql
 SELECT c.county, c.county_seat, t.population_2020_census
@@ -678,19 +699,63 @@ SELECT c.county, c.county_seat, t.population_2020_census
  INNER JOIN pnw_towns AS t ON c.county_seat = t.town;
 ```
 
-> "Let's break this down:   
-> - We give each table an alias: `c` for counties, `t` for towns   
-> - INNER JOIN connects the tables   
-> - ON specifies the matching condition: where the county seat equals a town name   
-> - We prefix column names with the table alias to be clear which table they come from   
+> "Let me break this down piece by piece:"
 
-> This finds each county's seat and shows its population. If a county seat isn't in our towns table, that county won't appear."
+**Walk through each component slowly:**
+
+> "**FROM pnw_counties AS c** - We start with the counties table and give it the alias 'c'. This is our 'left' table.
+
+> **INNER JOIN pnw_towns AS t** - We're joining the towns table, aliased as 't'. This is our 'right' table.
+
+> **ON c.county_seat = t.town** - This is the matching condition. For each county, SQL looks for a town where the town name equals the county seat name.
+
+> **SELECT c.county, c.county_seat, t.population_2020_census** - We pick columns from BOTH tables. The aliases (c. and t.) tell SQL which table each column comes from."
+
+**Run the query and examine results.**
+
+> "Notice what happened - we have 75 counties, but we might not get 75 rows back. Why? Because INNER JOIN only keeps matches. If a county seat (like a very small town) isn't in our towns table, that entire county row disappears from the results.
+
+> **Key insight**: INNER JOIN can LOSE data. You only see rows that have matches on both sides."
+
+#### Common INNER JOIN Mistakes
+
+> "Let me show you mistakes I see students make:"
+
+**Mistake 1: Forgetting the ON clause**
+
+```sql
+-- This is WRONG - produces a Cartesian product!
+SELECT c.county, t.town
+  FROM pnw_counties AS c
+ INNER JOIN pnw_towns AS t;
+```
+
+> "Without ON, SQL matches every county with every town. 75 counties times 453 towns = 33,975 rows of nonsense. Always include your ON clause!"
+
+**Mistake 2: Using the wrong columns to match**
+
+```sql
+-- This probably returns nothing useful
+SELECT c.county, t.town
+  FROM pnw_counties AS c
+ INNER JOIN pnw_towns AS t ON c.county = t.town;
+```
+
+> "Here we're trying to match county names to town names. Those aren't the same thing! Think carefully about which columns actually contain matching data."
+
+---
 
 ### LEFT JOIN
 
 **Show the visual diagrams for LEFT JOIN**
 
-> "A LEFT JOIN keeps ALL rows from the left table (the first one mentioned), and matches rows from the right table where possible. No match? You get NULL values."
+> "LEFT JOIN is more forgiving than INNER JOIN. It keeps ALL rows from the left table (the first one mentioned), whether or not they have a match in the right table."
+
+#### The Key Difference from INNER JOIN
+
+> "With INNER JOIN, no match means the row disappears. With LEFT JOIN, no match means the row stays, but the columns from the right table show NULL.
+
+> Think of it as: 'Give me everything from the left table, and add matching information from the right table if it exists.'"
 
 #### Example 45: LEFT JOIN
 
@@ -700,31 +765,121 @@ SELECT c.county, c.county_seat, t.population_2020_census
   LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;
 ```
 
-> "Now we see ALL counties, even if their county seat isn't in our towns table. Where there's no match, the population shows NULL.
+> "Now we see ALL 75 counties, guaranteed. For counties whose county seat IS in our towns table, we see the population. For counties whose county seat ISN'T in our towns table, we see NULL for the population.
 
-> LEFT JOIN is great when you want to see 'everything from table A, with matching info from table B if it exists.'"
+> Compare this to the INNER JOIN results - you'll likely see more rows here."
+
+**Run both queries and compare row counts.**
+
+> "See the difference? INNER JOIN gave us [X] rows. LEFT JOIN gives us 75 rows - every single county. The ones with NULL populations are counties whose seats weren't in our towns table."
+
+#### When to Use LEFT JOIN vs INNER JOIN
+
+> "Use **INNER JOIN** when you only want results that have complete information from both tables. Missing data should exclude the row.
+
+> Use **LEFT JOIN** when the left table is your 'primary' data and you want to enhance it with optional information from the right table. Missing data is okay - you still want to see the row.
+
+> **Real-world example**: If you're generating a report of all counties and their seats' populations, LEFT JOIN ensures every county appears even if population data is missing. INNER JOIN would silently omit counties with missing data - which might hide problems in your data."
+
+---
+
+### Understanding NULL in JOIN Results
+
+> "This trips up a lot of students. When a LEFT JOIN doesn't find a match, ALL columns from the right table become NULL - not just the join column.
+
+```sql
+SELECT c.county, 
+       c.county_seat, 
+       t.town,           -- Will be NULL if no match
+       t.state,          -- Will ALSO be NULL if no match
+       t.population_2020_census  -- Will ALSO be NULL if no match
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;
+```
+
+> "If a county seat doesn't match any town, ALL the 't.' columns are NULL, not just t.town. This is important when you're trying to figure out why you're seeing NULLs."
+
+---
 
 ### Anti-Join Pattern
 
 **Show the anti-join visual**
 
-> "Sometimes we want to find things that DON'T have a match. We call this an anti-join."
+> "Sometimes the most interesting question is: 'What's missing?' We call this an anti-join - finding rows in one table that DON'T have matches in another."
 
 #### Example 47: Finding Unmatched Records
 
+> "Let's find counties that don't have ANY towns listed in our towns table. Maybe these are very rural counties, or maybe there's a data quality issue we need to investigate."
+
 ```sql
 SELECT c.county
- FROM pnw_counties AS c
-LEFT JOIN pnw_towns AS t ON c.county = t.primary_county
-WHERE t.town IS NULL;
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t ON c.county = t.primary_county
+ WHERE t.town IS NULL;
 ```
 
-> "This finds counties that don't have ANY towns in our towns table. How?   
-> - LEFT JOIN keeps all counties   
-> - For counties with no matching towns, `t.town` will be NULL   
-> - WHERE filters to only those NULL cases   
+> "Here's the logic, step by step:
 
-> This is a powerful pattern for finding missing relationships, orphaned records, or data quality issues."
+> **Step 1**: LEFT JOIN ensures all counties are included, even those with no matching towns.
+
+> **Step 2**: For counties with no matching towns, ALL columns from t (including t.town) will be NULL.
+
+> **Step 3**: WHERE t.town IS NULL filters to keep only those 'orphan' counties.
+
+> The result shows counties that have zero towns in our towns table. This is incredibly useful for data quality checks!"
+
+#### Anti-Join Use Cases
+
+> "Anti-joins answer questions like:   
+> - Which customers have never placed an order?   
+> - Which products have never been sold?   
+> - Which counties have no recorded towns?   
+> - Which employees aren't assigned to any project?   
+
+> Any time you need to find 'things without matches,' the anti-join pattern is your tool."
+
+---
+
+### JOIN Troubleshooting Guide
+
+> "When your JOINs aren't working as expected, check these things:"
+
+**Problem: Way too many rows (Cartesian product)**
+> "You probably forgot the ON clause, or your ON condition is matching too broadly."
+
+**Problem: Way too few rows (or zero rows)**
+> "Your ON condition might be too restrictive, or the values don't actually match. Check for case sensitivity issues ('Oregon' vs 'oregon'), trailing spaces, or comparing the wrong columns."
+
+**Problem: Unexpected NULLs everywhere**
+> "You're using LEFT JOIN and many rows don't have matches. This might be correct! Or your matching condition might be wrong."
+
+**Problem: Duplicate rows appearing**
+> "One row in your left table might match MULTIPLE rows in your right table. This is called a many-to-many situation. You might need to add more conditions to ON, or use GROUP BY to consolidate."
+
+---
+
+### JOIN Summary Table
+
+| JOIN Type | Keeps from Left Table | Keeps from Right Table | Use When |
+|-----------|----------------------|------------------------|----------|
+| INNER JOIN | Only matching rows | Only matching rows | You need complete data from both tables |
+| LEFT JOIN | ALL rows | Only matching rows (NULL if no match) | Left table is primary, right is optional enhancement |
+| Anti-Join (LEFT + WHERE NULL) | Only NON-matching rows | Nothing | Finding orphans or missing relationships |
+
+---
+
+### Practice Mental Exercise
+
+> "Before we move on, let's do a mental exercise. Without running any code, predict:
+
+> If we INNER JOIN pnw_counties (75 rows) with pnw_towns (453 rows) on county = primary_county, will we get:   
+> A) 75 rows (one per county)   
+> B) 453 rows (one per town)   
+> C) Something else?   
+
+> ... The answer is C - something else! Each county can match MULTIPLE towns. King County might match Seattle, Bellevue, Redmond, etc. So we could get up to 453 rows (if every town's county exists in our counties table), but each county appears multiple times.
+
+> Understanding this 'row multiplication' effect is crucial for working with JOINs correctly."
 
 ---
 
@@ -772,6 +927,3 @@ INNER JOIN -- only matching rows from both tables
 LEFT JOIN  -- all from left table + matching from right
 ```
 
----
-
-*End of Talking Script*
