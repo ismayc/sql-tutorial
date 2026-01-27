@@ -4,6 +4,11 @@ output:
   learnr::tutorial:
     progressive: true
     allow_skip: true
+    language:
+      en:
+        text:
+          startover: "Reset All Exercises"
+          areyousure: "Are you sure you want to reset all exercises? Your work will be lost."
 runtime: shiny_prerendered
 ---
 
@@ -13,9 +18,25 @@ runtime: shiny_prerendered
 .title {
 margin-bottom: 0; /* Reduces space below the title */
 }
+
 .author {
 margin-top: 0; /* Reduces space above the author */
 }
+
+.ace_autocomplete {
+  display: none !important;
+}
+
+/* Hide the section overview headers in main content */
+.section.level1 > h1 {
+  display: none !important;
+}
+
+/* Or if it's h2 headers causing the issue */
+.section.level1 > h2 {
+  display: none !important;
+}
+
 </style>
 
 <div class="title">
@@ -36,50 +57,47 @@ library(DBI)
 library(RSQLite)
 suppressPackageStartupMessages(library(tidyverse))
 
-# Copy data over into this folder
-# file.copy(from = "../flights2023/pnwflights23/data/airlines.rda",
-#           to = "exercises/data/airlines.rda")
-# file.copy(from = "../flights2023/pnwflights23/data/airports.rda",
-#           to = "exercises/data/airports.rda")
-# file.copy(from = "../flights2023/pnwflights23/data/flights.rda",
-#           to = "exercises/data/flights.rda")
-# file.copy(from = "../flights2023/pnwflights23/data/planes.rda",
-#           to = "exercises/data/planes.rda")
-# file.copy(from = "../flights2023/pnwflights23/data/weather.rda",
-#           to = "exercises/data/weather.rda")
+# Connect to the pre-built SQLite database file
+# Using read-only mode for safety in multi-user environments
+con <- DBI::dbConnect(
+  RSQLite::SQLite(), 
+  dbname = "pnw_flights_database.sqlite",
+  flags = RSQLite::SQLITE_RO
+)
 
-#setwd(paste0(getwd(), "/exercises"))
-
-# Read data in from RDA files
-load("data/airlines.rda")
-load("data/airports.rda")
-load("data/flights.rda")
-load("data/planes.rda")
-load("data/weather.rda")
-
-## Create an ephemeral in-memory RSQLite database
-con <- dbConnect(SQLite(), ":memory:")
-
-# Write the new data to the database
-dbWriteTable(con, "airlines", airlines, overwrite = TRUE)
-dbWriteTable(con, "airports", airports, overwrite = TRUE)
-dbWriteTable(con, "flights", flights, overwrite = TRUE)
-dbWriteTable(con, "planes", planes, overwrite = TRUE)
-dbWriteTable(con, "weather", weather, overwrite = TRUE)
+# Load data frames for the ER diagram generation (if needed)
+# These are read from the database to avoid needing separate RDA files
+airlines <- DBI::dbReadTable(con, "airlines")
+airports <- DBI::dbReadTable(con, "airports")
+flights <- DBI::dbReadTable(con, "flights")
+planes <- DBI::dbReadTable(con, "planes")
+weather <- DBI::dbReadTable(con, "weather")
 
 knitr::opts_chunk$set(connection = "con", 
                       max.print = 500)
 ```
-
-
-
 ```{r setup2, echo=FALSE, out.width='100%', fig.align='center'}
 tutorial_options(exercise.cap = "Query", 
                  exercise.eval = FALSE,
-                 exercise.reveal_solution = TRUE)
+                 exercise.reveal_solution = TRUE,
+                 exercise.timelimit = 60  # Give students 60 seconds for complex queries
+)
 ```
 
 ```{r echo=FALSE}
+htmltools::tags$script("
+$(document).on('shiny:connected', function() {
+  setTimeout(function() {
+    $('.btn-tutorial-run').removeClass('disabled').prop('disabled', false);
+    $('.tutorial-exercise button').removeClass('disabled').prop('disabled', false);
+  }, 1000);
+});
+")
+```
+
+
+
+```{r echo=FALSE, eval=FALSE}
 library(DiagrammeR)
 # https://github.com/bergant/datamodelr
 library(datamodelr)
@@ -101,7 +119,7 @@ graph <- dm_create_graph(dm_f, rankdir = "BT", col_attr = c("column", "type"))
 #dm_render_graph(graph)
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 build_mermaid_from_dm <- function(dm_obj, df_list, primary_keys = list()) {
   # Extract references
   refs <- dm_obj$references
@@ -200,9 +218,18 @@ margin-left: 40px; /* Adjust indentation as needed */
 }
 </style>
 
-<br>
+<details open>
+<summary style="display: inline-block; padding: 8px 16px; background-color: #5cb85c; color: white; border-radius: 4px; cursor: pointer; font-weight: bold;">Click to show/hide Notes and Tips</summary>
 
-**Note that query results are limited to 500 records maximum to ensure the exercises run efficiently.**
+**Note: Query results display up to 500 rows in the output below to reduce website timeouts, but your query is validated against the complete dataset.**
+
+**Tips:**
+
+- Use "Hints" if you get stuck
+- Click "Run Code" to execute your query
+- When you feel confident about your code and results, click "Submit Answer" to check your work
+- Your work should automatically be saved in your browser, but it's **STRONGLY** recommended to keep a separate backup of your queries in a text file elsewhere
+</details>
 
 # Selection Techniques
 
