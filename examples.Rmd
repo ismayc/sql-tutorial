@@ -783,7 +783,7 @@ SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
 
 ![](images/01c-INNER JOIN.png){ width=60% }
 
-### Joining 1: Join towns with counties where the primary county matches
+### Joining 1: Get population of each county seat
 
 ```{sql example44, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -810,7 +810,7 @@ SELECT c.county, c.county_seat, t.population_2020_census
 
 ![](images/02c-LEFT JOIN multiple.png){ width=60% }
 
-### Joining 2: Are there any towns without county data listed?
+### Joining 2: Show ALL counties, even those whose seat isn't in our towns data
 
 ```{sql example45, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here

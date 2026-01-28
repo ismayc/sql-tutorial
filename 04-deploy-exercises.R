@@ -16,7 +16,7 @@ for (i in 2:11) {
             forceUpdate = TRUE)
 }
 
-# For 13th and 14th students
+# For 12th to 14th students
 rsconnect::setAccountInfo(name='chesterismay',
                           token='588F1892E3C091B60EE85857E0618BA9',
                           secret='OOV8es6R7RQvCT44gyYBp21MttvjzOpt1y6yTczd')
