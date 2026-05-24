@@ -12,160 +12,191 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 ## Filtering rows/records
 
-### Filtering 1: Towns with greater than 150,000 people
+The WHERE clause is your primary tool for finding specific records. Think of it as asking questions of your data.
+
+### Filtering 1: Which towns qualify as "cities" (population over 50,000)?
+
+*Scenario: You're researching urban development and need to identify the larger municipalities.*
 
 <SqlExercise
   id="example12"
   db="pnw_database.sqlite"
   solution={`SELECT town, state, population_2020_census 
   FROM pnw_towns 
- WHERE population_2020_census > 150000;`}
+ WHERE population_2020_census > 50000
+ ORDER BY population_2020_census DESC;`}
+  requireOrdering
 />
 
-### Filtering 2: Towns with greater than 150,000 people and in Oregon
+### Filtering 2: Find large Oregon cities for a state-specific grant
+
+*Scenario: An Oregon-only grant targets cities over 50,000 people. Who qualifies?*
 
 <SqlExercise
   id="example13"
   db="pnw_database.sqlite"
-  solution={`SELECT town, state, population_2020_census 
+  solution={`SELECT town, population_2020_census 
   FROM pnw_towns 
- WHERE population_2020_census > 150000
-   AND state = 'Oregon';`}
+ WHERE population_2020_census > 50000
+   AND state = 'Oregon'
+ ORDER BY population_2020_census DESC;`}
+  requireOrdering
 />
 
-### Filtering 3: Towns with greater than 150,000 people or in Oregon
+### Filtering 3: Find either large cities OR any Oregon town
+
+*Scenario: A regional initiative includes all Oregon towns plus major cities from Washington. The OR operator creates a union of conditions.*
 
 <SqlExercise
   id="example14"
   db="pnw_database.sqlite"
   solution={`SELECT town, state, population_2020_census 
   FROM pnw_towns 
- WHERE population_2020_census > 150000
-    OR state = 'Oregon';`}
+ WHERE population_2020_census > 100000
+    OR state = 'Oregon'
+ ORDER BY state, population_2020_census DESC;`}
+  requireOrdering
 />
 
-### Filtering 4: Counties established after 1920 with a population greater than 100,000
+### Filtering 4: Find historically significant, populous counties
+
+*Scenario: A heritage tourism initiative targets counties established before 1860 that now have substantial populations (over 50,000).*
 
 <SqlExercise
   id="example15"
   db="pnw_database.sqlite"
   solution={`SELECT county, state, year_established, population_2022
   FROM pnw_counties
- WHERE year_established > 1920
-   AND population_2022 > 100000;`}
+ WHERE year_established < 1860
+   AND population_2022 > 50000
+ ORDER BY year_established;`}
+  requireOrdering
 />
 
-### Filtering 5: Counties established after 1880 with a population greater than 100,000
+### Filtering 5: Find mid-sized towns (population between 10,000 and 50,000)
+
+*Scenario: A "Main Street" revitalization program targets mid-sized towns. BETWEEN provides a clean way to specify ranges.*
 
 <SqlExercise
   id="example16"
   db="pnw_database.sqlite"
-  solution={`SELECT county, state, year_established, population_2022
-  FROM pnw_counties
- WHERE year_established > 1880
-   AND population_2022 > 100000;`}
+  solution={`SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census BETWEEN 10000 AND 50000
+ ORDER BY population_2020_census DESC;`}
+  requireOrdering
 />
 
-### Filtering 6: Towns with a land area between 12 and 15 square miles
+### Filtering 6: Find compact towns (small land area)
+
+*Scenario: Urban planners studying density want towns under 2 square miles.*
 
 <SqlExercise
   id="example17"
   db="pnw_database.sqlite"
-  solution={`SELECT town, state, land_area_sq_mi
+  solution={`SELECT town, state, land_area_sq_mi, population_2020_census
   FROM pnw_towns
- WHERE land_area_sq_mi >= 12
-   AND land_area_sq_mi <= 15;`}
+ WHERE land_area_sq_mi < 2
+ ORDER BY land_area_sq_mi;`}
+  requireOrdering
 />
 
-### Filtering 7: Towns with a land area between 10 and 15 square miles (simplified)
+### Filtering 7: Complex criteria with parentheses
 
-<SqlExercise
-  id="example18"
-  db="pnw_database.sqlite"
-  solution={`SELECT town, state, land_area_sq_mi
-  FROM pnw_towns
- WHERE land_area_sq_mi BETWEEN 12 AND 15;`}
-/>
-
-### Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022
+*Scenario: Find either (a) old Washington counties established before 1860, or (b) any Oregon county with population over 200,000. Parentheses control the logic.*
 
 <SqlExercise
   id="example19"
   db="pnw_database.sqlite"
   solution={`SELECT county, state, year_established, population_2022
   FROM pnw_counties
- WHERE (state = 'Washington' AND year_established BETWEEN 1890 AND 1900)
-    OR (state = 'Oregon' AND population_2022 > 300000);`}
+ WHERE (state = 'Washington' AND year_established < 1860)
+    OR (state = 'Oregon' AND population_2022 > 200000)
+ ORDER BY state, population_2022 DESC;`}
+  requireOrdering
 />
 
 ## Filtering text
 
-### Filtering 9: Counties that start with the letter "K":
+Pattern matching with LIKE lets you search for partial text matches using wildcards: `%` matches any sequence of characters, `_` matches exactly one character.
+
+### Filtering 8: Find all counties named after presidents
+
+*Scenario: For a history article, find counties whose etymology mentions "President".*
 
 <SqlExercise
   id="example20"
   db="pnw_database.sqlite"
-  solution={`SELECT county, state
+  solution={`SELECT county, state, etymology
   FROM pnw_counties
- WHERE county LIKE 'K%';`}
+ WHERE etymology LIKE '%President%';`}
 />
 
-### Filtering 10: Towns that end with the letters "ia":
+### Filtering 9: Find towns ending in "ville"
+
+*Scenario: A linguistics researcher is studying town naming conventions.*
 
 <SqlExercise
   id="example21"
   db="pnw_database.sqlite"
   solution={`SELECT town, state
   FROM pnw_towns
- WHERE town LIKE '%ia';`}
+ WHERE town LIKE '%ville';`}
 />
 
-### Filtering 11: Towns that contain the phrase "mount":
+### Filtering 10: Find towns with "Port" in their name
+
+*Scenario: Identify coastal or river port towns for a maritime commerce study.*
 
 <SqlExercise
   id="example22"
   db="pnw_database.sqlite"
-  solution={`SELECT town, state
+  solution={`SELECT town, state, population_2020_census
   FROM pnw_towns
- WHERE town LIKE '%mount%';`}
+ WHERE town LIKE '%Port%'
+    OR town LIKE '%port%'
+ ORDER BY population_2020_census DESC;`}
+  requireOrdering
 />
 
-### Filtering 12: Counties with specific pattern in third and fourth position ("ar")
+### Filtering 11: Find counties with names starting with "King" or "Clark"
 
-<SqlExercise
-  id="example23"
-  db="pnw_database.sqlite"
-  solution={`SELECT county
-  FROM pnw_counties
- WHERE county LIKE '__ar%';`}
-/>
-
-### Filtering 13: Towns that are in Multnomah or Spokane counties
+*Scenario: Using IN for multiple exact matches is cleaner than multiple OR conditions.*
 
 <SqlExercise
   id="example24"
   db="pnw_database.sqlite"
-  solution={`SELECT * 
-  FROM pnw_towns 
- WHERE primary_county IN ('Multnomah', 'Spokane');`}
+  solution={`SELECT county, state, population_2022 
+  FROM pnw_counties 
+ WHERE county IN ('King', 'Clark', 'Pierce', 'Multnomah')
+ ORDER BY population_2022 DESC;`}
+  requireOrdering
 />
 
-### Filtering 14: Towns with missing values for secondary county
+### Filtering 12: Find towns that span multiple counties
+
+*Scenario: Administrative complexity - which towns cross county boundaries?*
 
 <SqlExercise
   id="example25"
   db="pnw_database.sqlite"
-  solution={`SELECT * 
- FROM pnw_towns 
-WHERE secondary_county IS NULL;`}
+  solution={`SELECT town, state, primary_county, secondary_county, tertiary_county
+  FROM pnw_towns 
+ WHERE secondary_county IS NOT NULL
+ ORDER BY town;`}
+  requireOrdering
 />
 
-### Filtering 15: Towns without missing values for secondary county
+### Filtering 13: Find towns entirely within one county
+
+*Scenario: The opposite query - towns that don't span county lines.*
 
 <SqlExercise
   id="example26"
   db="pnw_database.sqlite"
-  solution={`SELECT * 
- FROM pnw_towns 
-WHERE secondary_county IS NOT NULL;`}
+  solution={`SELECT town, state, primary_county
+  FROM pnw_towns 
+ WHERE secondary_county IS NULL
+ ORDER BY population_2020_census DESC;`}
+  requireOrdering
 />

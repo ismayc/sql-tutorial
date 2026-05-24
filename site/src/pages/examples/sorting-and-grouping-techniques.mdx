@@ -12,93 +12,156 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 ## Sorting
 
-### Sorting 1: Sorting towns by 2020 census population
+ORDER BY controls how results are displayed. This is crucial for reports and identifying extremes.
+
+### Sorting 1: Rank towns by population (smallest first)
+
+*Scenario: Default ORDER BY sorts ascending (smallest to largest).*
 
 <SqlExercise
   id="example35"
   db="pnw_database.sqlite"
-  solution={`SELECT town, population_2020_census
+  solution={`SELECT town, state, population_2020_census
   FROM pnw_towns
  ORDER BY population_2020_census;`}
   requireOrdering
 />
 
-### Sorting 2: Sorting towns by 2020 census population in ascending and descending order
+### Sorting 2: Rank towns by population (largest first)
 
-- 2a: Ascending order:
-
-<SqlExercise
-  id="example36a"
-  db="pnw_database.sqlite"
-  solution={`SELECT town, population_2020_census
-  FROM pnw_towns
-ORDER BY population_2020_census ASC;`}
-  requireOrdering
-/>
-
-- 2b: Descending order:
+*Scenario: DESC reverses the order for "top N" style reports.*
 
 <SqlExercise
   id="example36b"
   db="pnw_database.sqlite"
-  solution={`SELECT town, population_2020_census
+  solution={`SELECT town, state, population_2020_census
   FROM pnw_towns
  ORDER BY population_2020_census DESC;`}
   requireOrdering
 />
 
-### Sorting 3: Sorting counties by state and population in 2022
+### Sorting 3: Sort by multiple columns (state, then population within state)
+
+*Scenario: Create a report organized by state, with largest cities first within each state.*
 
 <SqlExercise
   id="example37"
   db="pnw_database.sqlite"
-  solution={`SELECT county, state, population_2022
+  solution={`SELECT town, state, population_2020_census
+  FROM pnw_towns
+ ORDER BY state, population_2020_census DESC;`}
+  requireOrdering
+/>
+
+### Sorting 4: Sort counties by age (oldest first)
+
+*Scenario: Historical timeline of county formation.*
+
+<SqlExercise
+  id="example37b"
+  db="pnw_database.sqlite"
+  solution={`SELECT county, state, year_established, etymology
   FROM pnw_counties
- ORDER BY state, population_2022 DESC;`}
+ ORDER BY year_established, county;`}
   requireOrdering
 />
 
 ## Grouping
 
-### Grouping 1: Grouping towns by state
+GROUP BY collapses rows into groups for aggregate calculations. This is one of SQL's most powerful features.
+
+### Grouping 1: Count towns per state
+
+*Scenario: Basic comparison of how many incorporated towns each state has.*
 
 <SqlExercise
   id="example38"
   db="pnw_database.sqlite"
-  solution={`SELECT state, COUNT(*) AS total_towns
+  solution={`SELECT state, 
+       COUNT(*) AS number_of_towns
   FROM pnw_towns
  GROUP BY state;`}
 />
 
-### Grouping 2: Grouping and ordering counties by state and average population
+### Grouping 2: Compare states by average county population
+
+*Scenario: Which state has larger counties on average?*
 
 <SqlExercise
   id="example39"
   db="pnw_database.sqlite"
-  solution={`SELECT state, AVG(population_2022) AS avg_population
+  solution={`SELECT state, 
+       COUNT(*) AS num_counties,
+       ROUND(AVG(population_2022), 0) AS avg_county_pop,
+       SUM(population_2022) AS total_state_pop
   FROM pnw_counties
  GROUP BY state
- ORDER BY avg_population DESC;`}
+ ORDER BY avg_county_pop DESC;`}
   requireOrdering
 />
 
-### Grouping 3: Filtering on grouped data
+### Grouping 3: Which counties have the most towns?
 
-- Trying with `WHERE`
+*Scenario: Identify counties with many incorporated municipalities.*
+
+<SqlExercise
+  id="example39b"
+  db="pnw_database.sqlite"
+  solution={`SELECT primary_county, 
+       state,
+       COUNT(*) AS num_towns,
+       SUM(population_2020_census) AS total_pop
+  FROM pnw_towns
+ GROUP BY primary_county, state
+ ORDER BY num_towns DESC;`}
+  requireOrdering
+/>
+
+### Grouping 4: Filter groups with HAVING
+
+*Scenario: Find only counties with 10 or more towns. HAVING filters after grouping (WHERE filters before).*
+
+**First, let's see why WHERE doesn't work here:**
 
 <SqlExercise
   id="example40a"
   db="pnw_database.sqlite"
+  initial={`-- This will cause an error - try it to see why
+-- WHERE cannot filter on aggregate results
+`}
   solution=""
 />
 
-- Trying with `HAVING`
+**Use HAVING instead to filter grouped results:**
 
 <SqlExercise
   id="example40b"
   db="pnw_database.sqlite"
-  solution={`SELECT primary_county, state, COUNT(*) AS total_towns
+  solution={`SELECT primary_county, 
+       state, 
+       COUNT(*) AS num_towns
   FROM pnw_towns
- GROUP BY primary_county
-HAVING COUNT(*) > 10;`}
+ GROUP BY primary_county, state
+HAVING COUNT(*) >= 10
+ ORDER BY num_towns DESC;`}
+  requireOrdering
+/>
+
+### Grouping 5: Population growth by county
+
+*Scenario: Which counties saw the most population growth in their towns from 2010 to 2020?*
+
+<SqlExercise
+  id="example40c"
+  db="pnw_database.sqlite"
+  solution={`SELECT primary_county,
+       state,
+       SUM(population_2010_census) AS pop_2010,
+       SUM(population_2020_census) AS pop_2020,
+       SUM(population_2020_census) - SUM(population_2010_census) AS growth
+  FROM pnw_towns
+ GROUP BY primary_county, state
+HAVING SUM(population_2010_census) > 0
+ ORDER BY growth DESC;`}
+  requireOrdering
 />

@@ -12,7 +12,11 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 ## Selecting columns/fields
 
-### Selection 1: Select all town names
+Imagine you work for a regional planning agency and need to pull specific information from your database. The SELECT statement lets you choose exactly which columns you need.
+
+### Selection 1: Create a quick reference list of all town names
+
+*Scenario: You need a simple list of town names for a mail merge or dropdown menu.*
 
 <SqlExercise
   id="example1"
@@ -21,7 +25,9 @@ import SchemaReference from "../../components/SchemaReference.astro";
   FROM pnw_towns;`}
 />
 
-### Selection 2: Select all county names
+### Selection 2: List all counties in the Pacific Northwest
+
+*Scenario: You're preparing a report header that needs to list every county in the region.*
 
 <SqlExercise
   id="example2"
@@ -30,7 +36,9 @@ import SchemaReference from "../../components/SchemaReference.astro";
   FROM pnw_counties;`}
 />
 
-### Selection 3: Select all columns for towns table
+### Selection 3: Export all town data for a comprehensive audit
+
+*Scenario: An auditor needs the complete towns dataset. Using `*` selects every column.*
 
 <SqlExercise
   id="example3"
@@ -39,7 +47,9 @@ import SchemaReference from "../../components/SchemaReference.astro";
   FROM pnw_towns;`}
 />
 
-### Selection 4: Select county names and population for 2022 
+### Selection 4: Pull county names and populations for a funding report
+
+*Scenario: Federal funding is allocated by population. You need county names paired with their 2022 population figures.*
 
 <SqlExercise
   id="example4"
@@ -50,30 +60,41 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 ## Aliasing
 
-### Aliasing 1: Select county names, population for 2022, and land area (Aliased)
+Aliases make your output more readable and your queries easier to write. They're especially useful when column names are long or when you're doing calculations.
+
+### Aliasing 1: Create a clean report with user-friendly column headers
+
+*Scenario: You're sharing data with non-technical stakeholders who won't understand `land_area_sq_mi`. Rename columns to be clearer.*
 
 <SqlExercise
   id="example5"
   db="pnw_database.sqlite"
-  solution={`SELECT county AS cty, 
-       population_2022 AS pop2022,
-       land_area_sq_mi AS area
+  solution={`SELECT county AS county_name, 
+       population_2022 AS population,
+       land_area_sq_mi AS area_square_miles
   FROM pnw_counties;`}
 />
 
-### Aliasing 2: Alias the table name
+### Aliasing 2: Use table aliases to simplify longer queries
+
+*Scenario: When writing complex queries with multiple tables, short table aliases save typing and improve readability.*
 
 <SqlExercise
   id="example6"
   db="pnw_database.sqlite"
-  solution={`SELECT counties.county,
-       counties.origin
-  FROM pnw_counties AS counties;`}
+  solution={`SELECT c.county,
+       c.county_seat,
+       c.year_established
+  FROM pnw_counties AS c;`}
 />
 
 ## Unique entries
 
-### Unique 1: Select distinct states from the `pnw_towns` table
+DISTINCT removes duplicate values, helping you understand the unique categories in your data.
+
+### Unique 1: What states are represented in our towns database?
+
+*Scenario: Before running state-specific analyses, you need to know which states are in the dataset.*
 
 <SqlExercise
   id="example7"
@@ -82,22 +103,52 @@ import SchemaReference from "../../components/SchemaReference.astro";
   FROM pnw_towns;`}
 />
 
+### Unique 2: Which counties have towns that span multiple counties?
+
+*Scenario: Some towns span county lines. Find which counties appear as secondary counties for any town.*
+
+<SqlExercise
+  id="example8"
+  db="pnw_database.sqlite"
+  solution={`SELECT DISTINCT secondary_county
+  FROM pnw_towns
+ WHERE secondary_county IS NOT NULL;`}
+/>
+
 ## Counting
 
-### Counting 1: Count the number of records in the `pnw_towns` table
+COUNT helps you understand the size of your data and answer "how many" questions.
+
+### Counting 1: How many towns are in our database?
+
+*Scenario: A journalist asks how comprehensive your database is. You need a quick count.*
 
 <SqlExercise
   id="example10"
   db="pnw_database.sqlite"
-  solution={`SELECT COUNT(*) AS num_towns
+  solution={`SELECT COUNT(*) AS total_towns
   FROM pnw_towns;`}
 />
 
-### Counting 2: Count the number of distinct states in `pnw_counties`
+### Counting 2: How many states does our county data cover?
+
+*Scenario: You want to verify your data covers both Oregon and Washington (and only those states).*
 
 <SqlExercise
   id="example11"
   db="pnw_database.sqlite"
-  solution={`SELECT COUNT(DISTINCT state) AS num_unique_states
+  solution={`SELECT COUNT(DISTINCT state) AS number_of_states
   FROM pnw_counties;`}
+/>
+
+### Counting 3: How many towns have incomplete data (missing secondary county info)?
+
+*Scenario: Data quality check - how many towns don't span multiple counties?*
+
+<SqlExercise
+  id="example11b"
+  db="pnw_database.sqlite"
+  solution={`SELECT COUNT(*) AS towns_single_county
+  FROM pnw_towns
+ WHERE secondary_county IS NULL;`}
 />

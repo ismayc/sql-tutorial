@@ -11,8 +11,10 @@
         "example5",
         "example6",
         "example7",
+        "example8",
         "example10",
-        "example11"
+        "example11",
+        "example11b"
       ],
       "checkableIds": [
         "example1",
@@ -22,14 +24,16 @@
         "example5",
         "example6",
         "example7",
+        "example8",
         "example10",
-        "example11"
+        "example11",
+        "example11b"
       ],
-      "exerciseCount": 9,
+      "exerciseCount": 11,
       "exercises": [
         {
           "id": "example1",
-          "title": "Selection 1: Select all town names",
+          "title": "Selection 1: Create a quick reference list of all town names",
           "solution": "SELECT town\n  FROM pnw_towns;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
@@ -37,7 +41,7 @@
         },
         {
           "id": "example2",
-          "title": "Selection 2: Select all county names",
+          "title": "Selection 2: List all counties in the Pacific Northwest",
           "solution": "SELECT county\n  FROM pnw_counties;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
@@ -45,7 +49,7 @@
         },
         {
           "id": "example3",
-          "title": "Selection 3: Select all columns for towns table",
+          "title": "Selection 3: Export all town data for a comprehensive audit",
           "solution": "SELECT *\n  FROM pnw_towns;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
@@ -53,7 +57,7 @@
         },
         {
           "id": "example4",
-          "title": "Selection 4: Select county names and population for 2022",
+          "title": "Selection 4: Pull county names and populations for a funding report",
           "solution": "SELECT county, population_2022\n  FROM pnw_counties;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
@@ -61,40 +65,56 @@
         },
         {
           "id": "example5",
-          "title": "Aliasing 1: Select county names, population for 2022, and land area (Aliased)",
-          "solution": "SELECT county AS cty, \n       population_2022 AS pop2022,\n       land_area_sq_mi AS area\n  FROM pnw_counties;",
+          "title": "Aliasing 1: Create a clean report with user-friendly column headers",
+          "solution": "SELECT county AS county_name, \n       population_2022 AS population,\n       land_area_sq_mi AS area_square_miles\n  FROM pnw_counties;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example6",
-          "title": "Aliasing 2: Alias the table name",
-          "solution": "SELECT counties.county,\n       counties.origin\n  FROM pnw_counties AS counties;",
+          "title": "Aliasing 2: Use table aliases to simplify longer queries",
+          "solution": "SELECT c.county,\n       c.county_seat,\n       c.year_established\n  FROM pnw_counties AS c;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example7",
-          "title": "Unique 1: Select distinct states from the `pnw_towns` table",
+          "title": "Unique 1: What states are represented in our towns database?",
           "solution": "SELECT DISTINCT state\n  FROM pnw_towns;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
+          "id": "example8",
+          "title": "Unique 2: Which counties have towns that span multiple counties?",
+          "solution": "SELECT DISTINCT secondary_county\n  FROM pnw_towns\n WHERE secondary_county IS NOT NULL;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
           "id": "example10",
-          "title": "Counting 1: Count the number of records in the `pnw_towns` table",
-          "solution": "SELECT COUNT(*) AS num_towns\n  FROM pnw_towns;",
+          "title": "Counting 1: How many towns are in our database?",
+          "solution": "SELECT COUNT(*) AS total_towns\n  FROM pnw_towns;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example11",
-          "title": "Counting 2: Count the number of distinct states in `pnw_counties`",
-          "solution": "SELECT COUNT(DISTINCT state) AS num_unique_states\n  FROM pnw_counties;",
+          "title": "Counting 2: How many states does our county data cover?",
+          "solution": "SELECT COUNT(DISTINCT state) AS number_of_states\n  FROM pnw_counties;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example11b",
+          "title": "Counting 3: How many towns have incomplete data (missing secondary county info)?",
+          "solution": "SELECT COUNT(*) AS towns_single_county\n  FROM pnw_towns\n WHERE secondary_county IS NULL;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
@@ -111,12 +131,10 @@
         "example15",
         "example16",
         "example17",
-        "example18",
         "example19",
         "example20",
         "example21",
         "example22",
-        "example23",
         "example24",
         "example25",
         "example26"
@@ -128,136 +146,118 @@
         "example15",
         "example16",
         "example17",
-        "example18",
         "example19",
         "example20",
         "example21",
         "example22",
-        "example23",
         "example24",
         "example25",
         "example26"
       ],
-      "exerciseCount": 15,
+      "exerciseCount": 13,
       "exercises": [
         {
           "id": "example12",
-          "title": "Filtering 1: Towns with greater than 150,000 people",
-          "solution": "SELECT town, state, population_2020_census \n  FROM pnw_towns \n WHERE population_2020_census > 150000;",
+          "title": "Filtering 1: Which towns qualify as \"cities\" (population over 50,000)?",
+          "solution": "SELECT town, state, population_2020_census \n  FROM pnw_towns \n WHERE population_2020_census > 50000\n ORDER BY population_2020_census DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example13",
-          "title": "Filtering 2: Towns with greater than 150,000 people and in Oregon",
-          "solution": "SELECT town, state, population_2020_census \n  FROM pnw_towns \n WHERE population_2020_census > 150000\n   AND state = 'Oregon';",
+          "title": "Filtering 2: Find large Oregon cities for a state-specific grant",
+          "solution": "SELECT town, population_2020_census \n  FROM pnw_towns \n WHERE population_2020_census > 50000\n   AND state = 'Oregon'\n ORDER BY population_2020_census DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example14",
-          "title": "Filtering 3: Towns with greater than 150,000 people or in Oregon",
-          "solution": "SELECT town, state, population_2020_census \n  FROM pnw_towns \n WHERE population_2020_census > 150000\n    OR state = 'Oregon';",
+          "title": "Filtering 3: Find either large cities OR any Oregon town",
+          "solution": "SELECT town, state, population_2020_census \n  FROM pnw_towns \n WHERE population_2020_census > 100000\n    OR state = 'Oregon'\n ORDER BY state, population_2020_census DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example15",
-          "title": "Filtering 4: Counties established after 1920 with a population greater than 100,000",
-          "solution": "SELECT county, state, year_established, population_2022\n  FROM pnw_counties\n WHERE year_established > 1920\n   AND population_2022 > 100000;",
+          "title": "Filtering 4: Find historically significant, populous counties",
+          "solution": "SELECT county, state, year_established, population_2022\n  FROM pnw_counties\n WHERE year_established < 1860\n   AND population_2022 > 50000\n ORDER BY year_established;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example16",
-          "title": "Filtering 5: Counties established after 1880 with a population greater than 100,000",
-          "solution": "SELECT county, state, year_established, population_2022\n  FROM pnw_counties\n WHERE year_established > 1880\n   AND population_2022 > 100000;",
+          "title": "Filtering 5: Find mid-sized towns (population between 10,000 and 50,000)",
+          "solution": "SELECT town, state, population_2020_census\n  FROM pnw_towns\n WHERE population_2020_census BETWEEN 10000 AND 50000\n ORDER BY population_2020_census DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example17",
-          "title": "Filtering 6: Towns with a land area between 12 and 15 square miles",
-          "solution": "SELECT town, state, land_area_sq_mi\n  FROM pnw_towns\n WHERE land_area_sq_mi >= 12\n   AND land_area_sq_mi <= 15;",
+          "title": "Filtering 6: Find compact towns (small land area)",
+          "solution": "SELECT town, state, land_area_sq_mi, population_2020_census\n  FROM pnw_towns\n WHERE land_area_sq_mi < 2\n ORDER BY land_area_sq_mi;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
-          "hasSolution": true
-        },
-        {
-          "id": "example18",
-          "title": "Filtering 7: Towns with a land area between 10 and 15 square miles (simplified)",
-          "solution": "SELECT town, state, land_area_sq_mi\n  FROM pnw_towns\n WHERE land_area_sq_mi BETWEEN 12 AND 15;",
-          "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example19",
-          "title": "Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022",
-          "solution": "SELECT county, state, year_established, population_2022\n  FROM pnw_counties\n WHERE (state = 'Washington' AND year_established BETWEEN 1890 AND 1900)\n    OR (state = 'Oregon' AND population_2022 > 300000);",
+          "title": "Filtering 7: Complex criteria with parentheses",
+          "solution": "SELECT county, state, year_established, population_2022\n  FROM pnw_counties\n WHERE (state = 'Washington' AND year_established < 1860)\n    OR (state = 'Oregon' AND population_2022 > 200000)\n ORDER BY state, population_2022 DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example20",
-          "title": "Filtering 9: Counties that start with the letter \"K\":",
-          "solution": "SELECT county, state\n  FROM pnw_counties\n WHERE county LIKE 'K%';",
+          "title": "Filtering 8: Find all counties named after presidents",
+          "solution": "SELECT county, state, etymology\n  FROM pnw_counties\n WHERE etymology LIKE '%President%';",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example21",
-          "title": "Filtering 10: Towns that end with the letters \"ia\":",
-          "solution": "SELECT town, state\n  FROM pnw_towns\n WHERE town LIKE '%ia';",
+          "title": "Filtering 9: Find towns ending in \"ville\"",
+          "solution": "SELECT town, state\n  FROM pnw_towns\n WHERE town LIKE '%ville';",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example22",
-          "title": "Filtering 11: Towns that contain the phrase \"mount\":",
-          "solution": "SELECT town, state\n  FROM pnw_towns\n WHERE town LIKE '%mount%';",
+          "title": "Filtering 10: Find towns with \"Port\" in their name",
+          "solution": "SELECT town, state, population_2020_census\n  FROM pnw_towns\n WHERE town LIKE '%Port%'\n    OR town LIKE '%port%'\n ORDER BY population_2020_census DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
-          "hasSolution": true
-        },
-        {
-          "id": "example23",
-          "title": "Filtering 12: Counties with specific pattern in third and fourth position (\"ar\")",
-          "solution": "SELECT county\n  FROM pnw_counties\n WHERE county LIKE '__ar%';",
-          "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example24",
-          "title": "Filtering 13: Towns that are in Multnomah or Spokane counties",
-          "solution": "SELECT * \n  FROM pnw_towns \n WHERE primary_county IN ('Multnomah', 'Spokane');",
+          "title": "Filtering 11: Find counties with names starting with \"King\" or \"Clark\"",
+          "solution": "SELECT county, state, population_2022 \n  FROM pnw_counties \n WHERE county IN ('King', 'Clark', 'Pierce', 'Multnomah')\n ORDER BY population_2022 DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example25",
-          "title": "Filtering 14: Towns with missing values for secondary county",
-          "solution": "SELECT * \n FROM pnw_towns \nWHERE secondary_county IS NULL;",
+          "title": "Filtering 12: Find towns that span multiple counties",
+          "solution": "SELECT town, state, primary_county, secondary_county, tertiary_county\n  FROM pnw_towns \n WHERE secondary_county IS NOT NULL\n ORDER BY town;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example26",
-          "title": "Filtering 15: Towns without missing values for secondary county",
-          "solution": "SELECT * \n FROM pnw_towns \nWHERE secondary_county IS NOT NULL;",
+          "title": "Filtering 13: Find towns entirely within one county",
+          "solution": "SELECT town, state, primary_county\n  FROM pnw_towns \n WHERE secondary_county IS NULL\n ORDER BY population_2020_census DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         }
       ]
@@ -291,72 +291,72 @@
       "exercises": [
         {
           "id": "example27",
-          "title": "Aggregating 1: Average population across all towns in Washington",
-          "solution": "SELECT AVG(population_2020_census) AS avg_population\n  FROM pnw_towns\n WHERE state = 'Washington';",
+          "title": "Aggregating 1: What's the average town size in each state?",
+          "solution": "SELECT state,\n       ROUND(AVG(population_2020_census), 0) AS avg_population\n  FROM pnw_towns\n GROUP BY state;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example28",
-          "title": "Aggregating 2: Total population across all towns in Oregon",
-          "solution": "SELECT SUM(population_2020_census) AS total_population\n  FROM pnw_towns\n WHERE state = 'Oregon';",
+          "title": "Aggregating 2: What's the total urban population by state?",
+          "solution": "SELECT state,\n       SUM(population_2020_census) AS total_town_population\n  FROM pnw_towns\n GROUP BY state;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example29",
-          "title": "Aggregating 3: Minimum population across all towns",
-          "solution": "SELECT MIN(population_2020_census) AS min_population\n  FROM pnw_towns;",
+          "title": "Aggregating 3: Find the smallest incorporated town",
+          "solution": "SELECT town, state, population_2020_census\n  FROM pnw_towns\n WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example30",
-          "title": "Aggregating 4: Maximum population across all towns",
-          "solution": "SELECT MAX(population_2020_census) AS max_population\n  FROM pnw_towns;",
+          "title": "Aggregating 4: Find the largest city",
+          "solution": "SELECT town, state, population_2020_census\n  FROM pnw_towns\n WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example31",
-          "title": "Aggregating 5: Total number of towns",
-          "solution": "SELECT COUNT(*) AS total_towns\n  FROM pnw_towns;",
+          "title": "Aggregating 5: Summary statistics for county land areas",
+          "solution": "SELECT COUNT(*) AS num_counties,\n       MIN(land_area_sq_mi) AS smallest_county,\n       MAX(land_area_sq_mi) AS largest_county,\n       ROUND(AVG(land_area_sq_mi), 0) AS avg_size,\n       SUM(land_area_sq_mi) AS total_area\n  FROM pnw_counties;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example32",
-          "title": "Aggregating 6: First town alphabetically",
-          "solution": "SELECT MIN(town) AS first_town\n  FROM pnw_towns;",
+          "title": "Aggregating 6: Which county was established first and last?",
+          "solution": "SELECT MIN(year_established) AS earliest_county,\n       MAX(year_established) AS newest_county\n  FROM pnw_counties;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example33",
-          "title": "Aggregating 7: Last county alphabetically",
-          "solution": "SELECT MAX(county) AS last_county\n  FROM pnw_counties;",
+          "title": "Aggregating 7: Find the actual earliest and newest counties",
+          "solution": "SELECT county, state, year_established\n  FROM pnw_counties\n WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)\n    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)\n ORDER BY year_established;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example34a",
-          "title": "Aggregating 8: Rounded average land areas",
-          "solution": "  SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area\n    FROM pnw_towns;",
+          "title": "Aggregating 8: Calculate and round population density",
+          "solution": "SELECT town, \n       state,\n       population_2020_census,\n       land_area_sq_mi,\n       ROUND(population_2020_census / land_area_sq_mi, 1) AS people_per_sq_mile\n  FROM pnw_towns\n WHERE land_area_sq_mi > 0\n ORDER BY people_per_sq_mile DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example34b",
-          "title": "example34b",
-          "solution": "  SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area\n    FROM pnw_towns;",
+          "title": "Aggregating 9: Round to whole numbers for simpler reporting",
+          "solution": "SELECT state,\n       ROUND(AVG(population_2020_census), 0) AS avg_town_pop,\n       ROUND(AVG(land_area_sq_mi), 0) AS avg_town_area\n  FROM pnw_towns\n GROUP BY state;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
@@ -368,77 +368,89 @@
       "title": "Sorting and Grouping Techniques",
       "exerciseIds": [
         "example35",
-        "example36a",
         "example36b",
         "example37",
+        "example37b",
         "example38",
         "example39",
+        "example39b",
         "example40a",
-        "example40b"
+        "example40b",
+        "example40c"
       ],
       "checkableIds": [
         "example35",
-        "example36a",
         "example36b",
         "example37",
+        "example37b",
         "example38",
         "example39",
+        "example39b",
         "example40a",
-        "example40b"
+        "example40b",
+        "example40c"
       ],
-      "exerciseCount": 8,
+      "exerciseCount": 10,
       "exercises": [
         {
           "id": "example35",
-          "title": "Sorting 1: Sorting towns by 2020 census population",
-          "solution": "SELECT town, population_2020_census\n  FROM pnw_towns\n ORDER BY population_2020_census;",
-          "db": "pnw_database.sqlite",
-          "requireOrdering": true,
-          "hasSolution": true
-        },
-        {
-          "id": "example36a",
-          "title": "Sorting 2: Sorting towns by 2020 census population in ascending and descending order",
-          "solution": "SELECT town, population_2020_census\n  FROM pnw_towns\nORDER BY population_2020_census ASC;",
+          "title": "Sorting 1: Rank towns by population (smallest first)",
+          "solution": "SELECT town, state, population_2020_census\n  FROM pnw_towns\n ORDER BY population_2020_census;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example36b",
-          "title": "example36b",
-          "solution": "SELECT town, population_2020_census\n  FROM pnw_towns\n ORDER BY population_2020_census DESC;",
+          "title": "Sorting 2: Rank towns by population (largest first)",
+          "solution": "SELECT town, state, population_2020_census\n  FROM pnw_towns\n ORDER BY population_2020_census DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example37",
-          "title": "Sorting 3: Sorting counties by state and population in 2022",
-          "solution": "SELECT county, state, population_2022\n  FROM pnw_counties\n ORDER BY state, population_2022 DESC;",
+          "title": "Sorting 3: Sort by multiple columns (state, then population within state)",
+          "solution": "SELECT town, state, population_2020_census\n  FROM pnw_towns\n ORDER BY state, population_2020_census DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example37b",
+          "title": "Sorting 4: Sort counties by age (oldest first)",
+          "solution": "SELECT county, state, year_established, etymology\n  FROM pnw_counties\n ORDER BY year_established, county;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example38",
-          "title": "Grouping 1: Grouping towns by state",
-          "solution": "SELECT state, COUNT(*) AS total_towns\n  FROM pnw_towns\n GROUP BY state;",
+          "title": "Grouping 1: Count towns per state",
+          "solution": "SELECT state, \n       COUNT(*) AS number_of_towns\n  FROM pnw_towns\n GROUP BY state;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example39",
-          "title": "Grouping 2: Grouping and ordering counties by state and average population",
-          "solution": "SELECT state, AVG(population_2022) AS avg_population\n  FROM pnw_counties\n GROUP BY state\n ORDER BY avg_population DESC;",
+          "title": "Grouping 2: Compare states by average county population",
+          "solution": "SELECT state, \n       COUNT(*) AS num_counties,\n       ROUND(AVG(population_2022), 0) AS avg_county_pop,\n       SUM(population_2022) AS total_state_pop\n  FROM pnw_counties\n GROUP BY state\n ORDER BY avg_county_pop DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example39b",
+          "title": "Grouping 3: Which counties have the most towns?",
+          "solution": "SELECT primary_county, \n       state,\n       COUNT(*) AS num_towns,\n       SUM(population_2020_census) AS total_pop\n  FROM pnw_towns\n GROUP BY primary_county, state\n ORDER BY num_towns DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example40a",
-          "title": "Grouping 3: Filtering on grouped data",
+          "title": "Grouping 4: Filter groups with HAVING",
           "solution": "",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
@@ -447,9 +459,17 @@
         {
           "id": "example40b",
           "title": "example40b",
-          "solution": "SELECT primary_county, state, COUNT(*) AS total_towns\n  FROM pnw_towns\n GROUP BY primary_county\nHAVING COUNT(*) > 10;",
+          "solution": "SELECT primary_county, \n       state, \n       COUNT(*) AS num_towns\n  FROM pnw_towns\n GROUP BY primary_county, state\nHAVING COUNT(*) >= 10\n ORDER BY num_towns DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example40c",
+          "title": "Grouping 5: Population growth by county",
+          "solution": "SELECT primary_county,\n       state,\n       SUM(population_2010_census) AS pop_2010,\n       SUM(population_2020_census) AS pop_2020,\n       SUM(population_2020_census) - SUM(population_2010_census) AS growth\n  FROM pnw_towns\n GROUP BY primary_county, state\nHAVING SUM(population_2010_census) > 0\n ORDER BY growth DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
           "hasSolution": true
         }
       ]
@@ -460,35 +480,55 @@
       "exerciseIds": [
         "example41",
         "example42",
-        "example43"
+        "example42b",
+        "example43",
+        "example43b"
       ],
       "checkableIds": [
         "example41",
         "example42",
-        "example43"
+        "example42b",
+        "example43",
+        "example43b"
       ],
-      "exerciseCount": 3,
+      "exerciseCount": 5,
       "exercises": [
         {
           "id": "example41",
-          "title": "Transforming 1: Classifying towns by population size using CASE WHEN",
-          "solution": "SELECT town, \n       population_2010_census,\n       CASE \n           WHEN population_2010_census > 100000 THEN 'Large'\n           WHEN population_2010_census BETWEEN 50000 AND 100000 THEN 'Medium'\n           ELSE 'Small'\n       END AS town_size\n  FROM pnw_towns\n  ORDER BY population_2010_census DESC;",
+          "title": "Transforming 1: Classify towns by size category",
+          "solution": "SELECT town, \n       state,\n       population_2020_census,\n       CASE \n           WHEN population_2020_census >= 100000 THEN 'Large City'\n           WHEN population_2020_census >= 25000 THEN 'Medium City'\n           WHEN population_2020_census >= 5000 THEN 'Small City'\n           ELSE 'Town'\n       END AS size_category\n  FROM pnw_towns\n ORDER BY population_2020_census DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example42",
-          "title": "Transforming 2: Percentage increase in population from 2010 to 2020",
-          "solution": "SELECT town, state, (population_2020_census - population_2010_census) / population_2010_census * 100 AS pct_change\n  FROM pnw_towns\n  ORDER BY pct_change DESC;",
+          "title": "Transforming 2: Calculate population change from 2010 to 2020",
+          "solution": "SELECT town, \n       state, \n       population_2010_census AS pop_2010,\n       population_2020_census AS pop_2020,\n       population_2020_census - population_2010_census AS pop_change,\n       ROUND((population_2020_census - population_2010_census) * 100.0 / population_2010_census, 1) AS pct_change\n  FROM pnw_towns\n WHERE population_2010_census > 0\n ORDER BY pct_change DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example42b",
+          "title": "Transforming 3: Identify fastest-growing and declining towns",
+          "solution": "SELECT town,\n       state,\n       population_2010_census AS pop_2010,\n       population_2020_census AS pop_2020,\n       CASE \n           WHEN population_2020_census > population_2010_census * 1.20 THEN 'Rapid Growth (>20%)'\n           WHEN population_2020_census > population_2010_census THEN 'Growing'\n           WHEN population_2020_census = population_2010_census THEN 'Stable'\n           WHEN population_2020_census > population_2010_census * 0.80 THEN 'Declining'\n           ELSE 'Rapid Decline (>20%)'\n       END AS growth_status\n  FROM pnw_towns\n WHERE population_2010_census > 0\n ORDER BY (population_2020_census - population_2010_census) * 1.0 / population_2010_census DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example43",
-          "title": "Transforming 3: Population density",
-          "solution": "SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density\n  FROM pnw_towns\n ORDER BY pop_density DESC;",
+          "title": "Transforming 4: Calculate and categorize population density",
+          "solution": "SELECT town, \n       state, \n       population_2020_census,\n       land_area_sq_mi,\n       ROUND(population_2020_census / land_area_sq_mi, 0) AS density,\n       CASE \n           WHEN population_2020_census / land_area_sq_mi > 5000 THEN 'Urban'\n           WHEN population_2020_census / land_area_sq_mi > 1000 THEN 'Suburban'\n           ELSE 'Rural'\n       END AS density_class\n  FROM pnw_towns\n WHERE land_area_sq_mi > 0\n ORDER BY density DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example43b",
+          "title": "Transforming 5: Flag counties by era of establishment",
+          "solution": "SELECT county,\n       state,\n       year_established,\n       CASE \n           WHEN year_established < 1850 THEN 'Pioneer Era'\n           WHEN year_established < 1890 THEN 'Settlement Era'\n           WHEN year_established < 1920 THEN 'Progressive Era'\n           ELSE 'Modern Era'\n       END AS historical_era\n  FROM pnw_counties\n ORDER BY year_established;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -500,38 +540,108 @@
       "title": "Joining Techniques",
       "exerciseIds": [
         "example44",
+        "example44b",
+        "example44c",
         "example45",
-        "example47"
+        "example45b",
+        "example45c",
+        "example47",
+        "example47b",
+        "example47c",
+        "example48"
       ],
       "checkableIds": [
         "example44",
+        "example44b",
+        "example44c",
         "example45",
-        "example47"
+        "example45b",
+        "example45c",
+        "example47",
+        "example47b",
+        "example47c",
+        "example48"
       ],
-      "exerciseCount": 3,
+      "exerciseCount": 10,
       "exercises": [
         {
           "id": "example44",
-          "title": "Joining 1: Get population of each county seat",
-          "solution": "SELECT c.county, c.county_seat, t.population_2020_census\n  FROM pnw_counties AS c\n INNER JOIN pnw_towns AS t ON c.county_seat = t.town;",
+          "title": "Joining 1: Enrich town data with county information",
+          "solution": "SELECT t.town,\n       t.population_2020_census,\n       c.county,\n       c.year_established,\n       c.etymology\n  FROM pnw_towns AS t\n INNER JOIN pnw_counties AS c \n    ON t.primary_county = c.county \n   AND t.state = c.state\n ORDER BY t.population_2020_census DESC;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example44b",
+          "title": "Joining 2: Find which towns are county seats",
+          "solution": "SELECT t.town,\n       t.state,\n       t.population_2020_census AS town_pop,\n       c.county,\n       c.population_2022 AS county_pop\n  FROM pnw_towns AS t\n INNER JOIN pnw_counties AS c \n    ON t.town = c.county_seat \n   AND t.state = c.state\n ORDER BY t.population_2020_census DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example44c",
+          "title": "Joining 3: Compare town population to county population",
+          "solution": "SELECT t.town,\n       t.population_2020_census AS town_pop,\n       c.county,\n       c.population_2022 AS county_pop,\n       ROUND(t.population_2020_census * 100.0 / c.population_2022, 1) AS pct_of_county\n  FROM pnw_towns AS t\n INNER JOIN pnw_counties AS c \n    ON t.primary_county = c.county \n   AND t.state = c.state\n ORDER BY pct_of_county DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example45",
-          "title": "Joining 2: Show ALL counties, even those whose seat isn't in our towns data",
-          "solution": "SELECT c.county, c.county_seat, t.population_2020_census\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;",
+          "title": "Joining 4: List all counties with their county seat populations (if available)",
+          "solution": "SELECT c.county,\n       c.state,\n       c.county_seat,\n       t.population_2020_census AS seat_population\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county_seat = t.town \n   AND c.state = t.state\n ORDER BY t.population_2020_census IS NULL DESC, \n          c.county;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example45b",
+          "title": "Joining 5: Flag whether each town is a county seat",
+          "solution": "SELECT t.town,\n       t.state,\n       t.population_2020_census,\n       CASE \n           WHEN c.county IS NOT NULL THEN 'Yes'\n           ELSE 'No'\n       END AS is_county_seat,\n       c.county AS seat_of_county\n  FROM pnw_towns AS t\n  LEFT JOIN pnw_counties AS c \n    ON t.town = c.county_seat \n   AND t.state = c.state\n ORDER BY is_county_seat DESC, t.population_2020_census DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example45c",
+          "title": "Joining 6: Count towns per county (including counties with zero towns)",
+          "solution": "SELECT c.county,\n       c.state,\n       c.population_2022 AS county_pop,\n       COUNT(t.town) AS num_towns,\n       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county = t.primary_county \n   AND c.state = t.state\n GROUP BY c.county, c.state, c.population_2022\n ORDER BY num_towns DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
           "hasSolution": true
         },
         {
           "id": "example47",
-          "title": "Joining 3: Find counties that don't have any towns listed",
-          "solution": "SELECT c.county\n FROM pnw_counties AS c\nLEFT JOIN pnw_towns AS t ON c.county = t.primary_county\nWHERE t.town IS NULL;",
+          "title": "Joining 7: Find county seats not in our towns database",
+          "solution": "SELECT c.county,\n       c.state,\n       c.county_seat\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county_seat = t.town \n   AND c.state = t.state\n WHERE t.town IS NULL\n ORDER BY c.state, c.county;",
           "db": "pnw_database.sqlite",
-          "requireOrdering": false,
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example47b",
+          "title": "Joining 8: Find large towns that are NOT county seats",
+          "solution": "SELECT t.town,\n       t.state,\n       t.population_2020_census,\n       t.primary_county\n  FROM pnw_towns AS t\n  LEFT JOIN pnw_counties AS c \n    ON t.town = c.county_seat \n   AND t.state = c.state\n WHERE c.county IS NULL\n   AND t.population_2020_census > 25000\n ORDER BY t.population_2020_census DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example47c",
+          "title": "Joining 9: Find counties with no towns in our database",
+          "solution": "SELECT c.county,\n       c.state,\n       c.population_2022,\n       c.county_seat\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county = t.primary_county \n   AND c.state = t.state\n WHERE t.town IS NULL\n ORDER BY c.population_2022 DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example48",
+          "title": "Joining 10: Comprehensive county analysis",
+          "solution": "SELECT c.county,\n       c.state,\n       c.year_established,\n       CASE \n           WHEN c.year_established < 1860 THEN 'Pioneer'\n           WHEN c.year_established < 1900 THEN 'Settlement'\n           ELSE 'Modern'\n       END AS era,\n       c.population_2022 AS county_pop,\n       COUNT(t.town) AS num_towns,\n       COALESCE(SUM(t.population_2020_census), 0) AS urban_pop,\n       MAX(t.population_2020_census) AS largest_town_pop\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county = t.primary_county \n   AND c.state = t.state\n GROUP BY c.county, c.state, c.year_established, c.population_2022\n ORDER BY c.population_2022 DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
           "hasSolution": true
         }
       ]

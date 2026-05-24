@@ -10,9 +10,13 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 <SchemaReference db="pnw_database.sqlite" />
 
+Joins combine data from multiple tables. This is essential because real databases store related information in separate tables to avoid redundancy.
+
 ![](/sql-tutorial/images/00-setup.png)
 
 ## INNER JOIN
+
+An INNER JOIN returns only rows where there's a match in BOTH tables. Think of it as finding the intersection.
 
 ### Setup
 
@@ -26,21 +30,74 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 ![](/sql-tutorial/images/01c-INNER-JOIN.png)
 
-### Joining 1: Get population of each county seat
+### Joining 1: Enrich town data with county information
+
+*Scenario: You want to see each town alongside when its county was established and the county's etymology. This requires combining data from both tables.*
 
 <SqlExercise
   id="example44"
   db="pnw_database.sqlite"
-  solution={`SELECT c.county, c.county_seat, t.population_2020_census
-  FROM pnw_counties AS c
- INNER JOIN pnw_towns AS t ON c.county_seat = t.town;`}
+  solution={`SELECT t.town,
+       t.population_2020_census,
+       c.county,
+       c.year_established,
+       c.etymology
+  FROM pnw_towns AS t
+ INNER JOIN pnw_counties AS c 
+    ON t.primary_county = c.county 
+   AND t.state = c.state
+ ORDER BY t.population_2020_census DESC;`}
+  requireOrdering
+/>
+
+### Joining 2: Find which towns are county seats
+
+*Scenario: County seats often have special administrative importance. Join to identify them.*
+
+<SqlExercise
+  id="example44b"
+  db="pnw_database.sqlite"
+  solution={`SELECT t.town,
+       t.state,
+       t.population_2020_census AS town_pop,
+       c.county,
+       c.population_2022 AS county_pop
+  FROM pnw_towns AS t
+ INNER JOIN pnw_counties AS c 
+    ON t.town = c.county_seat 
+   AND t.state = c.state
+ ORDER BY t.population_2020_census DESC;`}
+  requireOrdering
+/>
+
+### Joining 3: Compare town population to county population
+
+*Scenario: What percentage of each county's population lives in each town?*
+
+<SqlExercise
+  id="example44c"
+  db="pnw_database.sqlite"
+  solution={`SELECT t.town,
+       t.population_2020_census AS town_pop,
+       c.county,
+       c.population_2022 AS county_pop,
+       ROUND(t.population_2020_census * 100.0 / c.population_2022, 1) AS pct_of_county
+  FROM pnw_towns AS t
+ INNER JOIN pnw_counties AS c 
+    ON t.primary_county = c.county 
+   AND t.state = c.state
+ ORDER BY pct_of_county DESC;`}
+  requireOrdering
 />
 
 ## LEFT JOIN
 
+A LEFT JOIN returns ALL rows from the left table, plus matching rows from the right table. Non-matches get NULL values.
+
 ### Action
 
 ![](/sql-tutorial/images/02a-LEFT-JOIN.png)
+
 ### Output
 
 ![](/sql-tutorial/images/02b-LEFT-JOIN.png)
@@ -51,29 +108,166 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 ![](/sql-tutorial/images/02c-LEFT-JOIN-multiple.png)
 
-### Joining 2: Show ALL counties, even those whose seat isn't in our towns data
+### Joining 4: List all counties with their county seat populations (if available)
+
+*Scenario: Some county seats might not be in our towns database. LEFT JOIN ensures all counties appear.*
 
 <SqlExercise
   id="example45"
   db="pnw_database.sqlite"
-  solution={`SELECT c.county, c.county_seat, t.population_2020_census
+  solution={`SELECT c.county,
+       c.state,
+       c.county_seat,
+       t.population_2020_census AS seat_population
   FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;`}
+  LEFT JOIN pnw_towns AS t 
+    ON c.county_seat = t.town 
+   AND c.state = t.state
+ ORDER BY t.population_2020_census IS NULL DESC, 
+          c.county;`}
+  requireOrdering
+/>
+
+### Joining 5: Flag whether each town is a county seat
+
+*Scenario: Add a column indicating county seat status for every town.*
+
+<SqlExercise
+  id="example45b"
+  db="pnw_database.sqlite"
+  solution={`SELECT t.town,
+       t.state,
+       t.population_2020_census,
+       CASE 
+           WHEN c.county IS NOT NULL THEN 'Yes'
+           ELSE 'No'
+       END AS is_county_seat,
+       c.county AS seat_of_county
+  FROM pnw_towns AS t
+  LEFT JOIN pnw_counties AS c 
+    ON t.town = c.county_seat 
+   AND t.state = c.state
+ ORDER BY is_county_seat DESC, t.population_2020_census DESC;`}
+  requireOrdering
+/>
+
+### Joining 6: Count towns per county (including counties with zero towns)
+
+*Scenario: Some small counties might have no incorporated towns in our database. LEFT JOIN preserves them.*
+
+<SqlExercise
+  id="example45c"
+  db="pnw_database.sqlite"
+  solution={`SELECT c.county,
+       c.state,
+       c.population_2022 AS county_pop,
+       COUNT(t.town) AS num_towns,
+       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county = t.primary_county 
+   AND c.state = t.state
+ GROUP BY c.county, c.state, c.population_2022
+ ORDER BY num_towns DESC;`}
+  requireOrdering
 />
 
 ## Anti-Join
+
+An anti-join finds rows in one table that have NO match in another table. It's implemented as a LEFT JOIN with a WHERE clause checking for NULLs.
 
 ### Output
 
 ![](/sql-tutorial/images/12-Anti-join.png)
 
-### Joining 3: Find counties that don't have any towns listed
+### Joining 7: Find county seats not in our towns database
+
+*Scenario: Data quality check - which county seats are missing from our towns table?*
 
 <SqlExercise
   id="example47"
   db="pnw_database.sqlite"
-  solution={`SELECT c.county
- FROM pnw_counties AS c
-LEFT JOIN pnw_towns AS t ON c.county = t.primary_county
-WHERE t.town IS NULL;`}
+  solution={`SELECT c.county,
+       c.state,
+       c.county_seat
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county_seat = t.town 
+   AND c.state = t.state
+ WHERE t.town IS NULL
+ ORDER BY c.state, c.county;`}
+  requireOrdering
+/>
+
+### Joining 8: Find large towns that are NOT county seats
+
+*Scenario: Identify major population centers that lack county seat status.*
+
+<SqlExercise
+  id="example47b"
+  db="pnw_database.sqlite"
+  solution={`SELECT t.town,
+       t.state,
+       t.population_2020_census,
+       t.primary_county
+  FROM pnw_towns AS t
+  LEFT JOIN pnw_counties AS c 
+    ON t.town = c.county_seat 
+   AND t.state = c.state
+ WHERE c.county IS NULL
+   AND t.population_2020_census > 25000
+ ORDER BY t.population_2020_census DESC;`}
+  requireOrdering
+/>
+
+### Joining 9: Find counties with no towns in our database
+
+*Scenario: Which counties have zero incorporated towns listed? This might indicate missing data.*
+
+<SqlExercise
+  id="example47c"
+  db="pnw_database.sqlite"
+  solution={`SELECT c.county,
+       c.state,
+       c.population_2022,
+       c.county_seat
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county = t.primary_county 
+   AND c.state = t.state
+ WHERE t.town IS NULL
+ ORDER BY c.population_2022 DESC;`}
+  requireOrdering
+/>
+
+## Combining Multiple Techniques
+
+Real-world queries often combine joins with filtering, grouping, and transformations.
+
+### Joining 10: Comprehensive county analysis
+
+*Scenario: Create a county dashboard showing establishment era, number of towns, total town population, and the largest town.*
+
+<SqlExercise
+  id="example48"
+  db="pnw_database.sqlite"
+  solution={`SELECT c.county,
+       c.state,
+       c.year_established,
+       CASE 
+           WHEN c.year_established < 1860 THEN 'Pioneer'
+           WHEN c.year_established < 1900 THEN 'Settlement'
+           ELSE 'Modern'
+       END AS era,
+       c.population_2022 AS county_pop,
+       COUNT(t.town) AS num_towns,
+       COALESCE(SUM(t.population_2020_census), 0) AS urban_pop,
+       MAX(t.population_2020_census) AS largest_town_pop
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county = t.primary_county 
+   AND c.state = t.state
+ GROUP BY c.county, c.state, c.year_established, c.population_2022
+ ORDER BY c.population_2022 DESC;`}
+  requireOrdering
 />

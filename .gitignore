@@ -6,3 +6,7 @@
 .httr-oauth
 .DS_Store
 .quarto
+
+# Node — node_modules should always live inside site/, never at the repo root.
+# A stray "npm install" at the root creates these by accident.
+node_modules/

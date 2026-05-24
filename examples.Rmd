@@ -171,7 +171,11 @@ margin-left: 40px; /* Adjust indentation as needed */
 
 ## Selecting columns/fields
 
-### Selection 1: Select all town names
+Imagine you work for a regional planning agency and need to pull specific information from your database. The SELECT statement lets you choose exactly which columns you need.
+
+### Selection 1: Create a quick reference list of all town names
+
+*Scenario: You need a simple list of town names for a mail merge or dropdown menu.*
 
 ```{sql example1, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -182,7 +186,9 @@ SELECT town
   FROM pnw_towns;
 ```
 
-### Selection 2: Select all county names
+### Selection 2: List all counties in the Pacific Northwest
+
+*Scenario: You're preparing a report header that needs to list every county in the region.*
 
 ```{sql example2, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -194,7 +200,9 @@ SELECT county
 ```
 
 
-### Selection 3: Select all columns for towns table
+### Selection 3: Export all town data for a comprehensive audit
+
+*Scenario: An auditor needs the complete towns dataset. Using `*` selects every column.*
 
 ```{sql example3, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -205,7 +213,9 @@ SELECT *
   FROM pnw_towns;
 ```
 
-### Selection 4: Select county names and population for 2022 
+### Selection 4: Pull county names and populations for a funding report
+
+*Scenario: Federal funding is allocated by population. You need county names paired with their 2022 population figures.*
 
 ```{sql example4, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -218,34 +228,45 @@ SELECT county, population_2022
 
 ## Aliasing
 
-### Aliasing 1: Select county names, population for 2022, and land area (Aliased)
+Aliases make your output more readable and your queries easier to write. They're especially useful when column names are long or when you're doing calculations.
+
+### Aliasing 1: Create a clean report with user-friendly column headers
+
+*Scenario: You're sharing data with non-technical stakeholders who won't understand `land_area_sq_mi`. Rename columns to be clearer.*
 
 ```{sql example5, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example5-solution}
-SELECT county AS cty, 
-       population_2022 AS pop2022,
-       land_area_sq_mi AS area
+SELECT county AS county_name, 
+       population_2022 AS population,
+       land_area_sq_mi AS area_square_miles
   FROM pnw_counties;
 ```
 
-### Aliasing 2: Alias the table name
+### Aliasing 2: Use table aliases to simplify longer queries
+
+*Scenario: When writing complex queries with multiple tables, short table aliases save typing and improve readability.*
 
 ```{sql example6, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example6-solution}
-SELECT counties.county,
-       counties.origin
-  FROM pnw_counties AS counties;
+SELECT c.county,
+       c.county_seat,
+       c.year_established
+  FROM pnw_counties AS c;
 ```
 
 ## Unique entries
 
-### Unique 1: Select distinct states from the `pnw_towns` table
+DISTINCT removes duplicate values, helping you understand the unique categories in your data.
+
+### Unique 1: What states are represented in our towns database?
+
+*Scenario: Before running state-specific analyses, you need to know which states are in the dataset.*
 
 ```{sql example7, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -256,63 +277,73 @@ SELECT DISTINCT state
   FROM pnw_towns;
 ```
 
-<!--
-## View creation
+### Unique 2: Which counties have towns that span multiple counties?
 
-### View 1: Create a view that lists towns along with their primary counties
+*Scenario: Some towns span county lines. Find which counties appear as secondary counties for any town.*
 
 ```{sql example8, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example8-solution}
-CREATE VIEW towns_with_county AS
-SELECT town, primary_county
-  FROM pnw_towns;
+SELECT DISTINCT secondary_county
+  FROM pnw_towns
+ WHERE secondary_county IS NOT NULL;
 ```
-
-### View 2: Use this view in a query
-
-```{sql example9, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here
-```
-
-```{sql example9-solution}
-SELECT * 
-  FROM towns_with_county;
-```
-
--->
 
 ## Counting
 
-### Counting 1: Count the number of records in the `pnw_towns` table
+COUNT helps you understand the size of your data and answer "how many" questions.
+
+### Counting 1: How many towns are in our database?
+
+*Scenario: A journalist asks how comprehensive your database is. You need a quick count.*
 
 ```{sql example10, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example10-solution}
-SELECT COUNT(*) AS num_towns
+SELECT COUNT(*) AS total_towns
   FROM pnw_towns;
 ```
 
-### Counting 2: Count the number of distinct states in `pnw_counties`
+### Counting 2: How many states does our county data cover?
+
+*Scenario: You want to verify your data covers both Oregon and Washington (and only those states).*
 
 ```{sql example11, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example11-solution}
-SELECT COUNT(DISTINCT state) AS num_unique_states
+SELECT COUNT(DISTINCT state) AS number_of_states
   FROM pnw_counties;
+```
+
+### Counting 3: How many towns have incomplete data (missing secondary county info)?
+
+*Scenario: Data quality check - how many towns don't span multiple counties?*
+
+```{sql example11b, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example11b-solution}
+SELECT COUNT(*) AS towns_single_county
+  FROM pnw_towns
+ WHERE secondary_county IS NULL;
 ```
 
 # Filtering Techniques
 
 ## Filtering rows/records
 
-### Filtering 1: Towns with greater than 150,000 people
+The WHERE clause is your primary tool for finding specific records. Think of it as asking questions of your data.
+
+### Filtering 1: Which towns qualify as "cities" (population over 50,000)?
+
+*Scenario: You're researching urban development and need to identify the larger municipalities.*
 
 ```{sql example12, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -321,23 +352,29 @@ SELECT COUNT(DISTINCT state) AS num_unique_states
 ```{sql example12-solution}
 SELECT town, state, population_2020_census 
   FROM pnw_towns 
- WHERE population_2020_census > 150000;
+ WHERE population_2020_census > 50000
+ ORDER BY population_2020_census DESC;
 ```
 
-### Filtering 2: Towns with greater than 150,000 people and in Oregon
+### Filtering 2: Find large Oregon cities for a state-specific grant
+
+*Scenario: An Oregon-only grant targets cities over 50,000 people. Who qualifies?*
 
 ```{sql example13, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example13-solution}
-SELECT town, state, population_2020_census 
+SELECT town, population_2020_census 
   FROM pnw_towns 
- WHERE population_2020_census > 150000
-   AND state = 'Oregon';
+ WHERE population_2020_census > 50000
+   AND state = 'Oregon'
+ ORDER BY population_2020_census DESC;
 ```
 
-### Filtering 3: Towns with greater than 150,000 people or in Oregon
+### Filtering 3: Find either large cities OR any Oregon town
+
+*Scenario: A regional initiative includes all Oregon towns plus major cities from Washington. The OR operator creates a union of conditions.*
 
 ```{sql example14, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -346,11 +383,14 @@ SELECT town, state, population_2020_census
 ```{sql example14-solution}
 SELECT town, state, population_2020_census 
   FROM pnw_towns 
- WHERE population_2020_census > 150000
-    OR state = 'Oregon';
+ WHERE population_2020_census > 100000
+    OR state = 'Oregon'
+ ORDER BY state, population_2020_census DESC;
 ```
 
-### Filtering 4: Counties established after 1920 with a population greater than 100,000
+### Filtering 4: Find historically significant, populous counties
+
+*Scenario: A heritage tourism initiative targets counties established before 1860 that now have substantial populations (over 50,000).*
 
 ```{sql example15, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -359,49 +399,44 @@ SELECT town, state, population_2020_census
 ```{sql example15-solution}
 SELECT county, state, year_established, population_2022
   FROM pnw_counties
- WHERE year_established > 1920
-   AND population_2022 > 100000;
+ WHERE year_established < 1860
+   AND population_2022 > 50000
+ ORDER BY year_established;
 ```
 
-### Filtering 5: Counties established after 1880 with a population greater than 100,000
+### Filtering 5: Find mid-sized towns (population between 10,000 and 50,000)
+
+*Scenario: A "Main Street" revitalization program targets mid-sized towns. BETWEEN provides a clean way to specify ranges.*
 
 ```{sql example16, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example16-solution}
-SELECT county, state, year_established, population_2022
-  FROM pnw_counties
- WHERE year_established > 1880
-   AND population_2022 > 100000;
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census BETWEEN 10000 AND 50000
+ ORDER BY population_2020_census DESC;
 ```
 
-### Filtering 6: Towns with a land area between 12 and 15 square miles
+### Filtering 6: Find compact towns (small land area)
+
+*Scenario: Urban planners studying density want towns under 2 square miles.*
 
 ```{sql example17, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example17-solution}
-SELECT town, state, land_area_sq_mi
+SELECT town, state, land_area_sq_mi, population_2020_census
   FROM pnw_towns
- WHERE land_area_sq_mi >= 12
-   AND land_area_sq_mi <= 15;
+ WHERE land_area_sq_mi < 2
+ ORDER BY land_area_sq_mi;
 ```
 
-### Filtering 7: Towns with a land area between 10 and 15 square miles (simplified)
+### Filtering 7: Complex criteria with parentheses
 
-```{sql example18, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here
-```
-
-```{sql example18-solution}
-SELECT town, state, land_area_sq_mi
-  FROM pnw_towns
- WHERE land_area_sq_mi BETWEEN 12 AND 15;
-```
-
-### Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022
+*Scenario: Find either (a) old Washington counties established before 1860, or (b) any Oregon county with population over 200,000. Parentheses control the logic.*
 
 ```{sql example19, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -410,25 +445,32 @@ SELECT town, state, land_area_sq_mi
 ```{sql example19-solution}
 SELECT county, state, year_established, population_2022
   FROM pnw_counties
- WHERE (state = 'Washington' AND year_established BETWEEN 1890 AND 1900)
-    OR (state = 'Oregon' AND population_2022 > 300000);
+ WHERE (state = 'Washington' AND year_established < 1860)
+    OR (state = 'Oregon' AND population_2022 > 200000)
+ ORDER BY state, population_2022 DESC;
 ```
 
 ## Filtering text
 
-### Filtering 9: Counties that start with the letter "K":
+Pattern matching with LIKE lets you search for partial text matches using wildcards: `%` matches any sequence of characters, `_` matches exactly one character.
+
+### Filtering 8: Find all counties named after presidents
+
+*Scenario: For a history article, find counties whose etymology mentions "President".*
 
 ```{sql example20, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example20-solution}
-SELECT county, state
+SELECT county, state, etymology
   FROM pnw_counties
- WHERE county LIKE 'K%';
+ WHERE etymology LIKE '%President%';
 ```
 
-### Filtering 10: Towns that end with the letters "ia":
+### Filtering 9: Find towns ending in "ville"
+
+*Scenario: A linguistics researcher is studying town naming conventions.*
 
 ```{sql example21, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -437,292 +479,403 @@ SELECT county, state
 ```{sql example21-solution}
 SELECT town, state
   FROM pnw_towns
- WHERE town LIKE '%ia';
+ WHERE town LIKE '%ville';
 ```
 
-### Filtering 11: Towns that contain the phrase "mount":
+### Filtering 10: Find towns with "Port" in their name
+
+*Scenario: Identify coastal or river port towns for a maritime commerce study.*
 
 ```{sql example22, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example22-solution}
-SELECT town, state
+SELECT town, state, population_2020_census
   FROM pnw_towns
- WHERE town LIKE '%mount%';
+ WHERE town LIKE '%Port%'
+    OR town LIKE '%port%'
+ ORDER BY population_2020_census DESC;
 ```
 
-### Filtering 12: Counties with specific pattern in third and fourth position ("ar")
+### Filtering 11: Find counties with names starting with "King" or "Clark"
 
-```{sql example23, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here
-```
-
-```{sql example23-solution}
-SELECT county
-  FROM pnw_counties
- WHERE county LIKE '__ar%';
-```
-
-### Filtering 13: Towns that are in Multnomah or Spokane counties
+*Scenario: Using IN for multiple exact matches is cleaner than multiple OR conditions.*
 
 ```{sql example24, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example24-solution}
-SELECT * 
-  FROM pnw_towns 
- WHERE primary_county IN ('Multnomah', 'Spokane');
+SELECT county, state, population_2022 
+  FROM pnw_counties 
+ WHERE county IN ('King', 'Clark', 'Pierce', 'Multnomah')
+ ORDER BY population_2022 DESC;
 ```
 
-### Filtering 14: Towns with missing values for secondary county
+### Filtering 12: Find towns that span multiple counties
+
+*Scenario: Administrative complexity - which towns cross county boundaries?*
 
 ```{sql example25, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example25-solution}
-SELECT * 
- FROM pnw_towns 
-WHERE secondary_county IS NULL;
+SELECT town, state, primary_county, secondary_county, tertiary_county
+  FROM pnw_towns 
+ WHERE secondary_county IS NOT NULL
+ ORDER BY town;
 ```
 
-### Filtering 15: Towns without missing values for secondary county
+### Filtering 13: Find towns entirely within one county
+
+*Scenario: The opposite query - towns that don't span county lines.*
 
 ```{sql example26, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example26-solution}
-SELECT * 
- FROM pnw_towns 
-WHERE secondary_county IS NOT NULL;
+SELECT town, state, primary_county
+  FROM pnw_towns 
+ WHERE secondary_county IS NULL
+ ORDER BY population_2020_census DESC;
 ``` 
 
 # Aggregating Techniques
 
 ## Numerical summaries
 
-### Aggregating 1: Average population across all towns in Washington
+Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summary statistics.
+
+### Aggregating 1: What's the average town size in each state?
+
+*Scenario: Compare typical town sizes between Oregon and Washington.*
 
 ```{sql example27, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example27-solution}
-SELECT AVG(population_2020_census) AS avg_population
+SELECT state,
+       ROUND(AVG(population_2020_census), 0) AS avg_population
   FROM pnw_towns
- WHERE state = 'Washington';
+ GROUP BY state;
 ```
 
-### Aggregating 2: Total population across all towns in Oregon
+### Aggregating 2: What's the total urban population by state?
+
+*Scenario: How much of each state's population lives in incorporated towns?*
 
 ```{sql example28, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example28-solution}
-SELECT SUM(population_2020_census) AS total_population
+SELECT state,
+       SUM(population_2020_census) AS total_town_population
   FROM pnw_towns
- WHERE state = 'Oregon';
+ GROUP BY state;
 ```
 
-### Aggregating 3: Minimum population across all towns
+### Aggregating 3: Find the smallest incorporated town
+
+*Scenario: A journalist wants to profile the smallest town in the Pacific Northwest.*
 
 ```{sql example29, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example29-solution}
-SELECT MIN(population_2020_census) AS min_population
-  FROM pnw_towns;
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);
 ```
 
-### Aggregating 4: Maximum population across all towns
+### Aggregating 4: Find the largest city
+
+*Scenario: Identify the region's largest metropolitan center.*
 
 ```{sql example30, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example30-solution}
-SELECT MAX(population_2020_census) AS max_population
-  FROM pnw_towns;
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);
 ```
 
-### Aggregating 5: Total number of towns
+### Aggregating 5: Summary statistics for county land areas
+
+*Scenario: Get a complete statistical overview of county sizes.*
 
 ```{sql example31, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example31-solution}
-SELECT COUNT(*) AS total_towns
-  FROM pnw_towns;
+SELECT COUNT(*) AS num_counties,
+       MIN(land_area_sq_mi) AS smallest_county,
+       MAX(land_area_sq_mi) AS largest_county,
+       ROUND(AVG(land_area_sq_mi), 0) AS avg_size,
+       SUM(land_area_sq_mi) AS total_area
+  FROM pnw_counties;
 ```
 
 ## Categorical summaries
 
-### Aggregating 6: First town alphabetically
+MIN and MAX work on text too, returning alphabetically first/last values.
+
+### Aggregating 6: Which county was established first and last?
+
+*Scenario: Historical research on regional development.*
 
 ```{sql example32, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example32-solution}
-SELECT MIN(town) AS first_town
-  FROM pnw_towns;
+SELECT MIN(year_established) AS earliest_county,
+       MAX(year_established) AS newest_county
+  FROM pnw_counties;
 ```
 
-### Aggregating 7: Last county alphabetically
+### Aggregating 7: Find the actual earliest and newest counties
+
+*Scenario: Get the county names, not just the years.*
 
 ```{sql example33, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example33-solution}
-SELECT MAX(county) AS last_county
-  FROM pnw_counties;
+SELECT county, state, year_established
+  FROM pnw_counties
+ WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)
+    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)
+ ORDER BY year_established;
 ```
 
 ## Rounding summaries
 
-### Aggregating 8: Rounded average land areas
+ROUND helps create cleaner, more readable output for reports and presentations.
 
-- 8a: Rounding to 2 decimal places:
+### Aggregating 8: Calculate and round population density
+
+*Scenario: Create a readable density report (people per square mile).*
 
 ```{sql example34a, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example34a-solution}
-  SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area
-    FROM pnw_towns;
+SELECT town, 
+       state,
+       population_2020_census,
+       land_area_sq_mi,
+       ROUND(population_2020_census / land_area_sq_mi, 1) AS people_per_sq_mile
+  FROM pnw_towns
+ WHERE land_area_sq_mi > 0
+ ORDER BY people_per_sq_mile DESC;
 ```
 
-- 8b: Rounding to 0 decimal places:
+### Aggregating 9: Round to whole numbers for simpler reporting
+
+*Scenario: Executive summaries often need whole numbers.*
 
 ```{sql example34b, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example34b-solution}
-  SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area
-    FROM pnw_towns;
+SELECT state,
+       ROUND(AVG(population_2020_census), 0) AS avg_town_pop,
+       ROUND(AVG(land_area_sq_mi), 0) AS avg_town_area
+  FROM pnw_towns
+ GROUP BY state;
 ```
 
 # Sorting and Grouping Techniques
 
 ## Sorting
 
-### Sorting 1: Sorting towns by 2020 census population
+ORDER BY controls how results are displayed. This is crucial for reports and identifying extremes.
+
+### Sorting 1: Rank towns by population (smallest first)
+
+*Scenario: Default ORDER BY sorts ascending (smallest to largest).*
 
 ```{sql example35, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example35-solution}
-SELECT town, population_2020_census
+SELECT town, state, population_2020_census
   FROM pnw_towns
  ORDER BY population_2020_census;
 ```
 
-### Sorting 2: Sorting towns by 2020 census population in ascending and descending order
+### Sorting 2: Rank towns by population (largest first)
 
-- 2a: Ascending order:
-
-```{sql example36a, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here
-```
-
-```{sql example36a-solution}
-SELECT town, population_2020_census
-  FROM pnw_towns
-ORDER BY population_2020_census ASC;
-```
-
-- 2b: Descending order:
+*Scenario: DESC reverses the order for "top N" style reports.*
 
 ```{sql example36b, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example36b-solution}
-SELECT town, population_2020_census
+SELECT town, state, population_2020_census
   FROM pnw_towns
  ORDER BY population_2020_census DESC;
 ```
 
-### Sorting 3: Sorting counties by state and population in 2022
+### Sorting 3: Sort by multiple columns (state, then population within state)
+
+*Scenario: Create a report organized by state, with largest cities first within each state.*
 
 ```{sql example37, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example37-solution}
-SELECT county, state, population_2022
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ ORDER BY state, population_2020_census DESC;
+```
+
+### Sorting 4: Sort counties by age (oldest first)
+
+*Scenario: Historical timeline of county formation.*
+
+```{sql example37b, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example37b-solution}
+SELECT county, state, year_established, etymology
   FROM pnw_counties
- ORDER BY state, population_2022 DESC;
+ ORDER BY year_established, county;
 ```
 
 ## Grouping
 
-### Grouping 1: Grouping towns by state
+GROUP BY collapses rows into groups for aggregate calculations. This is one of SQL's most powerful features.
+
+### Grouping 1: Count towns per state
+
+*Scenario: Basic comparison of how many incorporated towns each state has.*
 
 ```{sql example38, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example38-solution}
-SELECT state, COUNT(*) AS total_towns
+SELECT state, 
+       COUNT(*) AS number_of_towns
   FROM pnw_towns
  GROUP BY state;
 ```
 
-### Grouping 2: Grouping and ordering counties by state and average population
+### Grouping 2: Compare states by average county population
+
+*Scenario: Which state has larger counties on average?*
 
 ```{sql example39, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example39-solution}
-SELECT state, AVG(population_2022) AS avg_population
+SELECT state, 
+       COUNT(*) AS num_counties,
+       ROUND(AVG(population_2022), 0) AS avg_county_pop,
+       SUM(population_2022) AS total_state_pop
   FROM pnw_counties
  GROUP BY state
- ORDER BY avg_population DESC;
+ ORDER BY avg_county_pop DESC;
 ```
 
-### Grouping 3: Filtering on grouped data
+### Grouping 3: Which counties have the most towns?
 
-- Trying with `WHERE`
+*Scenario: Identify counties with many incorporated municipalities.*
 
-```{sql example40a, exercise=TRUE, exercise.eval=FALSE}
+```{sql example39b, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
-```{sql example40a-solution, error=TRUE}
-SELECT primary_county, state, COUNT(*) AS total_towns
+```{sql example39b-solution}
+SELECT primary_county, 
+       state,
+       COUNT(*) AS num_towns,
+       SUM(population_2020_census) AS total_pop
   FROM pnw_towns
- GROUP BY primary_county
- WHERE COUNT(*) > 10;
+ GROUP BY primary_county, state
+ ORDER BY num_towns DESC;
+```
+
+### Grouping 4: Filter groups with HAVING
+
+*Scenario: Find only counties with 10 or more towns. HAVING filters after grouping (WHERE filters before).*
+
+**First, let's see why WHERE doesn't work here:**
+
+```{sql example40a, exercise=TRUE, exercise.eval=FALSE}
+-- This will cause an error - try it to see why
+-- WHERE cannot filter on aggregate results
+```
+
+```{sql example40a-solution, error=TRUE}
+-- This query will fail because WHERE runs before GROUP BY
+SELECT primary_county, state, COUNT(*) AS num_towns
+  FROM pnw_towns
+ GROUP BY primary_county, state
+ WHERE COUNT(*) >= 10;
 ```   
 
-- Trying with `HAVING`
+**Use HAVING instead to filter grouped results:**
 
 ```{sql example40b, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example40b-solution}
-SELECT primary_county, state, COUNT(*) AS total_towns
+SELECT primary_county, 
+       state, 
+       COUNT(*) AS num_towns
   FROM pnw_towns
- GROUP BY primary_county
-HAVING COUNT(*) > 10;
+ GROUP BY primary_county, state
+HAVING COUNT(*) >= 10
+ ORDER BY num_towns DESC;
+```
+
+### Grouping 5: Population growth by county
+
+*Scenario: Which counties saw the most population growth in their towns from 2010 to 2020?*
+
+```{sql example40c, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example40c-solution}
+SELECT primary_county,
+       state,
+       SUM(population_2010_census) AS pop_2010,
+       SUM(population_2020_census) AS pop_2020,
+       SUM(population_2020_census) - SUM(population_2010_census) AS growth
+  FROM pnw_towns
+ GROUP BY primary_county, state
+HAVING SUM(population_2010_census) > 0
+ ORDER BY growth DESC;
 ```
 
 # Transforming Techniques
 
-### Transforming 1: Classifying towns by population size using CASE WHEN
+Transformations create new calculated columns or categorize data based on conditions.
+
+### Transforming 1: Classify towns by size category
+
+*Scenario: Create size tiers for a stratified analysis. CASE WHEN acts like an IF-THEN statement.*
 
 ```{sql example41, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
@@ -730,45 +883,118 @@ HAVING COUNT(*) > 10;
 
 ```{sql example41-solution}
 SELECT town, 
-       population_2010_census,
+       state,
+       population_2020_census,
        CASE 
-           WHEN population_2010_census > 100000 THEN 'Large'
-           WHEN population_2010_census BETWEEN 50000 AND 100000 THEN 'Medium'
-           ELSE 'Small'
-       END AS town_size
+           WHEN population_2020_census >= 100000 THEN 'Large City'
+           WHEN population_2020_census >= 25000 THEN 'Medium City'
+           WHEN population_2020_census >= 5000 THEN 'Small City'
+           ELSE 'Town'
+       END AS size_category
   FROM pnw_towns
-  ORDER BY population_2010_census DESC;
+ ORDER BY population_2020_census DESC;
 ```  
 
-### Transforming 2: Percentage increase in population from 2010 to 2020
+### Transforming 2: Calculate population change from 2010 to 2020
+
+*Scenario: Identify growing and shrinking towns.*
 
 ```{sql example42, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example42-solution}
-SELECT town, state, (population_2020_census - population_2010_census) / population_2010_census * 100 AS pct_change
+SELECT town, 
+       state, 
+       population_2010_census AS pop_2010,
+       population_2020_census AS pop_2020,
+       population_2020_census - population_2010_census AS pop_change,
+       ROUND((population_2020_census - population_2010_census) * 100.0 / population_2010_census, 1) AS pct_change
   FROM pnw_towns
-  ORDER BY pct_change DESC;
+ WHERE population_2010_census > 0
+ ORDER BY pct_change DESC;
 ```
 
-### Transforming 3: Population density
+### Transforming 3: Identify fastest-growing and declining towns
+
+*Scenario: Combine CASE WHEN with calculations to flag growth status.*
+
+```{sql example42b, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example42b-solution}
+SELECT town,
+       state,
+       population_2010_census AS pop_2010,
+       population_2020_census AS pop_2020,
+       CASE 
+           WHEN population_2020_census > population_2010_census * 1.20 THEN 'Rapid Growth (>20%)'
+           WHEN population_2020_census > population_2010_census THEN 'Growing'
+           WHEN population_2020_census = population_2010_census THEN 'Stable'
+           WHEN population_2020_census > population_2010_census * 0.80 THEN 'Declining'
+           ELSE 'Rapid Decline (>20%)'
+       END AS growth_status
+  FROM pnw_towns
+ WHERE population_2010_census > 0
+ ORDER BY (population_2020_census - population_2010_census) * 1.0 / population_2010_census DESC;
+```
+
+### Transforming 4: Calculate and categorize population density
+
+*Scenario: Classify towns as urban, suburban, or rural based on density.*
 
 ```{sql example43, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example43-solution}
-SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
+SELECT town, 
+       state, 
+       population_2020_census,
+       land_area_sq_mi,
+       ROUND(population_2020_census / land_area_sq_mi, 0) AS density,
+       CASE 
+           WHEN population_2020_census / land_area_sq_mi > 5000 THEN 'Urban'
+           WHEN population_2020_census / land_area_sq_mi > 1000 THEN 'Suburban'
+           ELSE 'Rural'
+       END AS density_class
   FROM pnw_towns
- ORDER BY pop_density DESC;
+ WHERE land_area_sq_mi > 0
+ ORDER BY density DESC;
+```
+
+### Transforming 5: Flag counties by era of establishment
+
+*Scenario: Categorize counties by historical period.*
+
+```{sql example43b, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example43b-solution}
+SELECT county,
+       state,
+       year_established,
+       CASE 
+           WHEN year_established < 1850 THEN 'Pioneer Era'
+           WHEN year_established < 1890 THEN 'Settlement Era'
+           WHEN year_established < 1920 THEN 'Progressive Era'
+           ELSE 'Modern Era'
+       END AS historical_era
+  FROM pnw_counties
+ ORDER BY year_established;
 ```
 
 # Joining Techniques
 
+Joins combine data from multiple tables. This is essential because real databases store related information in separate tables to avoid redundancy.
+
 ![](images/00-setup.png){ width=60% }
 
 ## INNER JOIN
+
+An INNER JOIN returns only rows where there's a match in BOTH tables. Think of it as finding the intersection.
 
 ### Setup
 
@@ -783,23 +1009,77 @@ SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
 
 ![](images/01c-INNER JOIN.png){ width=60% }
 
-### Joining 1: Get population of each county seat
+### Joining 1: Enrich town data with county information
+
+*Scenario: You want to see each town alongside when its county was established and the county's etymology. This requires combining data from both tables.*
 
 ```{sql example44, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example44-solution}
-SELECT c.county, c.county_seat, t.population_2020_census
-  FROM pnw_counties AS c
- INNER JOIN pnw_towns AS t ON c.county_seat = t.town;
+SELECT t.town,
+       t.population_2020_census,
+       c.county,
+       c.year_established,
+       c.etymology
+  FROM pnw_towns AS t
+ INNER JOIN pnw_counties AS c 
+    ON t.primary_county = c.county 
+   AND t.state = c.state
+ ORDER BY t.population_2020_census DESC;
+```
+
+### Joining 2: Find which towns are county seats
+
+*Scenario: County seats often have special administrative importance. Join to identify them.*
+
+```{sql example44b, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example44b-solution}
+SELECT t.town,
+       t.state,
+       t.population_2020_census AS town_pop,
+       c.county,
+       c.population_2022 AS county_pop
+  FROM pnw_towns AS t
+ INNER JOIN pnw_counties AS c 
+    ON t.town = c.county_seat 
+   AND t.state = c.state
+ ORDER BY t.population_2020_census DESC;
+```
+
+### Joining 3: Compare town population to county population
+
+*Scenario: What percentage of each county's population lives in each town?*
+
+```{sql example44c, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example44c-solution}
+SELECT t.town,
+       t.population_2020_census AS town_pop,
+       c.county,
+       c.population_2022 AS county_pop,
+       ROUND(t.population_2020_census * 100.0 / c.population_2022, 1) AS pct_of_county
+  FROM pnw_towns AS t
+ INNER JOIN pnw_counties AS c 
+    ON t.primary_county = c.county 
+   AND t.state = c.state
+ ORDER BY pct_of_county DESC;
 ```
 
 ## LEFT JOIN
 
+A LEFT JOIN returns ALL rows from the left table, plus matching rows from the right table. Non-matches get NULL values.
+
 ### Action
 
 ![](images/02a-LEFT JOIN.png){ width=60% }
+
 ### Output
 
 ![](images/02b-LEFT JOIN.png){ width=60% }
@@ -810,52 +1090,173 @@ SELECT c.county, c.county_seat, t.population_2020_census
 
 ![](images/02c-LEFT JOIN multiple.png){ width=60% }
 
-### Joining 2: Show ALL counties, even those whose seat isn't in our towns data
+### Joining 4: List all counties with their county seat populations (if available)
+
+*Scenario: Some county seats might not be in our towns database. LEFT JOIN ensures all counties appear.*
 
 ```{sql example45, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example45-solution}
-SELECT c.county, c.county_seat, t.population_2020_census
+SELECT c.county,
+       c.state,
+       c.county_seat,
+       t.population_2020_census AS seat_population
   FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;
+  LEFT JOIN pnw_towns AS t 
+    ON c.county_seat = t.town 
+   AND c.state = t.state
+ ORDER BY t.population_2020_census IS NULL DESC, 
+          c.county;
 ```
 
-<!-- 
-## RIGHT JOIN
+### Joining 5: Flag whether each town is a county seat
 
-### Joining 3: List all counties and their corresponding town data (including counties without town data)
+*Scenario: Add a column indicating county seat status for every town.*
 
-```{sql example46, exercise=TRUE, exercise.eval=FALSE}
+```{sql example45b, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
-```{sql example46-solution}
-SELECT c.county, t.town
- FROM pnw_towns AS t
-RIGHT JOIN pnw_counties AS c ON t.primary_county = c.county
-  ORDER BY c.county DESC;
+```{sql example45b-solution}
+SELECT t.town,
+       t.state,
+       t.population_2020_census,
+       CASE 
+           WHEN c.county IS NOT NULL THEN 'Yes'
+           ELSE 'No'
+       END AS is_county_seat,
+       c.county AS seat_of_county
+  FROM pnw_towns AS t
+  LEFT JOIN pnw_counties AS c 
+    ON t.town = c.county_seat 
+   AND t.state = c.state
+ ORDER BY is_county_seat DESC, t.population_2020_census DESC;
 ```
 
--->
+### Joining 6: Count towns per county (including counties with zero towns)
+
+*Scenario: Some small counties might have no incorporated towns in our database. LEFT JOIN preserves them.*
+
+```{sql example45c, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example45c-solution}
+SELECT c.county,
+       c.state,
+       c.population_2022 AS county_pop,
+       COUNT(t.town) AS num_towns,
+       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county = t.primary_county 
+   AND c.state = t.state
+ GROUP BY c.county, c.state, c.population_2022
+ ORDER BY num_towns DESC;
+```
 
 ## Anti-Join
+
+An anti-join finds rows in one table that have NO match in another table. It's implemented as a LEFT JOIN with a WHERE clause checking for NULLs.
 
 ### Output
 
 ![](images/12-Anti join.png){ width=60% }
 
-### Joining 3: Find counties that don't have any towns listed
+### Joining 7: Find county seats not in our towns database
+
+*Scenario: Data quality check - which county seats are missing from our towns table?*
 
 ```{sql example47, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here
 ```
 
 ```{sql example47-solution}
-SELECT c.county
- FROM pnw_counties AS c
-LEFT JOIN pnw_towns AS t ON c.county = t.primary_county
-WHERE t.town IS NULL;
+SELECT c.county,
+       c.state,
+       c.county_seat
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county_seat = t.town 
+   AND c.state = t.state
+ WHERE t.town IS NULL
+ ORDER BY c.state, c.county;
 ```
 
+### Joining 8: Find large towns that are NOT county seats
+
+*Scenario: Identify major population centers that lack county seat status.*
+
+```{sql example47b, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example47b-solution}
+SELECT t.town,
+       t.state,
+       t.population_2020_census,
+       t.primary_county
+  FROM pnw_towns AS t
+  LEFT JOIN pnw_counties AS c 
+    ON t.town = c.county_seat 
+   AND t.state = c.state
+ WHERE c.county IS NULL
+   AND t.population_2020_census > 25000
+ ORDER BY t.population_2020_census DESC;
+```
+
+### Joining 9: Find counties with no towns in our database
+
+*Scenario: Which counties have zero incorporated towns listed? This might indicate missing data.*
+
+```{sql example47c, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example47c-solution}
+SELECT c.county,
+       c.state,
+       c.population_2022,
+       c.county_seat
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county = t.primary_county 
+   AND c.state = t.state
+ WHERE t.town IS NULL
+ ORDER BY c.population_2022 DESC;
+```
+
+## Combining Multiple Techniques
+
+Real-world queries often combine joins with filtering, grouping, and transformations.
+
+### Joining 10: Comprehensive county analysis
+
+*Scenario: Create a county dashboard showing establishment era, number of towns, total town population, and the largest town.*
+
+```{sql example48, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example48-solution}
+SELECT c.county,
+       c.state,
+       c.year_established,
+       CASE 
+           WHEN c.year_established < 1860 THEN 'Pioneer'
+           WHEN c.year_established < 1900 THEN 'Settlement'
+           ELSE 'Modern'
+       END AS era,
+       c.population_2022 AS county_pop,
+       COUNT(t.town) AS num_towns,
+       COALESCE(SUM(t.population_2020_census), 0) AS urban_pop,
+       MAX(t.population_2020_census) AS largest_town_pop
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county = t.primary_county 
+   AND c.state = t.state
+ GROUP BY c.county, c.state, c.year_established, c.population_2022
+ ORDER BY c.population_2022 DESC;
+```

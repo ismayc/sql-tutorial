@@ -1,8 +1,8 @@
 # Feedback regression report
 
-Generated: 2026-05-24T21:37:32.056Z
+Generated: 2026-05-24T21:52:40.397Z
 Base URL: `http://localhost:4321/sql-tutorial`
-Total cases: **319** · matching expectation: **319** (100.0%) · runtime: 46.5s
+Total cases: **405** · matching expectation: **405** (100.0%) · runtime: 51.0s
 
 ### Reading this report
 
@@ -12,7 +12,7 @@ Each exercise lists 2–6 variants. **Expected** is the outcome class the test a
 
 ### Selection Techniques  `/examples/selection-techniques`
 
-#### `example1` — Selection 1: Select all town names
+#### `example1` — Selection 1: Create a quick reference list of all town names
 
 **Solution:**
 ```sql
@@ -27,7 +27,7 @@ SELECT town
 | **typo-table**<br>`SELECT town FROM pnw_townsx;` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
 | **typo-column**<br>`SELECT townx FROM pnw_towns;` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
 
-#### `example2` — Selection 2: Select all county names
+#### `example2` — Selection 2: List all counties in the Pacific Northwest
 
 **Solution:**
 ```sql
@@ -42,7 +42,7 @@ SELECT county
 | **typo-table**<br>`SELECT county FROM pnw_countiesx;` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
 | **typo-column**<br>`SELECT countyx FROM pnw_counties;` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
 
-#### `example3` — Selection 3: Select all columns for towns table
+#### `example3` — Selection 3: Export all town data for a comprehensive audit
 
 **Solution:**
 ```sql
@@ -56,7 +56,7 @@ SELECT *
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
 | **typo-table**<br>`SELECT * FROM pnw_townsx;` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
 
-#### `example4` — Selection 4: Select county names and population for 2022
+#### `example4` — Selection 4: Pull county names and populations for a funding report
 
 **Solution:**
 ```sql
@@ -71,40 +71,41 @@ SELECT county, population_2022
 | **typo-table**<br>`SELECT county, population_2022 FROM pnw_countiesx;` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
 | **typo-column**<br>`SELECT countyx, population_2022 FROM pnw_counties;` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
 
-#### `example5` — Aliasing 1: Select county names, population for 2022, and land area (Aliased)
+#### `example5` — Aliasing 1: Create a clean report with user-friendly column headers
 
 **Solution:**
 ```sql
-SELECT county AS cty, 
-       population_2022 AS pop2022,
-       land_area_sq_mi AS area
+SELECT county AS county_name, 
+       population_2022 AS population,
+       land_area_sq_mi AS area_square_miles
   FROM pnw_counties;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT county AS cty, population_2022 AS pop2022, land_area_` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT county AS county_name, population_2022 AS population,` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT county AS cty, population_2022 AS pop2022, land_area_` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT countyx AS cty, population_2022 AS pop2022, land_area` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
+| **typo-table**<br>`SELECT county AS county_name, population_2022 AS population,` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT countyx AS county_name, population_2022 AS population` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
 
-#### `example6` — Aliasing 2: Alias the table name
+#### `example6` — Aliasing 2: Use table aliases to simplify longer queries
 
 **Solution:**
 ```sql
-SELECT counties.county,
-       counties.origin
-  FROM pnw_counties AS counties;
+SELECT c.county,
+       c.county_seat,
+       c.year_established
+  FROM pnw_counties AS c;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT counties.county, counties.origin FROM pnw_counties AS` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT c.county, c.county_seat, c.year_established FROM pnw_` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT counties.county, counties.origin FROM pnw_countiesx A` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT counties.countyx, counties.origin FROM pnw_counties A` | error | error | ✓ | There's no column named "countyx" in table `counties`. Did you mean `county`? |
+| **typo-table**<br>`SELECT c.county, c.county_seat, c.year_established FROM pnw_` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT c.countyx, c.county_seat, c.year_established FROM pnw` | error | error | ✓ | There's no column named "countyx" in table `c`. Did you mean `county`? |
 
-#### `example7` — Unique 1: Select distinct states from the `pnw_towns` table
+#### `example7` — Unique 1: What states are represented in our towns database?
 
 **Solution:**
 ```sql
@@ -119,357 +120,24 @@ SELECT DISTINCT state
 | **typo-table**<br>`SELECT DISTINCT state FROM pnw_townsx;` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
 | **typo-column**<br>`SELECT DISTINCT statex FROM pnw_towns;` | error | error | ✓ | There's no column named "statex". Did you mean `state`? |
 
-#### `example10` — Counting 1: Count the number of records in the `pnw_towns` table
+#### `example8` — Unique 2: Which counties have towns that span multiple counties?
 
 **Solution:**
 ```sql
-SELECT COUNT(*) AS num_towns
-  FROM pnw_towns;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT COUNT(*) AS num_towns FROM pnw_towns;` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT COUNT(*) AS num_towns FROM pnw_townsx;` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-
-#### `example11` — Counting 2: Count the number of distinct states in `pnw_counties`
-
-**Solution:**
-```sql
-SELECT COUNT(DISTINCT state) AS num_unique_states
-  FROM pnw_counties;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT COUNT(DISTINCT state) AS num_unique_states FROM pnw_c` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT COUNT(DISTINCT state) AS num_unique_states FROM pnw_c` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-
-### Filtering Techniques  `/examples/filtering-techniques`
-
-#### `example12` — Filtering 1: Towns with greater than 150,000 people
-
-**Solution:**
-```sql
-SELECT town, state, population_2020_census 
-  FROM pnw_towns 
- WHERE population_2020_census > 150000;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 8. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example13` — Filtering 2: Towns with greater than 150,000 people and in Oregon
-
-**Solution:**
-```sql
-SELECT town, state, population_2020_census 
-  FROM pnw_towns 
- WHERE population_2020_census > 150000
-   AND state = 'Oregon';
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 3. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example14` — Filtering 3: Towns with greater than 150,000 people or in Oregon
-
-**Solution:**
-```sql
-SELECT town, state, population_2020_census 
-  FROM pnw_towns 
- WHERE population_2020_census > 150000
-    OR state = 'Oregon';
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 246. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example15` — Filtering 4: Counties established after 1920 with a population greater than 100,000
-
-**Solution:**
-```sql
-SELECT county, state, year_established, population_2022
-  FROM pnw_counties
- WHERE year_established > 1920
-   AND population_2022 > 100000;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT county, state, year_established, population_2022 FROM` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT county, state, year_established, population_2022 FROM` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT countyx, state, year_established, population_2022 FRO` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
-| **missing-where**<br>`SELECT county, state, year_established, population_2022 FROM` | fail | warn | ✓ | Your query returned 75 rows but the expected answer has 0 — your WHERE condition probably needs to be stricter. |
-
-#### `example16` — Filtering 5: Counties established after 1880 with a population greater than 100,000
-
-**Solution:**
-```sql
-SELECT county, state, year_established, population_2022
-  FROM pnw_counties
- WHERE year_established > 1880
-   AND population_2022 > 100000;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT county, state, year_established, population_2022 FROM` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT county, state, year_established, population_2022 FROM` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT countyx, state, year_established, population_2022 FRO` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
-| **missing-where**<br>`SELECT county, state, year_established, population_2022 FROM` | fail | warn | ✓ | Too many rows: you returned 75, expected 4. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example17` — Filtering 6: Towns with a land area between 12 and 15 square miles
-
-**Solution:**
-```sql
-SELECT town, state, land_area_sq_mi
+SELECT DISTINCT secondary_county
   FROM pnw_towns
- WHERE land_area_sq_mi >= 12
-   AND land_area_sq_mi <= 15;
+ WHERE secondary_county IS NOT NULL;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT town, state, land_area_sq_mi FROM pnw_towns WHERE lan` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT DISTINCT secondary_county FROM pnw_towns WHERE second` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, state, land_area_sq_mi FROM pnw_townsx WHERE la` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, state, land_area_sq_mi FROM pnw_towns WHERE la` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-where**<br>`SELECT town, state, land_area_sq_mi FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 8. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **typo-table**<br>`SELECT DISTINCT secondary_county FROM pnw_townsx WHERE secon` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT DISTINCT secondary_countyx FROM pnw_towns WHERE secon` | error | error | ✓ | There's no column named "secondary_countyx". Did you mean `secondary_county`? |
+| **missing-where**<br>`SELECT DISTINCT secondary_county FROM pnw_towns;` | fail | warn | ✓ | Slightly too many rows: you returned 9, expected 8. Check whether your filter excludes the boundary (e.g., `>` vs `>=`). |
 
-#### `example18` — Filtering 7: Towns with a land area between 10 and 15 square miles (simplified)
-
-**Solution:**
-```sql
-SELECT town, state, land_area_sq_mi
-  FROM pnw_towns
- WHERE land_area_sq_mi BETWEEN 12 AND 15;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, state, land_area_sq_mi FROM pnw_towns WHERE lan` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, state, land_area_sq_mi FROM pnw_townsx WHERE la` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, state, land_area_sq_mi FROM pnw_towns WHERE la` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-where**<br>`SELECT town, state, land_area_sq_mi FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 8. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example19` — Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022
-
-**Solution:**
-```sql
-SELECT county, state, year_established, population_2022
-  FROM pnw_counties
- WHERE (state = 'Washington' AND year_established BETWEEN 1890 AND 1900)
-    OR (state = 'Oregon' AND population_2022 > 300000);
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT county, state, year_established, population_2022 FROM` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT county, state, year_established, population_2022 FROM` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT countyx, state, year_established, population_2022 FRO` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
-| **missing-where**<br>`SELECT county, state, year_established, population_2022 FROM` | fail | warn | ✓ | Too many rows: you returned 75, expected 7. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example20` — Filtering 9: Counties that start with the letter "K":
-
-**Solution:**
-```sql
-SELECT county, state
-  FROM pnw_counties
- WHERE county LIKE 'K%';
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT county, state FROM pnw_counties WHERE county LIKE 'K%` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT county, state FROM pnw_countiesx WHERE county LIKE 'K` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT countyx, state FROM pnw_counties WHERE county LIKE 'K` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
-| **missing-where**<br>`SELECT county, state FROM pnw_counties;` | fail | warn | ✓ | Too many rows: you returned 75, expected 5. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example21` — Filtering 10: Towns that end with the letters "ia":
-
-**Solution:**
-```sql
-SELECT town, state
-  FROM pnw_towns
- WHERE town LIKE '%ia';
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, state FROM pnw_towns WHERE town LIKE '%ia';` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, state FROM pnw_townsx WHERE town LIKE '%ia';` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, state FROM pnw_towns WHERE town LIKE '%ia';` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-where**<br>`SELECT town, state FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 4. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example22` — Filtering 11: Towns that contain the phrase "mount":
-
-**Solution:**
-```sql
-SELECT town, state
-  FROM pnw_towns
- WHERE town LIKE '%mount%';
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, state FROM pnw_towns WHERE town LIKE '%mount%';` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, state FROM pnw_townsx WHERE town LIKE '%mount%'` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, state FROM pnw_towns WHERE town LIKE '%mount%'` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-where**<br>`SELECT town, state FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 3. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example23` — Filtering 12: Counties with specific pattern in third and fourth position ("ar")
-
-**Solution:**
-```sql
-SELECT county
-  FROM pnw_counties
- WHERE county LIKE '__ar%';
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT county FROM pnw_counties WHERE county LIKE '__ar%';` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT county FROM pnw_countiesx WHERE county LIKE '__ar%';` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT countyx FROM pnw_counties WHERE county LIKE '__ar%';` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
-| **missing-where**<br>`SELECT county FROM pnw_counties;` | fail | warn | ✓ | Too many rows: you returned 75, expected 1. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example24` — Filtering 13: Towns that are in Multnomah or Spokane counties
-
-**Solution:**
-```sql
-SELECT * 
-  FROM pnw_towns 
- WHERE primary_county IN ('Multnomah', 'Spokane');
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT * FROM pnw_towns WHERE primary_county IN ('Multnomah'` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT * FROM pnw_townsx WHERE primary_county IN ('Multnomah` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **missing-where**<br>`SELECT * FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 15. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-#### `example25` — Filtering 14: Towns with missing values for secondary county
-
-**Solution:**
-```sql
-SELECT * 
- FROM pnw_towns 
-WHERE secondary_county IS NULL;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT * FROM pnw_towns WHERE secondary_county IS NULL;` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT * FROM pnw_townsx WHERE secondary_county IS NULL;` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **missing-where**<br>`SELECT * FROM pnw_towns;` | fail | warn | ✓ | Slightly too many rows: you returned 453, expected 439. Check whether your filter excludes the boundary (e.g., `>` vs `>=`). |
-
-#### `example26` — Filtering 15: Towns without missing values for secondary county
-
-**Solution:**
-```sql
-SELECT * 
- FROM pnw_towns 
-WHERE secondary_county IS NOT NULL;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT * FROM pnw_towns WHERE secondary_county IS NOT NULL;` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT * FROM pnw_townsx WHERE secondary_county IS NOT NULL;` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **missing-where**<br>`SELECT * FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 14. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
-
-### Aggregating Techniques  `/examples/aggregating-techniques`
-
-#### `example27` — Aggregating 1: Average population across all towns in Washington
-
-**Solution:**
-```sql
-SELECT AVG(population_2020_census) AS avg_population
-  FROM pnw_towns
- WHERE state = 'Washington';
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT AVG(population_2020_census) AS avg_population FROM pn` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT AVG(population_2020_census) AS avg_population FROM pn` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **missing-where**<br>`SELECT AVG(population_2020_census) AS avg_population FROM pn` | fail | warn | ✓ | Expected a row like [23543.04245283019], but you have [17617.69536423841]. Column "avg_population" differs (expected 23543.04245283019, got 17617.69536423841). |
-
-#### `example28` — Aggregating 2: Total population across all towns in Oregon
-
-**Solution:**
-```sql
-SELECT SUM(population_2020_census) AS total_population
-  FROM pnw_towns
- WHERE state = 'Oregon';
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT SUM(population_2020_census) AS total_population FROM ` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT SUM(population_2020_census) AS total_population FROM ` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **missing-where**<br>`SELECT SUM(population_2020_census) AS total_population FROM ` | fail | warn | ✓ | Expected a row like [2989691], but you have [7980816]. Column "total_population" differs (expected 2989691, got 7980816). |
-
-#### `example29` — Aggregating 3: Minimum population across all towns
-
-**Solution:**
-```sql
-SELECT MIN(population_2020_census) AS min_population
-  FROM pnw_towns;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT MIN(population_2020_census) AS min_population FROM pn` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT MIN(population_2020_census) AS min_population FROM pn` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-
-#### `example30` — Aggregating 4: Maximum population across all towns
-
-**Solution:**
-```sql
-SELECT MAX(population_2020_census) AS max_population
-  FROM pnw_towns;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT MAX(population_2020_census) AS max_population FROM pn` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT MAX(population_2020_census) AS max_population FROM pn` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-
-#### `example31` — Aggregating 5: Total number of towns
+#### `example10` — Counting 1: How many towns are in our database?
 
 **Solution:**
 ```sql
@@ -483,295 +151,1012 @@ SELECT COUNT(*) AS total_towns
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
 | **typo-table**<br>`SELECT COUNT(*) AS total_towns FROM pnw_townsx;` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
 
-#### `example32` — Aggregating 6: First town alphabetically
+#### `example11` — Counting 2: How many states does our county data cover?
 
 **Solution:**
 ```sql
-SELECT MIN(town) AS first_town
-  FROM pnw_towns;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT MIN(town) AS first_town FROM pnw_towns;` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT MIN(town) AS first_town FROM pnw_townsx;` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-
-#### `example33` — Aggregating 7: Last county alphabetically
-
-**Solution:**
-```sql
-SELECT MAX(county) AS last_county
+SELECT COUNT(DISTINCT state) AS number_of_states
   FROM pnw_counties;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT MAX(county) AS last_county FROM pnw_counties;` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT COUNT(DISTINCT state) AS number_of_states FROM pnw_co` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT MAX(county) AS last_county FROM pnw_countiesx;` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-table**<br>`SELECT COUNT(DISTINCT state) AS number_of_states FROM pnw_co` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
 
-#### `example34a` — Aggregating 8: Rounded average land areas
+#### `example11b` — Counting 3: How many towns have incomplete data (missing secondary county info)?
 
 **Solution:**
 ```sql
-SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area
-    FROM pnw_towns;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area FROM ` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area FROM ` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, ROUND(land_area_sq_mi, 2) AS rounded_area FROM` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-
-#### `example34b` — example34b
-
-**Solution:**
-```sql
-SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area
-    FROM pnw_towns;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area FROM ` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area FROM ` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, ROUND(land_area_sq_mi, 0) AS rounded_area FROM` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-
-### Sorting and Grouping Techniques  `/examples/sorting-and-grouping-techniques`
-
-#### `example35` — Sorting 1: Sorting towns by 2020 census population
-
-**Solution:**
-```sql
-SELECT town, population_2020_census
+SELECT COUNT(*) AS towns_single_county
   FROM pnw_towns
- ORDER BY population_2020_census;
+ WHERE secondary_county IS NULL;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT town, population_2020_census FROM pnw_towns ORDER BY ` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT COUNT(*) AS towns_single_county FROM pnw_towns WHERE ` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, population_2020_census FROM pnw_townsx ORDER BY` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, population_2020_census FROM pnw_towns ORDER BY` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-orderby**<br>`SELECT town, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+| **typo-table**<br>`SELECT COUNT(*) AS towns_single_county FROM pnw_townsx WHERE` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **missing-where**<br>`SELECT COUNT(*) AS towns_single_county FROM pnw_towns;` | fail | warn | ✓ | Expected a row like [439], but you have [453]. Column "towns_single_county" differs (expected 439, got 453). |
 
-#### `example36a` — Sorting 2: Sorting towns by 2020 census population in ascending and descending order
+### Filtering Techniques  `/examples/filtering-techniques`
+
+#### `example12` — Filtering 1: Which towns qualify as "cities" (population over 50,000)?
 
 **Solution:**
 ```sql
-SELECT town, population_2020_census
-  FROM pnw_towns
-ORDER BY population_2020_census ASC;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, population_2020_census FROM pnw_towns ORDER BY ` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, population_2020_census FROM pnw_townsx ORDER BY` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, population_2020_census FROM pnw_towns ORDER BY` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-orderby**<br>`SELECT town, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
-
-#### `example36b` — example36b
-
-**Solution:**
-```sql
-SELECT town, population_2020_census
-  FROM pnw_towns
+SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 50000
  ORDER BY population_2020_census DESC;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT town, population_2020_census FROM pnw_towns ORDER BY ` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, population_2020_census FROM pnw_townsx ORDER BY` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, population_2020_census FROM pnw_towns ORDER BY` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-orderby**<br>`SELECT town, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns OR` | fail | warn | ✓ | Too many rows: you returned 453, expected 37. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
-#### `example37` — Sorting 3: Sorting counties by state and population in 2022
+#### `example13` — Filtering 2: Find large Oregon cities for a state-specific grant
 
 **Solution:**
 ```sql
-SELECT county, state, population_2022
+SELECT town, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 50000
+   AND state = 'Oregon'
+ ORDER BY population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, population_2020_census FROM pnw_towns WHERE pop` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, population_2020_census FROM pnw_townsx WHERE po` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, population_2020_census FROM pnw_towns WHERE po` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, population_2020_census FROM pnw_towns ORDER BY ` | fail | warn | ✓ | Too many rows: you returned 453, expected 12. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT town, population_2020_census FROM pnw_towns WHERE pop` | fail | ok | ✓ | ✓ Your query matches the expected result. |
+
+#### `example14` — Filtering 3: Find either large cities OR any Oregon town
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 100000
+    OR state = 'Oregon'
+ ORDER BY state, population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns OR` | fail | warn | ✓ | Too many rows: you returned 453, expected 251. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example15` — Filtering 4: Find historically significant, populous counties
+
+**Solution:**
+```sql
+SELECT county, state, year_established, population_2022
   FROM pnw_counties
+ WHERE year_established < 1860
+   AND population_2022 > 50000
+ ORDER BY year_established;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT county, state, year_established, population_2022 FROM` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT county, state, year_established, population_2022 FROM` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT countyx, state, year_established, population_2022 FRO` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
+| **missing-where**<br>`SELECT county, state, year_established, population_2022 FROM` | fail | warn | ✓ | Too many rows: you returned 75, expected 27. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT county, state, year_established, population_2022 FROM` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example16` — Filtering 5: Find mid-sized towns (population between 10,000 and 50,000)
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census BETWEEN 10000 AND 50000
+ ORDER BY population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns OR` | fail | warn | ✓ | Too many rows: you returned 453, expected 109. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example17` — Filtering 6: Find compact towns (small land area)
+
+**Solution:**
+```sql
+SELECT town, state, land_area_sq_mi, population_2020_census
+  FROM pnw_towns
+ WHERE land_area_sq_mi < 2
+ ORDER BY land_area_sq_mi;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, land_area_sq_mi, population_2020_census ` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, land_area_sq_mi, population_2020_census ` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, land_area_sq_mi, population_2020_census` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, land_area_sq_mi, population_2020_census ` | fail | warn | ✓ | Too many rows: you returned 453, expected 210. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT town, state, land_area_sq_mi, population_2020_census ` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example19` — Filtering 7: Complex criteria with parentheses
+
+**Solution:**
+```sql
+SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE (state = 'Washington' AND year_established < 1860)
+    OR (state = 'Oregon' AND population_2022 > 200000)
  ORDER BY state, population_2022 DESC;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT county, state, population_2022 FROM pnw_counties ORDE` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT county, state, year_established, population_2022 FROM` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT county, state, population_2022 FROM pnw_countiesx ORD` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT countyx, state, population_2022 FROM pnw_counties ORD` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
-| **missing-orderby**<br>`SELECT county, state, population_2022 FROM pnw_counties;` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+| **typo-table**<br>`SELECT county, state, year_established, population_2022 FROM` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT countyx, state, year_established, population_2022 FRO` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
+| **missing-where**<br>`SELECT county, state, year_established, population_2022 FROM` | fail | warn | ✓ | Too many rows: you returned 75, expected 25. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT county, state, year_established, population_2022 FROM` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
-#### `example38` — Grouping 1: Grouping towns by state
+#### `example20` — Filtering 8: Find all counties named after presidents
 
 **Solution:**
 ```sql
-SELECT state, COUNT(*) AS total_towns
+SELECT county, state, etymology
+  FROM pnw_counties
+ WHERE etymology LIKE '%President%';
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT county, state, etymology FROM pnw_counties WHERE etym` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT county, state, etymology FROM pnw_countiesx WHERE ety` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT countyx, state, etymology FROM pnw_counties WHERE ety` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
+| **missing-where**<br>`SELECT county, state, etymology FROM pnw_counties;` | fail | warn | ✓ | Too many rows: you returned 75, expected 12. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+
+#### `example21` — Filtering 9: Find towns ending in "ville"
+
+**Solution:**
+```sql
+SELECT town, state
+  FROM pnw_towns
+ WHERE town LIKE '%ville';
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state FROM pnw_towns WHERE town LIKE '%ville';` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state FROM pnw_townsx WHERE town LIKE '%ville';` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state FROM pnw_towns WHERE town LIKE '%ville';` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 17. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+
+#### `example22` — Filtering 10: Find towns with "Port" in their name
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE town LIKE '%Port%'
+    OR town LIKE '%port%'
+ ORDER BY population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns OR` | fail | warn | ✓ | Too many rows: you returned 453, expected 12. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example24` — Filtering 11: Find counties with names starting with "King" or "Clark"
+
+**Solution:**
+```sql
+SELECT county, state, population_2022 
+  FROM pnw_counties 
+ WHERE county IN ('King', 'Clark', 'Pierce', 'Multnomah')
+ ORDER BY population_2022 DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT county, state, population_2022 FROM pnw_counties WHER` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT county, state, population_2022 FROM pnw_countiesx WHE` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT countyx, state, population_2022 FROM pnw_counties WHE` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
+| **missing-where**<br>`SELECT county, state, population_2022 FROM pnw_counties ORDE` | fail | warn | ✓ | Too many rows: you returned 75, expected 4. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT county, state, population_2022 FROM pnw_counties WHER` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example25` — Filtering 12: Find towns that span multiple counties
+
+**Solution:**
+```sql
+SELECT town, state, primary_county, secondary_county, tertiary_county
+  FROM pnw_towns 
+ WHERE secondary_county IS NOT NULL
+ ORDER BY town;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, primary_county, secondary_county, tertia` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, primary_county, secondary_county, tertia` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, primary_county, secondary_county, terti` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, primary_county, secondary_county, tertia` | fail | warn | ✓ | Too many rows: you returned 453, expected 14. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT town, state, primary_county, secondary_county, tertia` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example26` — Filtering 13: Find towns entirely within one county
+
+**Solution:**
+```sql
+SELECT town, state, primary_county
+  FROM pnw_towns 
+ WHERE secondary_county IS NULL
+ ORDER BY population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, primary_county FROM pnw_towns WHERE seco` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, primary_county FROM pnw_townsx WHERE sec` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, primary_county FROM pnw_towns WHERE sec` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, primary_county FROM pnw_towns ORDER BY p` | fail | warn | ✓ | Slightly too many rows: you returned 453, expected 439. Check whether your filter excludes the boundary (e.g., `>` vs `>=`). |
+| **missing-orderby**<br>`SELECT town, state, primary_county FROM pnw_towns WHERE seco` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+### Aggregating Techniques  `/examples/aggregating-techniques`
+
+#### `example27` — Aggregating 1: What's the average town size in each state?
+
+**Solution:**
+```sql
+SELECT state,
+       ROUND(AVG(population_2020_census), 0) AS avg_population
   FROM pnw_towns
  GROUP BY state;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT state, COUNT(*) AS total_towns FROM pnw_towns GROUP B` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT state, ROUND(AVG(population_2020_census), 0) AS avg_p` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT state, COUNT(*) AS total_towns FROM pnw_townsx GROUP ` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT statex, COUNT(*) AS total_towns FROM pnw_towns GROUP ` | error | error | ✓ | There's no column named "statex". Did you mean `state`? |
+| **typo-table**<br>`SELECT state, ROUND(AVG(population_2020_census), 0) AS avg_p` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT statex, ROUND(AVG(population_2020_census), 0) AS avg_` | error | error | ✓ | There's no column named "statex". Did you mean `state`? |
 
-#### `example39` — Grouping 2: Grouping and ordering counties by state and average population
+#### `example28` — Aggregating 2: What's the total urban population by state?
 
 **Solution:**
 ```sql
-SELECT state, AVG(population_2022) AS avg_population
-  FROM pnw_counties
- GROUP BY state
- ORDER BY avg_population DESC;
+SELECT state,
+       SUM(population_2020_census) AS total_town_population
+  FROM pnw_towns
+ GROUP BY state;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT state, AVG(population_2022) AS avg_population FROM pn` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT state, SUM(population_2020_census) AS total_town_popu` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT state, AVG(population_2022) AS avg_population FROM pn` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT statex, AVG(population_2022) AS avg_population FROM p` | error | error | ✓ | There's no column named "statex". Did you mean `state`? |
-| **missing-orderby**<br>`SELECT state, AVG(population_2022) AS avg_population FROM pn` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+| **typo-table**<br>`SELECT state, SUM(population_2020_census) AS total_town_popu` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT statex, SUM(population_2020_census) AS total_town_pop` | error | error | ✓ | There's no column named "statex". Did you mean `state`? |
+
+#### `example29` — Aggregating 3: Find the smallest incorporated town
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 1. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+
+#### `example30` — Aggregating 4: Find the largest city
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Too many rows: you returned 453, expected 1. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+
+#### `example31` — Aggregating 5: Summary statistics for county land areas
+
+**Solution:**
+```sql
+SELECT COUNT(*) AS num_counties,
+       MIN(land_area_sq_mi) AS smallest_county,
+       MAX(land_area_sq_mi) AS largest_county,
+       ROUND(AVG(land_area_sq_mi), 0) AS avg_size,
+       SUM(land_area_sq_mi) AS total_area
+  FROM pnw_counties;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT COUNT(*) AS num_counties, MIN(land_area_sq_mi) AS sma` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT COUNT(*) AS num_counties, MIN(land_area_sq_mi) AS sma` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+
+#### `example32` — Aggregating 6: Which county was established first and last?
+
+**Solution:**
+```sql
+SELECT MIN(year_established) AS earliest_county,
+       MAX(year_established) AS newest_county
+  FROM pnw_counties;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT MIN(year_established) AS earliest_county, MAX(year_es` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT MIN(year_established) AS earliest_county, MAX(year_es` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+
+#### `example33` — Aggregating 7: Find the actual earliest and newest counties
+
+**Solution:**
+```sql
+SELECT county, state, year_established
+  FROM pnw_counties
+ WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)
+    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)
+ ORDER BY year_established;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT county, state, year_established FROM pnw_counties WHE` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT county, state, year_established FROM pnw_countiesx WH` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT countyx, state, year_established FROM pnw_counties WH` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
+| **missing-where**<br>`SELECT county, state, year_established FROM pnw_counties ORD` | fail | warn | ✓ | Too many rows: you returned 75, expected 5. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT county, state, year_established FROM pnw_counties WHE` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example34a` — Aggregating 8: Calculate and round population density
+
+**Solution:**
+```sql
+SELECT town, 
+       state,
+       population_2020_census,
+       land_area_sq_mi,
+       ROUND(population_2020_census / land_area_sq_mi, 1) AS people_per_sq_mile
+  FROM pnw_towns
+ WHERE land_area_sq_mi > 0
+ ORDER BY people_per_sq_mile DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census, land_area_sq_mi,` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census, land_area_sq_mi,` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census, land_area_sq_mi` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2020_census, land_area_sq_mi,` | fail | ok | ✓ | ✓ Your query matches the expected result. |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census, land_area_sq_mi,` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example34b` — Aggregating 9: Round to whole numbers for simpler reporting
+
+**Solution:**
+```sql
+SELECT state,
+       ROUND(AVG(population_2020_census), 0) AS avg_town_pop,
+       ROUND(AVG(land_area_sq_mi), 0) AS avg_town_area
+  FROM pnw_towns
+ GROUP BY state;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT state, ROUND(AVG(population_2020_census), 0) AS avg_t` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT state, ROUND(AVG(population_2020_census), 0) AS avg_t` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT statex, ROUND(AVG(population_2020_census), 0) AS avg_` | error | error | ✓ | There's no column named "statex". Did you mean `state`? |
+
+### Sorting and Grouping Techniques  `/examples/sorting-and-grouping-techniques`
+
+#### `example35` — Sorting 1: Rank towns by population (smallest first)
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ ORDER BY population_2020_census;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns OR` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx O` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns O` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example36b` — Sorting 2: Rank towns by population (largest first)
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ ORDER BY population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns OR` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx O` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns O` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example37` — Sorting 3: Sort by multiple columns (state, then population within state)
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ ORDER BY state, population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns OR` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx O` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns O` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example37b` — Sorting 4: Sort counties by age (oldest first)
+
+**Solution:**
+```sql
+SELECT county, state, year_established, etymology
+  FROM pnw_counties
+ ORDER BY year_established, county;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT county, state, year_established, etymology FROM pnw_c` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT county, state, year_established, etymology FROM pnw_c` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT countyx, state, year_established, etymology FROM pnw_` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
+| **missing-orderby**<br>`SELECT county, state, year_established, etymology FROM pnw_c` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example38` — Grouping 1: Count towns per state
+
+**Solution:**
+```sql
+SELECT state, 
+       COUNT(*) AS number_of_towns
+  FROM pnw_towns
+ GROUP BY state;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT state, COUNT(*) AS number_of_towns FROM pnw_towns GRO` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT state, COUNT(*) AS number_of_towns FROM pnw_townsx GR` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT statex, COUNT(*) AS number_of_towns FROM pnw_towns GR` | error | error | ✓ | There's no column named "statex". Did you mean `state`? |
+
+#### `example39` — Grouping 2: Compare states by average county population
+
+**Solution:**
+```sql
+SELECT state, 
+       COUNT(*) AS num_counties,
+       ROUND(AVG(population_2022), 0) AS avg_county_pop,
+       SUM(population_2022) AS total_state_pop
+  FROM pnw_counties
+ GROUP BY state
+ ORDER BY avg_county_pop DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT state, COUNT(*) AS num_counties, ROUND(AVG(population` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT state, COUNT(*) AS num_counties, ROUND(AVG(population` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT statex, COUNT(*) AS num_counties, ROUND(AVG(populatio` | error | error | ✓ | There's no column named "statex". Did you mean `state`? |
+| **missing-orderby**<br>`SELECT state, COUNT(*) AS num_counties, ROUND(AVG(population` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example39b` — Grouping 3: Which counties have the most towns?
+
+**Solution:**
+```sql
+SELECT primary_county, 
+       state,
+       COUNT(*) AS num_towns,
+       SUM(population_2020_census) AS total_pop
+  FROM pnw_towns
+ GROUP BY primary_county, state
+ ORDER BY num_towns DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT primary_county, state, COUNT(*) AS num_towns, SUM(pop` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT primary_county, state, COUNT(*) AS num_towns, SUM(pop` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT primary_countyx, state, COUNT(*) AS num_towns, SUM(po` | error | error | ✓ | There's no column named "primary_countyx". Did you mean `primary_county`? |
+| **missing-orderby**<br>`SELECT primary_county, state, COUNT(*) AS num_towns, SUM(pop` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
 #### `example40b` — example40b
 
 **Solution:**
 ```sql
-SELECT primary_county, state, COUNT(*) AS total_towns
+SELECT primary_county, 
+       state, 
+       COUNT(*) AS num_towns
   FROM pnw_towns
- GROUP BY primary_county
-HAVING COUNT(*) > 10;
+ GROUP BY primary_county, state
+HAVING COUNT(*) >= 10
+ ORDER BY num_towns DESC;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT primary_county, state, COUNT(*) AS total_towns FROM p` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT primary_county, state, COUNT(*) AS num_towns FROM pnw` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT primary_county, state, COUNT(*) AS total_towns FROM p` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT primary_countyx, state, COUNT(*) AS total_towns FROM ` | error | error | ✓ | There's no column named "primary_countyx". Did you mean `primary_county`? |
+| **typo-table**<br>`SELECT primary_county, state, COUNT(*) AS num_towns FROM pnw` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT primary_countyx, state, COUNT(*) AS num_towns FROM pn` | error | error | ✓ | There's no column named "primary_countyx". Did you mean `primary_county`? |
+| **missing-orderby**<br>`SELECT primary_county, state, COUNT(*) AS num_towns FROM pnw` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example40c` — Grouping 5: Population growth by county
+
+**Solution:**
+```sql
+SELECT primary_county,
+       state,
+       SUM(population_2010_census) AS pop_2010,
+       SUM(population_2020_census) AS pop_2020,
+       SUM(population_2020_census) - SUM(population_2010_census) AS growth
+  FROM pnw_towns
+ GROUP BY primary_county, state
+HAVING SUM(population_2010_census) > 0
+ ORDER BY growth DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT primary_county, state, SUM(population_2010_census) AS` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT primary_county, state, SUM(population_2010_census) AS` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT primary_countyx, state, SUM(population_2010_census) A` | error | error | ✓ | There's no column named "primary_countyx". Did you mean `primary_county`? |
+| **missing-orderby**<br>`SELECT primary_county, state, SUM(population_2010_census) AS` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
 ### Transforming Techniques  `/examples/transforming-techniques`
 
-#### `example41` — Transforming 1: Classifying towns by population size using CASE WHEN
+#### `example41` — Transforming 1: Classify towns by size category
 
 **Solution:**
 ```sql
 SELECT town, 
-       population_2010_census,
+       state,
+       population_2020_census,
        CASE 
-           WHEN population_2010_census > 100000 THEN 'Large'
-           WHEN population_2010_census BETWEEN 50000 AND 100000 THEN 'Medium'
-           ELSE 'Small'
-       END AS town_size
+           WHEN population_2020_census >= 100000 THEN 'Large City'
+           WHEN population_2020_census >= 25000 THEN 'Medium City'
+           WHEN population_2020_census >= 5000 THEN 'Small City'
+           ELSE 'Town'
+       END AS size_category
   FROM pnw_towns
-  ORDER BY population_2010_census DESC;
+ ORDER BY population_2020_census DESC;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT town, population_2010_census, CASE WHEN population_20` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT town, state, population_2020_census, CASE WHEN popula` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, population_2010_census, CASE WHEN population_20` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, population_2010_census, CASE WHEN population_2` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-orderby**<br>`SELECT town, population_2010_census, CASE WHEN population_20` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+| **typo-table**<br>`SELECT town, state, population_2020_census, CASE WHEN popula` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census, CASE WHEN popul` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census, CASE WHEN popula` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
-#### `example42` — Transforming 2: Percentage increase in population from 2010 to 2020
+#### `example42` — Transforming 2: Calculate population change from 2010 to 2020
 
 **Solution:**
 ```sql
-SELECT town, state, (population_2020_census - population_2010_census) / population_2010_census * 100 AS pct_change
+SELECT town, 
+       state, 
+       population_2010_census AS pop_2010,
+       population_2020_census AS pop_2020,
+       population_2020_census - population_2010_census AS pop_change,
+       ROUND((population_2020_census - population_2010_census) * 100.0 / population_2010_census, 1) AS pct_change
   FROM pnw_towns
-  ORDER BY pct_change DESC;
+ WHERE population_2010_census > 0
+ ORDER BY pct_change DESC;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT town, state, (population_2020_census - population_201` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT town, state, population_2010_census AS pop_2010, popu` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, state, (population_2020_census - population_201` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, state, (population_2020_census - population_20` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-orderby**<br>`SELECT town, state, (population_2020_census - population_201` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+| **typo-table**<br>`SELECT town, state, population_2010_census AS pop_2010, popu` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2010_census AS pop_2010, pop` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2010_census AS pop_2010, popu` | fail | warn | ✓ | Slightly too many rows: you returned 453, expected 452. Check whether your filter excludes the boundary (e.g., `>` vs `>=`). |
+| **missing-orderby**<br>`SELECT town, state, population_2010_census AS pop_2010, popu` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
-#### `example43` — Transforming 3: Population density
+#### `example42b` — Transforming 3: Identify fastest-growing and declining towns
 
 **Solution:**
 ```sql
-SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
+SELECT town,
+       state,
+       population_2010_census AS pop_2010,
+       population_2020_census AS pop_2020,
+       CASE 
+           WHEN population_2020_census > population_2010_census * 1.20 THEN 'Rapid Growth (>20%)'
+           WHEN population_2020_census > population_2010_census THEN 'Growing'
+           WHEN population_2020_census = population_2010_census THEN 'Stable'
+           WHEN population_2020_census > population_2010_census * 0.80 THEN 'Declining'
+           ELSE 'Rapid Decline (>20%)'
+       END AS growth_status
   FROM pnw_towns
- ORDER BY pop_density DESC;
+ WHERE population_2010_census > 0
+ ORDER BY (population_2020_census - population_2010_census) * 1.0 / population_2010_census DESC;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT town, state, population_2020_census / land_area_sq_mi` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT town, state, population_2010_census AS pop_2010, popu` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT town, state, population_2020_census / land_area_sq_mi` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT townx, state, population_2020_census / land_area_sq_m` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
-| **missing-orderby**<br>`SELECT town, state, population_2020_census / land_area_sq_mi` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+| **typo-table**<br>`SELECT town, state, population_2010_census AS pop_2010, popu` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2010_census AS pop_2010, pop` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2010_census AS pop_2010, popu` | fail | warn | ✓ | Slightly too many rows: you returned 453, expected 452. Check whether your filter excludes the boundary (e.g., `>` vs `>=`). |
+| **missing-orderby**<br>`SELECT town, state, population_2010_census AS pop_2010, popu` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example43` — Transforming 4: Calculate and categorize population density
+
+**Solution:**
+```sql
+SELECT town, 
+       state, 
+       population_2020_census,
+       land_area_sq_mi,
+       ROUND(population_2020_census / land_area_sq_mi, 0) AS density,
+       CASE 
+           WHEN population_2020_census / land_area_sq_mi > 5000 THEN 'Urban'
+           WHEN population_2020_census / land_area_sq_mi > 1000 THEN 'Suburban'
+           ELSE 'Rural'
+       END AS density_class
+  FROM pnw_towns
+ WHERE land_area_sq_mi > 0
+ ORDER BY density DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census, land_area_sq_mi,` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT town, state, population_2020_census, land_area_sq_mi,` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census, land_area_sq_mi` | error | error | ✓ | There's no column named "townx". Did you mean `town`? |
+| **missing-where**<br>`SELECT town, state, population_2020_census, land_area_sq_mi,` | fail | ok | ✓ | ✓ Your query matches the expected result. |
+| **missing-orderby**<br>`SELECT town, state, population_2020_census, land_area_sq_mi,` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example43b` — Transforming 5: Flag counties by era of establishment
+
+**Solution:**
+```sql
+SELECT county,
+       state,
+       year_established,
+       CASE 
+           WHEN year_established < 1850 THEN 'Pioneer Era'
+           WHEN year_established < 1890 THEN 'Settlement Era'
+           WHEN year_established < 1920 THEN 'Progressive Era'
+           ELSE 'Modern Era'
+       END AS historical_era
+  FROM pnw_counties
+ ORDER BY year_established;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT county, state, year_established, CASE WHEN year_estab` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT county, state, year_established, CASE WHEN year_estab` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT countyx, state, year_established, CASE WHEN year_esta` | error | error | ✓ | There's no column named "countyx". Did you mean `county`? |
+| **missing-orderby**<br>`SELECT county, state, year_established, CASE WHEN year_estab` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
 ### Joining Techniques  `/examples/joining-techniques`
 
-#### `example44` — Joining 1: Get population of each county seat
+#### `example44` — Joining 1: Enrich town data with county information
 
 **Solution:**
 ```sql
-SELECT c.county, c.county_seat, t.population_2020_census
+SELECT t.town,
+       t.population_2020_census,
+       c.county,
+       c.year_established,
+       c.etymology
+  FROM pnw_towns AS t
+ INNER JOIN pnw_counties AS c 
+    ON t.primary_county = c.county 
+   AND t.state = c.state
+ ORDER BY t.population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT t.town, t.population_2020_census, c.county, c.year_es` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT t.town, t.population_2020_census, c.county, c.year_es` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT t.townx, t.population_2020_census, c.county, c.year_e` | error | error | ✓ | There's no column named "townx" in table `t`. Did you mean `town`? |
+| **missing-orderby**<br>`SELECT t.town, t.population_2020_census, c.county, c.year_es` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example44b` — Joining 2: Find which towns are county seats
+
+**Solution:**
+```sql
+SELECT t.town,
+       t.state,
+       t.population_2020_census AS town_pop,
+       c.county,
+       c.population_2022 AS county_pop
+  FROM pnw_towns AS t
+ INNER JOIN pnw_counties AS c 
+    ON t.town = c.county_seat 
+   AND t.state = c.state
+ ORDER BY t.population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT t.town, t.state, t.population_2020_census AS town_pop` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT t.town, t.state, t.population_2020_census AS town_pop` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT t.townx, t.state, t.population_2020_census AS town_po` | error | error | ✓ | There's no column named "townx" in table `t`. Did you mean `town`? |
+| **missing-orderby**<br>`SELECT t.town, t.state, t.population_2020_census AS town_pop` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example44c` — Joining 3: Compare town population to county population
+
+**Solution:**
+```sql
+SELECT t.town,
+       t.population_2020_census AS town_pop,
+       c.county,
+       c.population_2022 AS county_pop,
+       ROUND(t.population_2020_census * 100.0 / c.population_2022, 1) AS pct_of_county
+  FROM pnw_towns AS t
+ INNER JOIN pnw_counties AS c 
+    ON t.primary_county = c.county 
+   AND t.state = c.state
+ ORDER BY pct_of_county DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT t.town, t.population_2020_census AS town_pop, c.count` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT t.town, t.population_2020_census AS town_pop, c.count` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT t.townx, t.population_2020_census AS town_pop, c.coun` | error | error | ✓ | There's no column named "townx" in table `t`. Did you mean `town`? |
+| **missing-orderby**<br>`SELECT t.town, t.population_2020_census AS town_pop, c.count` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example45` — Joining 4: List all counties with their county seat populations (if available)
+
+**Solution:**
+```sql
+SELECT c.county,
+       c.state,
+       c.county_seat,
+       t.population_2020_census AS seat_population
   FROM pnw_counties AS c
- INNER JOIN pnw_towns AS t ON c.county_seat = t.town;
+  LEFT JOIN pnw_towns AS t 
+    ON c.county_seat = t.town 
+   AND c.state = t.state
+ ORDER BY t.population_2020_census IS NULL DESC, 
+          c.county;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT c.county, c.county_seat, t.population_2020_census FRO` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT c.county, c.state, c.county_seat, t.population_2020_c` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT c.county, c.county_seat, t.population_2020_census FRO` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT c.countyx, c.county_seat, t.population_2020_census FR` | error | error | ✓ | There's no column named "countyx" in table `c`. Did you mean `county`? |
+| **typo-table**<br>`SELECT c.county, c.state, c.county_seat, t.population_2020_c` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT c.countyx, c.state, c.county_seat, t.population_2020_` | error | error | ✓ | There's no column named "countyx" in table `c`. Did you mean `county`? |
+| **missing-orderby**<br>`SELECT c.county, c.state, c.county_seat, t.population_2020_c` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
-#### `example45` — Joining 2: Show ALL counties, even those whose seat isn't in our towns data
+#### `example45b` — Joining 5: Flag whether each town is a county seat
 
 **Solution:**
 ```sql
-SELECT c.county, c.county_seat, t.population_2020_census
+SELECT t.town,
+       t.state,
+       t.population_2020_census,
+       CASE 
+           WHEN c.county IS NOT NULL THEN 'Yes'
+           ELSE 'No'
+       END AS is_county_seat,
+       c.county AS seat_of_county
+  FROM pnw_towns AS t
+  LEFT JOIN pnw_counties AS c 
+    ON t.town = c.county_seat 
+   AND t.state = c.state
+ ORDER BY is_county_seat DESC, t.population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT t.town, t.state, t.population_2020_census, CASE WHEN ` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT t.town, t.state, t.population_2020_census, CASE WHEN ` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT t.townx, t.state, t.population_2020_census, CASE WHEN` | error | error | ✓ | There's no column named "townx" in table `t`. Did you mean `town`? |
+| **missing-orderby**<br>`SELECT t.town, t.state, t.population_2020_census, CASE WHEN ` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example45c` — Joining 6: Count towns per county (including counties with zero towns)
+
+**Solution:**
+```sql
+SELECT c.county,
+       c.state,
+       c.population_2022 AS county_pop,
+       COUNT(t.town) AS num_towns,
+       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop
   FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;
+  LEFT JOIN pnw_towns AS t 
+    ON c.county = t.primary_county 
+   AND c.state = t.state
+ GROUP BY c.county, c.state, c.population_2022
+ ORDER BY num_towns DESC;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT c.county, c.county_seat, t.population_2020_census FRO` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT c.county, c.state, c.population_2022 AS county_pop, C` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT c.county, c.county_seat, t.population_2020_census FRO` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT c.countyx, c.county_seat, t.population_2020_census FR` | error | error | ✓ | There's no column named "countyx" in table `c`. Did you mean `county`? |
+| **typo-table**<br>`SELECT c.county, c.state, c.population_2022 AS county_pop, C` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT c.countyx, c.state, c.population_2022 AS county_pop, ` | error | error | ✓ | There's no column named "countyx" in table `c`. Did you mean `county`? |
+| **missing-orderby**<br>`SELECT c.county, c.state, c.population_2022 AS county_pop, C` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
-#### `example47` — Joining 3: Find counties that don't have any towns listed
+#### `example47` — Joining 7: Find county seats not in our towns database
 
 **Solution:**
 ```sql
-SELECT c.county
- FROM pnw_counties AS c
-LEFT JOIN pnw_towns AS t ON c.county = t.primary_county
-WHERE t.town IS NULL;
+SELECT c.county,
+       c.state,
+       c.county_seat
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county_seat = t.town 
+   AND c.state = t.state
+ WHERE t.town IS NULL
+ ORDER BY c.state, c.county;
 ```
 
 | Pattern | Expected | Actual | Match | Message |
 |---|---|---|---|---|
-| **correct**<br>`SELECT c.county FROM pnw_counties AS c LEFT JOIN pnw_towns A` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | ok | ok | ✓ | ✓ Your query matches the expected result. |
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
-| **typo-table**<br>`SELECT c.county FROM pnw_countiesx AS c LEFT JOIN pnw_towns ` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
-| **typo-column**<br>`SELECT c.countyx FROM pnw_counties AS c LEFT JOIN pnw_towns ` | error | error | ✓ | There's no column named "countyx" in table `c`. Did you mean `county`? |
-| **missing-where**<br>`SELECT c.county FROM pnw_counties AS c LEFT JOIN pnw_towns A` | fail | warn | ✓ | Too many rows: you returned 514, expected 2. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **typo-table**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_countiesx A` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT c.countyx, c.state, c.county_seat FROM pnw_counties A` | error | error | ✓ | There's no column named "countyx" in table `c`. Did you mean `county`? |
+| **missing-where**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | fail | warn | ✓ | Too many rows: you returned 75, expected 5. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | fail | ok | ✓ | ✓ Your query matches the expected result. |
+
+#### `example47b` — Joining 8: Find large towns that are NOT county seats
+
+**Solution:**
+```sql
+SELECT t.town,
+       t.state,
+       t.population_2020_census,
+       t.primary_county
+  FROM pnw_towns AS t
+  LEFT JOIN pnw_counties AS c 
+    ON t.town = c.county_seat 
+   AND t.state = c.state
+ WHERE c.county IS NULL
+   AND t.population_2020_census > 25000
+ ORDER BY t.population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean `pnw_towns`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT t.townx, t.state, t.population_2020_census, t.primary` | error | error | ✓ | There's no column named "townx" in table `t`. Did you mean `town`? |
+| **missing-where**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | fail | warn | ✓ | Too many rows: you returned 453, expected 46. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+
+#### `example47c` — Joining 9: Find counties with no towns in our database
+
+**Solution:**
+```sql
+SELECT c.county,
+       c.state,
+       c.population_2022,
+       c.county_seat
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county = t.primary_county 
+   AND c.state = t.state
+ WHERE t.town IS NULL
+ ORDER BY c.population_2022 DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT c.countyx, c.state, c.population_2022, c.county_seat ` | error | error | ✓ | There's no column named "countyx" in table `c`. Did you mean `county`? |
+| **missing-where**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | fail | warn | ✓ | Too many rows: you returned 449, expected 2. You may be missing a WHERE clause, joining without the right ON condition, or forgetting GROUP BY. |
+| **missing-orderby**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | fail | ok | ✓ | ✓ Your query matches the expected result. |
+
+#### `example48` — Joining 10: Comprehensive county analysis
+
+**Solution:**
+```sql
+SELECT c.county,
+       c.state,
+       c.year_established,
+       CASE 
+           WHEN c.year_established < 1860 THEN 'Pioneer'
+           WHEN c.year_established < 1900 THEN 'Settlement'
+           ELSE 'Modern'
+       END AS era,
+       c.population_2022 AS county_pop,
+       COUNT(t.town) AS num_towns,
+       COALESCE(SUM(t.population_2020_census), 0) AS urban_pop,
+       MAX(t.population_2020_census) AS largest_town_pop
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t 
+    ON c.county = t.primary_county 
+   AND c.state = t.state
+ GROUP BY c.county, c.state, c.year_established, c.population_2022
+ ORDER BY c.population_2022 DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT c.county, c.state, c.year_established, CASE WHEN c.ye` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return any columns — make sure it's a SELECT statement. |
+| **typo-table**<br>`SELECT c.county, c.state, c.year_established, CASE WHEN c.ye` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean `pnw_counties`? Available tables: `fips`, `pnw_counties`, `pnw_towns`. |
+| **typo-column**<br>`SELECT c.countyx, c.state, c.year_established, CASE WHEN c.y` | error | error | ✓ | There's no column named "countyx" in table `c`. Did you mean `county`? |
+| **missing-orderby**<br>`SELECT c.county, c.state, c.year_established, CASE WHEN c.ye` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
 
 ## Exercises
 

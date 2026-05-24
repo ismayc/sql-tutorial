@@ -12,91 +12,136 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 ## Numerical summaries
 
-### Aggregating 1: Average population across all towns in Washington
+Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summary statistics.
+
+### Aggregating 1: What's the average town size in each state?
+
+*Scenario: Compare typical town sizes between Oregon and Washington.*
 
 <SqlExercise
   id="example27"
   db="pnw_database.sqlite"
-  solution={`SELECT AVG(population_2020_census) AS avg_population
+  solution={`SELECT state,
+       ROUND(AVG(population_2020_census), 0) AS avg_population
   FROM pnw_towns
- WHERE state = 'Washington';`}
+ GROUP BY state;`}
 />
 
-### Aggregating 2: Total population across all towns in Oregon
+### Aggregating 2: What's the total urban population by state?
+
+*Scenario: How much of each state's population lives in incorporated towns?*
 
 <SqlExercise
   id="example28"
   db="pnw_database.sqlite"
-  solution={`SELECT SUM(population_2020_census) AS total_population
+  solution={`SELECT state,
+       SUM(population_2020_census) AS total_town_population
   FROM pnw_towns
- WHERE state = 'Oregon';`}
+ GROUP BY state;`}
 />
 
-### Aggregating 3: Minimum population across all towns
+### Aggregating 3: Find the smallest incorporated town
+
+*Scenario: A journalist wants to profile the smallest town in the Pacific Northwest.*
 
 <SqlExercise
   id="example29"
   db="pnw_database.sqlite"
-  solution={`SELECT MIN(population_2020_census) AS min_population
-  FROM pnw_towns;`}
+  solution={`SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);`}
 />
 
-### Aggregating 4: Maximum population across all towns
+### Aggregating 4: Find the largest city
+
+*Scenario: Identify the region's largest metropolitan center.*
 
 <SqlExercise
   id="example30"
   db="pnw_database.sqlite"
-  solution={`SELECT MAX(population_2020_census) AS max_population
-  FROM pnw_towns;`}
+  solution={`SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);`}
 />
 
-### Aggregating 5: Total number of towns
+### Aggregating 5: Summary statistics for county land areas
+
+*Scenario: Get a complete statistical overview of county sizes.*
 
 <SqlExercise
   id="example31"
   db="pnw_database.sqlite"
-  solution={`SELECT COUNT(*) AS total_towns
-  FROM pnw_towns;`}
+  solution={`SELECT COUNT(*) AS num_counties,
+       MIN(land_area_sq_mi) AS smallest_county,
+       MAX(land_area_sq_mi) AS largest_county,
+       ROUND(AVG(land_area_sq_mi), 0) AS avg_size,
+       SUM(land_area_sq_mi) AS total_area
+  FROM pnw_counties;`}
 />
 
 ## Categorical summaries
 
-### Aggregating 6: First town alphabetically
+MIN and MAX work on text too, returning alphabetically first/last values.
+
+### Aggregating 6: Which county was established first and last?
+
+*Scenario: Historical research on regional development.*
 
 <SqlExercise
   id="example32"
   db="pnw_database.sqlite"
-  solution={`SELECT MIN(town) AS first_town
-  FROM pnw_towns;`}
+  solution={`SELECT MIN(year_established) AS earliest_county,
+       MAX(year_established) AS newest_county
+  FROM pnw_counties;`}
 />
 
-### Aggregating 7: Last county alphabetically
+### Aggregating 7: Find the actual earliest and newest counties
+
+*Scenario: Get the county names, not just the years.*
 
 <SqlExercise
   id="example33"
   db="pnw_database.sqlite"
-  solution={`SELECT MAX(county) AS last_county
-  FROM pnw_counties;`}
+  solution={`SELECT county, state, year_established
+  FROM pnw_counties
+ WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)
+    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)
+ ORDER BY year_established;`}
+  requireOrdering
 />
 
 ## Rounding summaries
 
-### Aggregating 8: Rounded average land areas
+ROUND helps create cleaner, more readable output for reports and presentations.
 
-- 8a: Rounding to 2 decimal places:
+### Aggregating 8: Calculate and round population density
+
+*Scenario: Create a readable density report (people per square mile).*
 
 <SqlExercise
   id="example34a"
   db="pnw_database.sqlite"
-  solution={`  SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area
-    FROM pnw_towns;`}
+  solution={`SELECT town, 
+       state,
+       population_2020_census,
+       land_area_sq_mi,
+       ROUND(population_2020_census / land_area_sq_mi, 1) AS people_per_sq_mile
+  FROM pnw_towns
+ WHERE land_area_sq_mi > 0
+ ORDER BY people_per_sq_mile DESC;`}
+  requireOrdering
 />
 
-- 8b: Rounding to 0 decimal places:
+### Aggregating 9: Round to whole numbers for simpler reporting
+
+*Scenario: Executive summaries often need whole numbers.*
 
 <SqlExercise
   id="example34b"
   db="pnw_database.sqlite"
-  solution={`  SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area
-    FROM pnw_towns;`}
+  solution={`SELECT state,
+       ROUND(AVG(population_2020_census), 0) AS avg_town_pop,
+       ROUND(AVG(land_area_sq_mi), 0) AS avg_town_area
+  FROM pnw_towns
+ GROUP BY state;`}
 />

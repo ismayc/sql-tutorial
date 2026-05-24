@@ -10,41 +10,112 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 <SchemaReference db="pnw_database.sqlite" />
 
-### Transforming 1: Classifying towns by population size using CASE WHEN
+Transformations create new calculated columns or categorize data based on conditions.
+
+### Transforming 1: Classify towns by size category
+
+*Scenario: Create size tiers for a stratified analysis. CASE WHEN acts like an IF-THEN statement.*
 
 <SqlExercise
   id="example41"
   db="pnw_database.sqlite"
   solution={`SELECT town, 
-       population_2010_census,
+       state,
+       population_2020_census,
        CASE 
-           WHEN population_2010_census > 100000 THEN 'Large'
-           WHEN population_2010_census BETWEEN 50000 AND 100000 THEN 'Medium'
-           ELSE 'Small'
-       END AS town_size
+           WHEN population_2020_census >= 100000 THEN 'Large City'
+           WHEN population_2020_census >= 25000 THEN 'Medium City'
+           WHEN population_2020_census >= 5000 THEN 'Small City'
+           ELSE 'Town'
+       END AS size_category
   FROM pnw_towns
-  ORDER BY population_2010_census DESC;`}
+ ORDER BY population_2020_census DESC;`}
   requireOrdering
 />
 
-### Transforming 2: Percentage increase in population from 2010 to 2020
+### Transforming 2: Calculate population change from 2010 to 2020
+
+*Scenario: Identify growing and shrinking towns.*
 
 <SqlExercise
   id="example42"
   db="pnw_database.sqlite"
-  solution={`SELECT town, state, (population_2020_census - population_2010_census) / population_2010_census * 100 AS pct_change
+  solution={`SELECT town, 
+       state, 
+       population_2010_census AS pop_2010,
+       population_2020_census AS pop_2020,
+       population_2020_census - population_2010_census AS pop_change,
+       ROUND((population_2020_census - population_2010_census) * 100.0 / population_2010_census, 1) AS pct_change
   FROM pnw_towns
-  ORDER BY pct_change DESC;`}
+ WHERE population_2010_census > 0
+ ORDER BY pct_change DESC;`}
   requireOrdering
 />
 
-### Transforming 3: Population density
+### Transforming 3: Identify fastest-growing and declining towns
+
+*Scenario: Combine CASE WHEN with calculations to flag growth status.*
+
+<SqlExercise
+  id="example42b"
+  db="pnw_database.sqlite"
+  solution={`SELECT town,
+       state,
+       population_2010_census AS pop_2010,
+       population_2020_census AS pop_2020,
+       CASE 
+           WHEN population_2020_census > population_2010_census * 1.20 THEN 'Rapid Growth (>20%)'
+           WHEN population_2020_census > population_2010_census THEN 'Growing'
+           WHEN population_2020_census = population_2010_census THEN 'Stable'
+           WHEN population_2020_census > population_2010_census * 0.80 THEN 'Declining'
+           ELSE 'Rapid Decline (>20%)'
+       END AS growth_status
+  FROM pnw_towns
+ WHERE population_2010_census > 0
+ ORDER BY (population_2020_census - population_2010_census) * 1.0 / population_2010_census DESC;`}
+  requireOrdering
+/>
+
+### Transforming 4: Calculate and categorize population density
+
+*Scenario: Classify towns as urban, suburban, or rural based on density.*
 
 <SqlExercise
   id="example43"
   db="pnw_database.sqlite"
-  solution={`SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
+  solution={`SELECT town, 
+       state, 
+       population_2020_census,
+       land_area_sq_mi,
+       ROUND(population_2020_census / land_area_sq_mi, 0) AS density,
+       CASE 
+           WHEN population_2020_census / land_area_sq_mi > 5000 THEN 'Urban'
+           WHEN population_2020_census / land_area_sq_mi > 1000 THEN 'Suburban'
+           ELSE 'Rural'
+       END AS density_class
   FROM pnw_towns
- ORDER BY pop_density DESC;`}
+ WHERE land_area_sq_mi > 0
+ ORDER BY density DESC;`}
+  requireOrdering
+/>
+
+### Transforming 5: Flag counties by era of establishment
+
+*Scenario: Categorize counties by historical period.*
+
+<SqlExercise
+  id="example43b"
+  db="pnw_database.sqlite"
+  solution={`SELECT county,
+       state,
+       year_established,
+       CASE 
+           WHEN year_established < 1850 THEN 'Pioneer Era'
+           WHEN year_established < 1890 THEN 'Settlement Era'
+           WHEN year_established < 1920 THEN 'Progressive Era'
+           ELSE 'Modern Era'
+       END AS historical_era
+  FROM pnw_counties
+ ORDER BY year_established;`}
   requireOrdering
 />
