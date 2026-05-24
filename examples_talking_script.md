@@ -1,291 +1,253 @@
 ---
-title: SQL Examples Talking Script
+title: SQL Live-Coding Script — 2.5 hour workshop
+description: Talking script with explicit timing for a 2.5-hour live SQL session, broken by 10-minute pauses at the top of each hour.
 ---
 
-## Pacific Northwest Towns and Counties Data
+## Session at a glance
 
-**Author:** Prepared for Dr. Chester Ismay's SQL Tutorial  
-**Purpose:** Live coding presentation guide for students with no SQL background
+| Wall clock | Segment | Length |
+|---|---|---|
+| **0:00 – 1:00** | **Block 1** — Welcome, Selection, Filtering | 60 min |
+| 1:00 – 1:10 | ☕ Break | 10 min |
+| **1:10 – 2:00** | **Block 2** — Aggregating, Sorting & Grouping, Transforming, JOIN setup | 50 min |
+| 2:00 – 2:10 | ☕ Break | 10 min |
+| **2:10 – 2:30** | **Block 3** — INNER / LEFT / Anti-JOIN, Wrap-up | 20 min |
 
----
+The first column assumes a 0:00 start. If the class is scheduled (e.g.) 9:00–11:30 the breaks fall at 10:00 and 11:00.
 
-### Key Teaching Philosophy
-- **Go slow** - SQL syntax is new to everyone
-- **Explain WHY** before showing HOW
-- **Make mistakes on purpose** - debugging is learning
-- **Encourage questions** at natural break points
+### Teaching philosophy
+- **Go slow** — SQL syntax is new to everyone.
+- **Explain WHY before HOW** — context first, syntax second.
+- **Make mistakes on purpose** — debugging is the lesson.
+- **Frame each example with a scenario** — every example in `examples.Rmd` opens with one (e.g., "You need a list for a mail merge…"). Read the scenario aloud, then write the SQL.
 
----
+### Material to have open
+- The static tutorial at `https://ismayc.github.io/sql-tutorial/` (Examples + Scratchpad open in two browser tabs).
+- The ER diagram for towns & counties (the **Examples** index page has it expandable; the **Scratchpad** has the same diagram so you can keep ONE tab open across the whole session).
+- A pre-loaded scratchpad URL for live coding so the editor is hot.
 
-## Introduction (5-7 minutes)
+### Compression cheatsheet — if you fall behind
+If you're more than 5 minutes behind by the end of any segment, drop these in this order:
+1. **Aliasing 2** (table aliases) — you'll redo it in JOINs anyway.
+2. **One of the LIKE examples** (keep just `LIKE 'K%'` and one wildcard variant).
+3. **MIN/MAX on text** (Categorical Summaries) — say it works on strings and move on.
+4. **Population Density** in Transforming — pick *either* density *or* percentage change, not both.
+5. **JOIN troubleshooting guide** — refer students to the script handout instead.
+6. **Mental Exercise** at the end of JOINs — skip.
 
-### Opening
-
-> "Welcome everyone! Today we're going to learn SQL - Structured Query Language. SQL is pronounced either 'S-Q-L' or 'sequel' - both are correct, and you'll hear both in the industry.
-
-> SQL is the universal language for talking to databases. Whether you end up working with Oracle, PostgreSQL, MySQL, or SQLite like we are today - the core SQL you learn will transfer everywhere."
-
-### Introduce the Data
-
-> "We're going to learn SQL using real data about the Pacific Northwest - specifically Oregon and Washington. We have two tables:"
-
-These tables are on Canvas and correspond to information about counties and towns in Washington and Oregon.
-
-**Show the ER Diagram and explain:**
-
-> "This is an Entity-Relationship diagram, or ERD. It shows us what tables we have and how they connect.
-
-> First, let's look at `pnw_counties` - this has 75 rows representing every county in Oregon and Washington. Each county has:   
-> - Its name and which state it's in   
-> - A FIPS code (that's a government identification number)   
-> - The county seat - that's the city where the county government is located   
-> - When it was established, where it came from originally, and what the name means   
-> - The 2022 population and land area   
-
-> Our second table is `pnw_towns` with 453 towns. For each town we have:   
-> - The town name and state   
-> - Which county or counties it falls in - some towns span multiple counties   
-> - Population from both the 2010 and 2020 census   
-> - Land area in square miles   
-
-> Notice the line connecting these tables? That shows us that towns are connected to counties. One option is to set `primary_county` in the towns table to match up with the `county` in the counties table. We'll use this relationship later when we learn about JOINs."
-
-### SQL Learning Tips
-
-> "Before we dive in, here are three tips that will help you become effective SQL learners:
-
-> **First: SQL keywords are not case-sensitive**, but there's a strong convention. Most SQL developers write keywords like SELECT and FROM in all capitals. This makes the code easier to read because you can instantly see what's a SQL command versus what's data.
-
-Many SQL users use this SQL style guide as well: https://www.sqlstyle.guide/
-
-> **Second: Spacing and indentation matter for readability**, not for the computer. I'll show you a clean style that makes your queries easy to understand.
-
-> **Third: Every query ends with a semicolon**. Think of it like a period at the end of a sentence - it tells the database 'I'm done with this thought.'"
+### Material the script doesn't cover live
+The improved `examples.Rmd` has additions students can explore independently after class:
+- **Selection — Unique 2**: counties with multi-county towns.
+- **Sorting & Grouping** additions on multi-column sort and `HAVING` with `AVG`.
+- **Transforming** additions on `CASE WHEN` with text + percentage formatting.
+- **Joining** has 7 more examples (multiple-match LEFT JOINs, self-joins, more anti-join patterns). Point students to the **Joining Techniques** page on the static site and tell them to start with the scenario boxes.
 
 ---
 
-## Selection Techniques (20-25 minutes)
+# BLOCK 1 — Foundations (60 min) · 0:00 → 1:00
 
-### Selecting Columns/Fields
+## 0:00 — Welcome & orientation (5 min)
 
-#### Example 1: Select All Town Names
+> "Welcome everyone! Today we're going to learn SQL — Structured Query Language. SQL is pronounced either 'S-Q-L' or 'sequel' — both are correct, and you'll hear both in industry.
 
-> "Let's write our very first SQL query. We want to see all the town names from our towns table.
+> SQL is the universal language for talking to databases. Whether you end up working with Postgres, MySQL, BigQuery, or SQLite like we are today — the core SQL you learn will transfer everywhere."
 
-> SQL queries have a basic structure - you tell the database WHAT you want, and then WHERE to find it."
+### Show the static site
 
-**Type slowly, explaining each part:**
+> "Everything we'll write today, you can practice on `ismayc.github.io/sql-tutorial`. The site runs entirely in your browser — there's nothing to install, no account to make, and your work is saved locally as you go. We'll be live-coding on the **Examples** pages; the **Exercises** pages are for you afterward."
+
+### Introduce the data
+
+Open the **Examples → Selection Techniques** page; expand the ER diagram + text description.
+
+> "Two tables for the live coding today:
+> - `pnw_counties` — 75 rows, one per county in Oregon and Washington. Columns include the name, the county seat, when it was established, etymology, 2022 population, and land area.
+> - `pnw_towns` — 453 rows, one per town. Each town points back to its primary county; some towns straddle multiple counties so we also have secondary and tertiary county columns. Population is recorded for both the 2010 and 2020 censuses.
+
+> Notice the relationship: a town's `primary_county` matches the `county` in `pnw_counties`. That shared value is what JOINs use later."
+
+### Three style tips before we type
+
+> "**Keywords are not case-sensitive**, but the convention is all-caps for SQL keywords (`SELECT`, `FROM`, …). That makes commands visually distinct from data.
+>
+> **Indentation is for humans**, not for SQLite. I'm going to indent so `SELECT` and `FROM` line up — it makes long queries easier to scan.
+>
+> **Every statement ends with a semicolon.** Think of it as a period."
+
+> "**Cmd/Ctrl + Enter** runs the query in the editor. We'll do that constantly."
+
+---
+
+## 0:05 — Selection Techniques (25 min)
+
+### Selecting columns
+
+#### Example 1 — Quick reference list of all town names
+
+> "**Scenario:** you need a list of town names for a mail merge or a dropdown menu.
+
+> This is the simplest SQL you can write: tell the database WHAT you want, and WHERE to find it."
 
 ```sql
 SELECT town
   FROM pnw_towns;
 ```
 
-> "Let me break this down:
-> - `SELECT` is our command - we're selecting data   
-> - `town` is the column we want to see   
-> - `FROM pnw_towns` tells SQL which table to look in   
-> - The semicolon says 'end of query'   
+Type it slowly. Walk through each token:
 
-> Notice how I indented `FROM` under `SELECT`? That's a style choice that makes it easy to scan. You'll see the keyword on the left and the details on the right."
+> "`SELECT` is the verb — we're picking. `town` is the column. `FROM pnw_towns` is the source. Semicolon ends the thought.
+> 453 rows back — every town in our dataset."
 
-**Run the query and show results.**
+#### Example 2 — List all counties in the Pacific Northwest
 
-> "Look at that - all 453 town names! SQL returned exactly what we asked for, nothing more, nothing less."
-
-#### Example 2: Select All County Names
-
-> "Now you try. How would we get all the county names from the counties table?"
-
-**Give students a moment, then show:**
+> "Same pattern, different table. *Scenario: a report header that needs to enumerate every county in the region.*"
 
 ```sql
 SELECT county
   FROM pnw_counties;
 ```
 
-> "Same pattern - SELECT the column, FROM the table."
+> "75 rows. Notice the result table appears below the editor — for small results like this it's just plain HTML; for larger results you'll see a search box and pagination."
 
-#### Example 3: Select All Columns
+#### Example 3 — Export all town data for an audit
 
-> "What if we want to see EVERYTHING in a table? We could list every column name, but there's a shortcut - the asterisk, or star character."
+> "*Scenario: an auditor needs the complete towns dataset.* The shortcut for 'every column' is `*`."
 
 ```sql
 SELECT *
   FROM pnw_towns;
 ```
 
-> "The `*` means 'all columns.' This is great for exploring data, but in production code, it's better to be explicit about which columns you need. Why? Because tables can change over time, and you want your code to be predictable."
+> "`*` is great for exploration, but in production code be explicit — tables change over time and `*` makes your queries fragile."
 
-**Run and show the wider result set.**
+#### Example 4 — County names and populations for a funding report
 
-> "See how we now get all 8 columns? The town, state, all three county columns, both population columns, and land area."
-
-#### Example 4: Select Multiple Specific Columns
-
-> "Usually we want something in between - not just one column, and not all columns. Let's get county names with their 2022 population."
+> "*Scenario: federal funding is allocated by population.* You want county name paired with its 2022 population."
 
 ```sql
 SELECT county, population_2022
   FROM pnw_counties;
 ```
 
-> "When you want multiple columns, separate them with commas. The order you list them is the order they'll appear in your results."
+> "Multiple columns are comma-separated. The output order matches the SELECT order."
 
-### Aliasing (Column and Table Aliases)
+### Aliasing — clean column headers
 
-#### Example 5: Column Aliases
+#### Example 5 — Friendly headers for non-technical stakeholders
 
-> "Sometimes column names are long or unclear. We can rename them in our output using aliases.
-
-> Look at this query - I want to see county, population, and land area, but I want shorter, cleaner names in my results:"
+> "*Scenario: you're emailing a CSV to people who won't understand* `land_area_sq_mi`. The `AS` keyword renames columns in the output."
 
 ```sql
-SELECT county AS cty, 
-       population_2022 AS pop2022,
-       land_area_sq_mi AS area
+SELECT county AS county_name,
+       population_2022 AS population,
+       land_area_sq_mi AS area_square_miles
   FROM pnw_counties;
 ```
 
-> "The keyword `AS` creates an alias. The data stays the same, but the column header changes to whatever you specify. This is purely for readability in your results - it doesn't change anything in the actual database.
+> "The data is identical to the unaliased query — only the column headers change. Each column on its own line is a readability choice; SQL doesn't care."
 
-> Notice I put each column on its own line? When you have multiple columns, this makes it much easier to read."
-
-#### Example 6: Table Aliases
-
-> "We can also give tables shorter names. This becomes essential when you're working with multiple tables."
+#### Example 6 — Table aliases (90 seconds, skip if behind)
 
 ```sql
-SELECT counties.county,
-       counties.origin
-  FROM pnw_counties AS counties;
+SELECT c.county,
+       c.county_seat,
+       c.year_established
+  FROM pnw_counties AS c;
 ```
 
-> "Here I'm saying 'call the pnw_counties table just `counties` for this query.' Then I can reference columns as `counties.county` and `counties.origin`.
+> "We can alias the *table* too. Right now this looks like extra typing — `c.county` instead of just `county`. The payoff comes in JOINs when two tables both have a column called `name` or `id`. Park this idea, we'll revisit it."
 
-> This might seem like extra typing now, but when you have two tables that both have a column called 'name' or 'id', the table alias tells SQL exactly which one you mean."
+### DISTINCT
 
-### Unique Entries
+#### Example 7 — What states are represented?
 
-#### Example 7: DISTINCT Values
-
-> "What if I want to know which states are in our data, without seeing duplicates? Enter DISTINCT."
+> "*Scenario: before running state-specific analyses, you need to know which states exist in the data.*"
 
 ```sql
 SELECT DISTINCT state
   FROM pnw_towns;
 ```
 
-> "DISTINCT removes duplicate values from your results. We have 453 towns, but only 2 unique states - Oregon and Washington.
+> "453 rows in the table, 2 unique states — Oregon and Washington. `DISTINCT` is a one-keyword data audit."
 
-> This is incredibly useful for exploring data - you can quickly see what values exist in a column."
+### COUNT
 
-### Counting
-
-#### Example 10: COUNT All Records
-
-> "Often we don't need to see all the data - we just need to know how much there is. That's where COUNT comes in."
+#### Example 10 — How many towns are in the dataset?
 
 ```sql
 SELECT COUNT(*) AS num_towns
   FROM pnw_towns;
 ```
 
-> "COUNT(*) counts every row in the table. The result? 453 towns.
+> "`COUNT(*)` counts every row. The alias is purely cosmetic — without it the column header would say `COUNT(*)` which isn't a great variable name. Result: 453."
 
-> I added an alias `num_towns` because without it, the column header would just say `COUNT(*)` which isn't very descriptive."
-
-#### Example 11: COUNT DISTINCT
-
-> "We can combine COUNT with DISTINCT to count unique values:"
+#### Example 11 — How many distinct states are in `pnw_counties`?
 
 ```sql
 SELECT COUNT(DISTINCT state) AS num_unique_states
   FROM pnw_counties;
 ```
 
-> "This tells us we have 2 unique states in our counties table. COUNT DISTINCT is fantastic for data quality checks - like seeing how many different categories exist in a column."
+> "Combine `COUNT` with `DISTINCT` to get the number of unique categories. Two states. This pattern is gold for data quality — 'how many distinct customers? products? departments?'"
+
+**[Pause point — invite questions]**
+
+> "That's the building-block half of `SELECT`. Any questions before we narrow results down with `WHERE`?"
+
+⏱ **Checkpoint: you should be at ~0:30.**
 
 ---
 
-**[PAUSE POINT - Ask for Questions]**
+## 0:30 — Filtering Techniques (30 min)
 
-> "That covers the basics of selecting data. Any questions before we move on to filtering? ... Great, let's learn how to narrow down our results."
+> "So far we've returned every row. Most real work asks 'just the rows that meet *these* conditions.' That's `WHERE`."
 
----
+### Filtering rows
 
-## Filtering Techniques (25-30 minutes)
-
-### Filtering Rows/Records
-
-> "So far, we've been getting ALL rows from our tables. But usually we only want rows that meet certain conditions. That's filtering, and we use the WHERE clause."
-
-#### Example 12: Basic Filtering with Greater Than
-
-> "Let's find all towns with more than 150,000 people."
+#### Example 12 — Cities with more than 150,000 people
 
 ```sql
-SELECT town, state, population_2020_census 
-  FROM pnw_towns 
+SELECT town, state, population_2020_census
+  FROM pnw_towns
  WHERE population_2020_census > 150000;
 ```
 
-> "The WHERE clause comes after FROM and specifies our condition. Here we're saying: only give me rows where the population column is greater than 150,000.
+> "`WHERE` comes after `FROM`. Reads almost like English: '*Select* town, state, population *from* the towns table *where* the population is greater than 150,000.'
+> Five rows back: Portland, Seattle, Eugene, Salem, Vancouver — the major metros."
 
-> Notice the structure - it reads almost like English: 'Select town, state, and population FROM the towns table WHERE the population is greater than 150,000.'"
-
-**Run and show results.**
-
-> "We get just 5 towns - these are the major cities. Portland, Seattle, Eugene, Salem, and Vancouver."
-
-#### Example 13: Multiple Conditions with AND
-
-> "What if we want large Oregon towns specifically? We add another condition with AND."
+#### Example 13 — Large Oregon cities only
 
 ```sql
-SELECT town, state, population_2020_census 
-  FROM pnw_towns 
+SELECT town, state, population_2020_census
+  FROM pnw_towns
  WHERE population_2020_census > 150000
    AND state = 'Oregon';
 ```
 
-> "When using AND, both conditions must be true for a row to be included. Notice that 'Oregon' is in single quotes - that's because it's text data, not a number. SQL needs those quotes to know it's a string.
+> "`AND` requires both conditions. `'Oregon'` is in single quotes because it's text. **Text comparisons are case-sensitive in SQLite by default** — `'Oregon'` ≠ `'oregon'`.
+> Down to 2 rows: Portland and Eugene."
 
-> Also notice - text comparisons are case-sensitive in most databases. 'Oregon' is not the same as 'oregon' or 'OREGON'."
-
-**Run and show the filtered results.**
-
-> "Now we're down to just 4 rows - the large Oregon towns."
-
-#### Example 14: Expanding Results with OR
-
-> "OR works differently - it includes a row if EITHER condition is true."
+#### Example 14 — Big cities OR any Oregon city
 
 ```sql
-SELECT town, state, population_2020_census 
-  FROM pnw_towns 
+SELECT town, state, population_2020_census
+  FROM pnw_towns
  WHERE population_2020_census > 150000
     OR state = 'Oregon';
 ```
 
-> "This gives us all towns with more than 150,000 people, PLUS all Oregon towns regardless of population. The result set is much larger."
+> "`OR` keeps a row if EITHER condition is true. Much wider result set — every Oregon town, plus the big Washington ones."
 
-**Run and discuss the difference from AND.**
+#### Example 17 — BETWEEN for ranges (optional — skip if behind)
 
-> "See how many more rows we get? Every Oregon town is included, plus the big Washington cities."
-
-#### Example 17: BETWEEN for Ranges
-
-> "When filtering on a range of values, you could write two conditions with AND:"
+> "You could write a range as two conditions:"
 
 ```sql
-SELECT town, state, land_area_sq_mi
-  FROM pnw_towns
- WHERE land_area_sq_mi >= 12
-   AND land_area_sq_mi <= 15;
+WHERE land_area_sq_mi >= 12
+  AND land_area_sq_mi <= 15
 ```
 
-> "But SQL has a cleaner way - the BETWEEN operator:"
+> "But `BETWEEN` reads cleaner and includes both endpoints:"
 
 ```sql
 SELECT town, state, land_area_sq_mi
@@ -293,11 +255,7 @@ SELECT town, state, land_area_sq_mi
  WHERE land_area_sq_mi BETWEEN 12 AND 15;
 ```
 
-> "BETWEEN is inclusive on both ends - it includes 12 and 15. It's cleaner to read and less prone to typos."
-
-#### Example 19: Complex Conditions with Parentheses
-
-> "Sometimes we need complex logic. Parentheses group conditions together, just like in math."
+#### Example 19 — Complex logic with parentheses
 
 ```sql
 SELECT county, state, year_established, population_2022
@@ -306,15 +264,11 @@ SELECT county, state, year_established, population_2022
     OR (state = 'Oregon' AND population_2022 > 300000);
 ```
 
-> "Read this as: 'Give me Washington counties established in the 1890s, OR Oregon counties with more than 300,000 people.'
+> "'Washington counties established in the 1890s, OR Oregon counties bigger than 300k.' Parentheses make intent unambiguous. Without them SQLite would still evaluate left-to-right with precedence, but you don't want to gamble on that — make grouping explicit."
 
-> Without the parentheses, SQL might interpret this differently. When your logic gets complex, parentheses make your intent clear."
+### Pattern matching on text
 
-### Filtering Text
-
-#### Example 20: LIKE with Wildcards - Starting Characters
-
-> "For text matching, SQL gives us the LIKE operator with wildcards. The percent sign `%` means 'any characters.'"
+#### Example 20 — Counties starting with K
 
 ```sql
 SELECT county, state
@@ -322,11 +276,9 @@ SELECT county, state
  WHERE county LIKE 'K%';
 ```
 
-> "'K%' means 'starts with K, followed by anything.' This finds Klamath, King, Kitsap, Kittitas, and Klickitat.
+> "`LIKE` is pattern matching. `%` means 'any characters.' `'K%'` is 'starts with K, then anything.' Klamath, King, Kitsap, Kittitas, Klickitat."
 
-> This is called pattern matching, and it's incredibly powerful for text data."
-
-#### Example 21: LIKE - Ending Characters
+#### Example 21 — Towns ending in 'ia'
 
 ```sql
 SELECT town, state
@@ -334,9 +286,9 @@ SELECT town, state
  WHERE town LIKE '%ia';
 ```
 
-> "'%ia' means 'ends with ia.' This catches Olympia, Columbia City, Astoria, and many others."
+> "Wildcard on the left. Olympia, Astoria, Columbia City, …"
 
-#### Example 22: LIKE - Contains Pattern
+#### Example 22 — Towns containing 'mount' (combine if behind)
 
 ```sql
 SELECT town, state
@@ -344,9 +296,9 @@ SELECT town, state
  WHERE town LIKE '%mount%';
 ```
 
-> "'%mount%' means 'contains mount anywhere.' This finds Mount Vernon, Mountlake Terrace, and any other town with 'mount' in the name."
+> "Wildcards on both sides — substring search. Mount Vernon, Mountlake Terrace, …"
 
-#### Example 23: Underscore for Single Character
+#### Example 23 — Single-character wildcard
 
 ```sql
 SELECT county
@@ -354,57 +306,70 @@ SELECT county
  WHERE county LIKE '__ar%';
 ```
 
-> "The underscore `_` matches exactly one character. So '__ar%' means: two characters, then 'ar', then anything. This finds 'Clark' - 'Cl' are the two characters, then 'ar', then 'k'."
+> "`_` (underscore) means exactly one character. Two chars, then `ar`, then anything. Finds `Clark` — `Cl` + `ar` + `k`."
 
-#### Example 24: IN for Multiple Values
+### IN and NULL
 
-> "When checking against a list of values, use IN instead of multiple ORs."
+#### Example 24 — `IN` instead of multiple ORs
 
 ```sql
-SELECT * 
-  FROM pnw_towns 
+SELECT *
+  FROM pnw_towns
  WHERE primary_county IN ('Multnomah', 'Spokane');
 ```
 
-> "This is cleaner than writing `primary_county = 'Multnomah' OR primary_county = 'Spokane'`. As your list grows, IN becomes much more readable."
+> "Cleaner than `primary_county = 'Multnomah' OR primary_county = 'Spokane'`. As the list grows, `IN` wins easily."
 
-#### Example 25: IS NULL - Finding Missing Data
+#### Example 25 — `IS NULL`, not `= NULL`
 
-> "Real data often has missing values. In SQL, missing data is represented as NULL - not zero, not empty string, but NULL meaning 'unknown' or 'not applicable.'"
+> "Real data has missing values. SQL represents them as `NULL` — not zero, not empty string, but a separate 'unknown' state."
 
 ```sql
-SELECT * 
- FROM pnw_towns 
+SELECT *
+ FROM pnw_towns
 WHERE secondary_county IS NULL;
 ```
 
-> "We use `IS NULL` - not `= NULL`. This is a common mistake! NULL is special - it's not equal to anything, not even itself. So we have to use `IS NULL` to check for it."
+> "Use `IS NULL`, not `= NULL`. This trips up everyone the first time. `NULL` isn't equal to anything — not even itself — so equality comparisons don't work."
 
-#### Example 26: IS NOT NULL
+#### Example 26 — `IS NOT NULL`
 
 ```sql
-SELECT * 
- FROM pnw_towns 
+SELECT *
+ FROM pnw_towns
 WHERE secondary_county IS NOT NULL;
 ```
 
-> "And `IS NOT NULL` finds rows that DO have a value. These are towns that span multiple counties."
+> "Towns that DO have a secondary county. These are towns that straddle multiple counties — useful, e.g., for tax-jurisdiction reporting."
+
+**[Pause point — invite questions]**
+
+> "`WHERE` is the workhorse — you'll use it on most queries. Final questions before we take a break?"
+
+⏱ **Checkpoint: you should be at ~1:00.**
 
 ---
 
-**[PAUSE POINT - Ask for Questions]**
+# ☕ BREAK 1 (10 min) · 1:00 → 1:10
 
-> "Filtering is fundamental - you'll use WHERE clauses constantly. Any questions? ... Alright, let's move on to calculations and aggregations."
+> "We'll take ten minutes. When we come back, we'll do calculations across many rows — counting, averaging, grouping. Stretch your legs!"
+
+While students are away:
+- Make sure the **Aggregating Techniques** Examples page is open.
+- Set the theme toggle to whichever theme looks best on the projector — if dark vs light contrast looked rough in Block 1, switch now.
+- Pre-paste the GROUP BY example into the editor so the first demo is fast.
 
 ---
 
-## Aggregating Techniques (15-20 minutes)
+# BLOCK 2 — Computation, grouping, transforming, JOIN setup (50 min) · 1:10 → 2:00
 
-### Numerical Summaries
+## 1:10 — Aggregating Techniques (15 min)
 
-> "SQL can do calculations across many rows, collapsing them into summary statistics. These are called aggregate functions."
+> "Now we'll do arithmetic across many rows. Aggregate functions collapse rows down into a single summary number."
 
-#### Example 27: AVG - Average
+### Numerical summaries
+
+#### Example 27 — AVG of populations
 
 ```sql
 SELECT AVG(population_2020_census) AS avg_population
@@ -412,11 +377,9 @@ SELECT AVG(population_2020_census) AS avg_population
  WHERE state = 'Washington';
 ```
 
-> "AVG calculates the arithmetic mean. This tells us the average population of Washington towns.
+> "`AVG` = arithmetic mean. Filter + aggregate combine naturally — only Washington towns get averaged."
 
-> Notice we can combine aggregation with filtering - we're only averaging Washington towns, not all towns."
-
-#### Example 28: SUM - Total
+#### Example 28 — SUM
 
 ```sql
 SELECT SUM(population_2020_census) AS total_population
@@ -424,71 +387,55 @@ SELECT SUM(population_2020_census) AS total_population
  WHERE state = 'Oregon';
 ```
 
-> "SUM adds up all the values. This gives us the total population of all Oregon towns in our dataset."
+> "Total population across all Oregon towns in our dataset."
 
-#### Example 29 & 30: MIN and MAX
+#### Examples 29 & 30 — MIN, MAX
 
 ```sql
-SELECT MIN(population_2020_census) AS min_population
+SELECT MIN(population_2020_census) AS min_population,
+       MAX(population_2020_census) AS max_population
   FROM pnw_towns;
 ```
 
-```sql
-SELECT MAX(population_2020_census) AS max_population
-  FROM pnw_towns;
-```
+> "Combined into one query — you can compute multiple aggregates in a single `SELECT`."
 
-> "MIN and MAX find the smallest and largest values. Pretty straightforward!"
+### Categorical summaries (skip if behind)
 
-### Categorical Summaries
-
-> "MIN and MAX also work on text - they give you the first and last alphabetically."
-
-#### Example 32: First Alphabetically
+> "`MIN` and `MAX` also work on text — first/last alphabetically."
 
 ```sql
-SELECT MIN(town) AS first_town
-  FROM pnw_towns;
+SELECT MIN(town) AS first_town,
+       MAX(county) AS last_county
+  FROM pnw_towns, pnw_counties;
 ```
 
-> "This returns 'Aberdeen' - the first town alphabetically."
-
-#### Example 33: Last Alphabetically
-
-```sql
-SELECT MAX(county) AS last_county
-  FROM pnw_counties;
-```
-
-> "This returns 'Yamhill' or 'Yakima' depending on the state - whichever comes last in alphabetical order."
+> "Useful for sanity-checking the alphabet range of a column."
 
 ### Rounding
 
-#### Example 34a & 34b: ROUND Function
+#### Examples 34a / 34b — ROUND
 
 ```sql
 SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area
   FROM pnw_towns;
 ```
 
-> "ROUND takes two arguments: the number to round, and how many decimal places. So ROUND(land_area_sq_mi, 2) gives us two decimal places."
+> "`ROUND(value, n)` — `n` is decimal places. With `0` you get whole numbers."
 
 ```sql
 SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area
   FROM pnw_towns;
 ```
 
-> "With 0 decimal places, we get whole numbers."
+⏱ **Checkpoint: you should be at ~1:25.**
 
 ---
 
-## Sorting and Grouping Techniques (20-25 minutes)
+## 1:25 — Sorting and Grouping (20 min)
 
 ### Sorting
 
-> "Results come back in no guaranteed order unless you specify one. ORDER BY lets you control the sort."
-
-#### Example 35: Basic Sorting
+#### Example 35 — Default ascending sort
 
 ```sql
 SELECT town, population_2020_census
@@ -496,17 +443,9 @@ SELECT town, population_2020_census
  ORDER BY population_2020_census;
 ```
 
-> "This sorts from smallest to largest population - ascending order, which is the default."
+> "Without `ORDER BY` the row order is whatever SQLite feels like — usually insertion order, but you cannot rely on it. With `ORDER BY` you make the order explicit."
 
-#### Example 36a & 36b: ASC and DESC
-
-```sql
-SELECT town, population_2020_census
-  FROM pnw_towns
-ORDER BY population_2020_census ASC;
-```
-
-> "ASC means ascending - smallest to largest. It's the default, so you don't have to write it, but it makes your intent clear."
+#### Examples 36a / 36b — ASC, DESC
 
 ```sql
 SELECT town, population_2020_census
@@ -514,9 +453,9 @@ SELECT town, population_2020_census
  ORDER BY population_2020_census DESC;
 ```
 
-> "DESC means descending - largest to smallest. Now Seattle shows up first with 737,015 people."
+> "`DESC` for largest-first. Seattle is on top with 737,015. `ASC` is the default — write it for readability anyway."
 
-#### Example 37: Multiple Sort Columns
+#### Example 37 — Multi-column sort
 
 ```sql
 SELECT county, state, population_2022
@@ -524,15 +463,13 @@ SELECT county, state, population_2022
  ORDER BY state, population_2022 DESC;
 ```
 
-> "You can sort by multiple columns. This sorts first by state (alphabetically), then within each state, by population (largest first).
-
-> So Oregon counties come first (O before W), ordered by population. Then Washington counties, also ordered by population."
+> "Primary sort by state (alphabetical Oregon → Washington), within each state by population descending. Mix of orderings is fine."
 
 ### Grouping
 
-> "This is where SQL gets really powerful. GROUP BY lets you calculate summaries for each category."
+> "This is where SQL becomes magic. `GROUP BY` lets you compute aggregates *per category*."
 
-#### Example 38: Basic GROUP BY
+#### Example 38 — Count per state
 
 ```sql
 SELECT state, COUNT(*) AS total_towns
@@ -540,11 +477,9 @@ SELECT state, COUNT(*) AS total_towns
  GROUP BY state;
 ```
 
-> "Instead of counting ALL towns, we count towns PER STATE. GROUP BY state creates two groups, and COUNT(*) runs separately for each group.
+> "Instead of one count over the whole table, we get one count *per state*. The grouping key shows up in the result."
 
-> Result: Oregon has some number of towns, Washington has some number of towns."
-
-#### Example 39: GROUP BY with ORDER BY
+#### Example 39 — Combine GROUP BY with ORDER BY
 
 ```sql
 SELECT state, AVG(population_2022) AS avg_population
@@ -553,13 +488,11 @@ SELECT state, AVG(population_2022) AS avg_population
  ORDER BY avg_population DESC;
 ```
 
-> "We can calculate average county population by state, then sort to see which state has larger counties on average."
+> "Compute the average county population by state, then sort the resulting two rows by that average. The state with the larger counties on average bubbles to the top."
 
-#### Example 40a & 40b: HAVING vs WHERE
+#### Examples 40a / 40b — WHERE vs HAVING
 
-> "Here's a common mistake. What if we want to see only counties that have more than 10 towns?"
-
-**First, show the error:**
+> "Here is one of the most common SQL mistakes. We want counties with more than 10 towns. Try the natural-sounding query first."
 
 ```sql
 SELECT primary_county, state, COUNT(*) AS total_towns
@@ -568,9 +501,7 @@ SELECT primary_county, state, COUNT(*) AS total_towns
  WHERE COUNT(*) > 10;
 ```
 
-> "This gives an error! Why? Because WHERE filters individual rows BEFORE grouping happens. We can't use COUNT(*) in WHERE because the counting hasn't happened yet."
-
-**Then show the solution:**
+> "This throws an error. `WHERE` runs *before* `GROUP BY`, so the count doesn't exist yet to compare. The fix:"
 
 ```sql
 SELECT primary_county, state, COUNT(*) AS total_towns
@@ -579,63 +510,47 @@ SELECT primary_county, state, COUNT(*) AS total_towns
 HAVING COUNT(*) > 10;
 ```
 
-> "HAVING filters groups AFTER the grouping and counting. Think of it as WHERE for aggregated results.
+> "`HAVING` is `WHERE` for aggregated groups. Mnemonic: **WHERE filters rows, HAVING filters groups.** They're not interchangeable."
 
-> **Key rule**: WHERE filters rows before grouping, HAVING filters groups after grouping."
-
----
-
-**[PAUSE POINT - Ask for Questions]**
-
-> "GROUP BY and HAVING are often the trickiest concepts for new SQL learners. Any questions before we move on?"
+⏱ **Checkpoint: you should be at ~1:45.**
 
 ---
 
-## Transforming Techniques (10-15 minutes)
+## 1:45 — Transforming Techniques (10 min)
 
-### CASE WHEN - Conditional Logic
+### CASE WHEN — SQL's if/then/else
 
-#### Example 41: Classifying Data
-
-> "Sometimes we want to create new categories based on values. CASE WHEN is SQL's if-then-else."
+#### Example 41 — Classify town by size
 
 ```sql
-SELECT town, 
+SELECT town,
        population_2010_census,
-       CASE 
-           WHEN population_2010_census > 100000 THEN 'Large'
-           WHEN population_2010_census BETWEEN 50000 AND 100000 THEN 'Medium'
-           ELSE 'Small'
+       CASE
+         WHEN population_2010_census > 100000              THEN 'Large'
+         WHEN population_2010_census BETWEEN 50000 AND 100000 THEN 'Medium'
+         ELSE                                                 'Small'
        END AS town_size
   FROM pnw_towns
-  ORDER BY population_2010_census DESC;
+ ORDER BY population_2010_census DESC;
 ```
 
-> "Let me walk through this:   
-> - CASE starts the conditional   
-> - Each WHEN tests a condition   
-> - THEN specifies what to return if that condition is true   
-> - ELSE catches everything that didn't match any WHEN   
-> - END closes the CASE statement   
-> - AS town_size gives our new calculated column a name   
+> "Each `WHEN` is a test. First match wins. `ELSE` catches everything else. `END` closes the `CASE`. Order matters — write more specific conditions first."
 
-> This creates a new column that classifies each town as Large, Medium, or Small based on population."
+### Math in the SELECT list (pick ONE if behind)
 
-### Calculated Columns
-
-#### Example 42: Percentage Change
+#### Example 42 — Percentage change
 
 ```sql
-SELECT town, state, (population_2020_census - population_2010_census) / population_2010_census * 100 AS pct_change
+SELECT town, state,
+       (population_2020_census - population_2010_census) * 100.0
+         / population_2010_census AS pct_change
   FROM pnw_towns
-  ORDER BY pct_change DESC;
+ ORDER BY pct_change DESC;
 ```
 
-> "We can do math right in our SELECT! This calculates the percentage population change between 2010 and 2020.
+> "Arithmetic operators work in `SELECT`. `* 100.0` (not `* 100`) forces floating-point division — otherwise integer division gives misleading zeros for small percentages."
 
-> The formula: (new - old) / old * 100. SQL follows normal order of operations."
-
-#### Example 43: Population Density
+#### Example 43 — Population density (skip if you did 42)
 
 ```sql
 SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
@@ -643,55 +558,60 @@ SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
  ORDER BY pop_density DESC;
 ```
 
-> "Population divided by area gives us density - people per square mile. Now we can see which towns are most crowded."
+> "People per square mile. Same idea — derive new values right in `SELECT`."
+
+⏱ **Checkpoint: you should be at ~1:55.**
 
 ---
 
-## Joining Techniques (35-45 minutes)
+## 1:55 — Setup for JOINs (5 min)
 
-> "This is where it all comes together. Real databases have data spread across multiple tables. JOINs let us combine them. This is often the trickiest part of SQL for beginners, so we're going to take our time here."
+> "Five minutes left in this block. We're going to *set up* JOINs now and *do* them after the next break. Trust me — JOINs land better when the mental model is fresh."
 
-### Why Do We Need JOINs?
+### Why JOINs exist
 
-> "First, let's understand WHY data is split across tables in the first place.
+> "If we stored everything in one mega-table, a county's population would repeat in every town's row. Update the population once and you'd need to update hundreds of rows. So databases store each fact once — `pnw_counties` has the county facts, `pnw_towns` has the town facts — and use a shared column to reconnect them on demand. That reconnection is a JOIN."
 
-> Imagine if we stored everything in ONE giant table - every town would repeat the county's establishment year, etymology, population, etc. If a county's population estimate changed, we'd have to update it in hundreds of rows. That's error-prone and wasteful.
+### The shared column
 
-> Instead, databases use **normalization** - storing each piece of information once, in the right place. Counties in one table, towns in another. But then we need a way to connect them back together when we need combined information. That's what JOINs do."
+> "Look at the data:
+> - `pnw_towns.primary_county` has values like `'King'`, `'Multnomah'`, `'Lane'`.
+> - `pnw_counties.county` has values like `'King'`, `'Multnomah'`, `'Lane'`.
+> Same strings, in different tables. The JOIN's `ON` clause says 'match rows where these are equal.'"
 
-### Setup - Understanding the Relationship
+### Mental model
 
-> "Look back at our ER diagram. See the line connecting the tables? That represents a relationship.
+> "Imagine two stacks of index cards — counties and towns. A JOIN is walking through one stack, finding the matching card in the other stack, and stapling them together. The `ON` clause says what 'matching' means."
 
-> The `primary_county` column in the towns table contains values like 'Multnomah', 'King', 'Lane'. The `county` column in the counties table ALSO contains those same values. This shared data is what lets us connect the tables.
+> "Three JOIN flavours we'll cover after the break:
+> - **INNER JOIN** — only rows that have a match on both sides.
+> - **LEFT JOIN** — every row on the left, plus matching info from the right when it exists.
+> - **Anti-Join** — rows on the left that have *no* match on the right (e.g., counties with no recorded towns).
+> Hold those names in your head, we'll write each one shortly."
 
-> In database terminology:   
-> - The `county` column in pnw_counties is a **primary key** - it uniquely identifies each row   
-> - The `primary_county` column in pnw_towns is a **foreign key** - it references the primary key in another table   
-
-> JOINs work by finding rows where these values match."
-
-### The Mental Model: JOINs as Matching
-
-> "Here's how I want you to think about JOINs:
-
-> Imagine you have two stacks of index cards. One stack has county information, one has town information. A JOIN is like going through the town cards one by one and finding the matching county card to staple together.
-
-> The **ON** clause tells SQL what 'matching' means - which columns to compare."
+⏱ **Checkpoint: you should be at ~2:00.**
 
 ---
 
-### INNER JOIN
+# ☕ BREAK 2 (10 min) · 2:00 → 2:10
 
-**Show the visual diagrams for INNER JOIN**
+> "Quick break. When we come back: ten focused minutes on JOIN syntax, then five minutes wrapping up and answering questions."
 
-> "An INNER JOIN is the most selective type of join. It only returns rows where there's a match in BOTH tables.
+While students are away:
+- Switch to the **Joining Techniques** Examples page so the JOIN diagrams are ready.
+- If the room's energy is low, plan to spend more time on the INNER JOIN demo and skip the Mental Exercise.
 
-> Think of it like a Venn diagram - INNER JOIN gives you only the overlap, only the rows that exist in both tables based on your matching condition."
+---
 
-#### Example 44: Basic INNER JOIN
+# BLOCK 3 — JOINs and wrap-up (20 min) · 2:10 → 2:30
 
-> "Let's say we want to see each county alongside its county seat's population. The county seat name is stored in pnw_counties, but the population is stored in pnw_towns. We need to JOIN them."
+## 2:10 — INNER JOIN (5 min)
+
+**Show the INNER JOIN visual** on screen (`Examples → Joining Techniques`, top of the page).
+
+> "INNER JOIN is the strictest type. Only rows with matches on both sides survive. Venn diagram intersection."
+
+#### Example 44 — County seats' populations
 
 ```sql
 SELECT c.county, c.county_seat, t.population_2020_census
@@ -699,65 +619,34 @@ SELECT c.county, c.county_seat, t.population_2020_census
  INNER JOIN pnw_towns AS t ON c.county_seat = t.town;
 ```
 
-> "Let me break this down piece by piece:"
+Walk through it slowly:
+> "**FROM `pnw_counties` AS c** — left table, aliased.
+> **INNER JOIN `pnw_towns` AS t** — right table, aliased.
+> **ON c.county_seat = t.town** — the matching rule.
+> **SELECT c.county, c.county_seat, t.population_2020_census** — pick columns from BOTH sides; the alias tells SQL which table each column comes from."
 
-**Walk through each component slowly:**
+> "75 counties → fewer rows back. INNER JOIN *can lose data*. If a county seat (say, a tiny town) isn't in our towns table, that whole county row disappears. Remember that — it's a common cause of 'where did my rows go?' bugs."
 
-> "**FROM pnw_counties AS c** - We start with the counties table and give it the alias 'c'. This is our 'left' table.
-
-> **INNER JOIN pnw_towns AS t** - We're joining the towns table, aliased as 't'. This is our 'right' table.
-
-> **ON c.county_seat = t.town** - This is the matching condition. For each county, SQL looks for a town where the town name equals the county seat name.
-
-> **SELECT c.county, c.county_seat, t.population_2020_census** - We pick columns from BOTH tables. The aliases (c. and t.) tell SQL which table each column comes from."
-
-**Run the query and examine results.**
-
-> "Notice what happened - we have 75 counties, but we might not get 75 rows back. Why? Because INNER JOIN only keeps matches. If a county seat (like a very small town) isn't in our towns table, that entire county row disappears from the results.
-
-> **Key insight**: INNER JOIN can LOSE data. You only see rows that have matches on both sides."
-
-#### Common INNER JOIN Mistakes
-
-> "Let me show you mistakes I see students make:"
-
-**Mistake 1: Forgetting the ON clause**
+### One mistake to call out (30 sec)
 
 ```sql
--- This is WRONG - produces a Cartesian product!
+-- DON'T DO THIS
 SELECT c.county, t.town
   FROM pnw_counties AS c
  INNER JOIN pnw_towns AS t;
 ```
 
-> "Without ON, SQL matches every county with every town. 75 counties times 453 towns = 33,975 rows of nonsense. Always include your ON clause!"
-
-**Mistake 2: Using the wrong columns to match**
-
-```sql
--- This probably returns nothing useful
-SELECT c.county, t.town
-  FROM pnw_counties AS c
- INNER JOIN pnw_towns AS t ON c.county = t.town;
-```
-
-> "Here we're trying to match county names to town names. Those aren't the same thing! Think carefully about which columns actually contain matching data."
+> "No `ON` clause → Cartesian product. 75 × 453 = 33,975 nonsense rows. Always specify `ON`."
 
 ---
 
-### LEFT JOIN
+## 2:15 — LEFT JOIN (5 min)
 
-**Show the visual diagrams for LEFT JOIN**
+**Show the LEFT JOIN visual.**
 
-> "LEFT JOIN is more forgiving than INNER JOIN. It keeps ALL rows from the left table (the first one mentioned), whether or not they have a match in the right table."
+> "LEFT JOIN keeps every row from the left table whether or not there's a match. Where there's no match, the right-table columns come back as `NULL`."
 
-#### The Key Difference from INNER JOIN
-
-> "With INNER JOIN, no match means the row disappears. With LEFT JOIN, no match means the row stays, but the columns from the right table show NULL.
-
-> Think of it as: 'Give me everything from the left table, and add matching information from the right table if it exists.'"
-
-#### Example 45: LEFT JOIN
+#### Example 45 — Same query, swap INNER for LEFT
 
 ```sql
 SELECT c.county, c.county_seat, t.population_2020_census
@@ -765,51 +654,23 @@ SELECT c.county, c.county_seat, t.population_2020_census
   LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;
 ```
 
-> "Now we see ALL 75 counties, guaranteed. For counties whose county seat IS in our towns table, we see the population. For counties whose county seat ISN'T in our towns table, we see NULL for the population.
+> "All 75 counties guaranteed. Counties whose seat isn't in the towns table show `NULL` for population. Compare to the INNER JOIN row count — LEFT will have more (or equal, never fewer)."
 
-> Compare this to the INNER JOIN results - you'll likely see more rows here."
+### When to pick which
 
-**Run both queries and compare row counts.**
-
-> "See the difference? INNER JOIN gave us [X] rows. LEFT JOIN gives us 75 rows - every single county. The ones with NULL populations are counties whose seats weren't in our towns table."
-
-#### When to Use LEFT JOIN vs INNER JOIN
-
-> "Use **INNER JOIN** when you only want results that have complete information from both tables. Missing data should exclude the row.
-
-> Use **LEFT JOIN** when the left table is your 'primary' data and you want to enhance it with optional information from the right table. Missing data is okay - you still want to see the row.
-
-> **Real-world example**: If you're generating a report of all counties and their seats' populations, LEFT JOIN ensures every county appears even if population data is missing. INNER JOIN would silently omit counties with missing data - which might hide problems in your data."
+> "**INNER** when missing data on either side should drop the row.
+> **LEFT** when the left table is your 'main' data and you want the right table to *enhance* it where possible.
+> Reporting tip: LEFT is safer for audit-style reports because rows can't vanish silently."
 
 ---
 
-### Understanding NULL in JOIN Results
+## 2:20 — Anti-Join: 'what's missing?' (5 min)
 
-> "This trips up a lot of students. When a LEFT JOIN doesn't find a match, ALL columns from the right table become NULL - not just the join column.
+**Show the anti-join visual.**
 
-```sql
-SELECT c.county, 
-       c.county_seat, 
-       t.town,           -- Will be NULL if no match
-       t.state,          -- Will ALSO be NULL if no match
-       t.population_2020_census  -- Will ALSO be NULL if no match
-  FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;
-```
+> "The most pedagogically interesting JOIN is the one that finds rows *without* matches."
 
-> "If a county seat doesn't match any town, ALL the 't.' columns are NULL, not just t.town. This is important when you're trying to figure out why you're seeing NULLs."
-
----
-
-### Anti-Join Pattern
-
-**Show the anti-join visual**
-
-> "Sometimes the most interesting question is: 'What's missing?' We call this an anti-join - finding rows in one table that DON'T have matches in another."
-
-#### Example 47: Finding Unmatched Records
-
-> "Let's find counties that don't have ANY towns listed in our towns table. Maybe these are very rural counties, or maybe there's a data quality issue we need to investigate."
+#### Example 47 — Counties with no recorded towns
 
 ```sql
 SELECT c.county
@@ -818,112 +679,104 @@ SELECT c.county
  WHERE t.town IS NULL;
 ```
 
-> "Here's the logic, step by step:
+Three-step explanation:
+> "1. LEFT JOIN ensures every county is in the result, even those with no matching town.
+> 2. Counties with no matching town have `NULL` in every `t.*` column.
+> 3. `WHERE t.town IS NULL` keeps only the orphans."
 
-> **Step 1**: LEFT JOIN ensures all counties are included, even those with no matching towns.
-
-> **Step 2**: For counties with no matching towns, ALL columns from t (including t.town) will be NULL.
-
-> **Step 3**: WHERE t.town IS NULL filters to keep only those 'orphan' counties.
-
-> The result shows counties that have zero towns in our towns table. This is incredibly useful for data quality checks!"
-
-#### Anti-Join Use Cases
-
-> "Anti-joins answer questions like:   
-> - Which customers have never placed an order?   
-> - Which products have never been sold?   
-> - Which counties have no recorded towns?   
-> - Which employees aren't assigned to any project?   
-
-> Any time you need to find 'things without matches,' the anti-join pattern is your tool."
+> "Real-world translations:
+> - Customers who've never placed an order
+> - Products never sold
+> - Employees not yet assigned to a project
+> - Counties with no recorded towns (today)."
 
 ---
 
-### JOIN Troubleshooting Guide
+## 2:25 — Wrap-up and Q&A (5 min)
 
-> "When your JOINs aren't working as expected, check these things:"
+### What you can do now
 
-**Problem: Way too many rows (Cartesian product)**
-> "You probably forgot the ON clause, or your ON condition is matching too broadly."
+> "After 2.5 hours, you can:
+> - **SELECT** specific columns or all columns, with aliases.
+> - **WHERE** to narrow results — comparisons, `AND`/`OR`, `BETWEEN`, `LIKE`, `IN`, `IS NULL`.
+> - **Aggregate** with `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`, plus `ROUND`.
+> - **`ORDER BY`** to control sort, **`GROUP BY`** for per-category aggregates, **`HAVING`** to filter groups.
+> - **`CASE WHEN`** for conditional logic and calculated columns.
+> - **INNER**, **LEFT**, and **anti**-JOINs to combine tables."
 
-**Problem: Way too few rows (or zero rows)**
-> "Your ON condition might be too restrictive, or the values don't actually match. Check for case sensitivity issues ('Oregon' vs 'oregon'), trailing spaces, or comparing the wrong columns."
+### Where to go next
 
-**Problem: Unexpected NULLs everywhere**
-> "You're using LEFT JOIN and many rows don't have matches. This might be correct! Or your matching condition might be wrong."
+> "Open the **Exercises** section on the static site — 32 practice problems on the Pacific Northwest flights data. The flights tutorial uses a different dataset (airlines, airports, flights, planes, weather) so you'll exercise everything you learned today plus a few new patterns.
 
-**Problem: Duplicate rows appearing**
-> "One row in your left table might match MULTIPLE rows in your right table. This is called a many-to-many situation. You might need to add more conditions to ON, or use GROUP BY to consolidate."
+> Each exercise has hints if you're stuck and a 'Check answer' button that diff-compares your result against the expected output and gives you specific feedback like 'your column count is right but the names don't match — did you forget AS?' or 'too many rows — your WHERE might be too loose.'
 
----
+> If you want to go deeper on JOINs there are seven more JOIN examples on the **Joining Techniques** Examples page that we didn't cover live."
 
-### JOIN Summary Table
+### Final invitation
 
-| JOIN Type | Keeps from Left Table | Keeps from Right Table | Use When |
-|-----------|----------------------|------------------------|----------|
-| INNER JOIN | Only matching rows | Only matching rows | You need complete data from both tables |
-| LEFT JOIN | ALL rows | Only matching rows (NULL if no match) | Left table is primary, right is optional enhancement |
-| Anti-Join (LEFT + WHERE NULL) | Only NON-matching rows | Nothing | Finding orphans or missing relationships |
+> "Any final questions?"
 
 ---
 
-### Practice Mental Exercise
+# Appendix A — Quick reference card
 
-> "Before we move on, let's do a mental exercise. Without running any code, predict:
+```sql
+SELECT column1, column2     -- what columns to show
+  FROM table_name           -- which table
+ WHERE row_condition        -- filter rows (before grouping)
+ GROUP BY column            -- create groups
+HAVING group_condition      -- filter groups (after grouping)
+ ORDER BY column DESC       -- sort the final result
+ LIMIT 10;                  -- cap the rows returned
 
-> If we INNER JOIN pnw_counties (75 rows) with pnw_towns (453 rows) on county = primary_county, will we get:   
-> A) 75 rows (one per county)   
-> B) 453 rows (one per town)   
-> C) Something else?   
-
-> ... The answer is C - something else! Each county can match MULTIPLE towns. King County might match Seattle, Bellevue, Redmond, etc. So we could get up to 453 rows (if every town's county exists in our counties table), but each county appears multiple times.
-
-> Understanding this 'row multiplication' effect is crucial for working with JOINs correctly."
-
----
-
-## Wrap-Up and Key Takeaways (5 minutes)
-
-> "Congratulations! You've just learned the fundamentals of SQL. Let me summarize what you can now do:
-
-> **Selection**: You can pick specific columns, all columns, rename them with aliases, and find unique values with DISTINCT.
-
-> **Filtering**: You can narrow results with WHERE, use comparison operators, combine conditions with AND/OR, match patterns with LIKE, check for NULL values, and use IN for lists.
-
-> **Aggregation**: You can calculate COUNT, SUM, AVG, MIN, and MAX, and ROUND your results.
-
-> **Sorting and Grouping**: You can ORDER BY to sort results, GROUP BY to calculate summaries per category, and use HAVING to filter those groups.
-
-> **Transforming**: You can create new calculated columns and use CASE WHEN for conditional logic.
-
-> **Joining**: You can combine data from multiple tables with INNER JOIN, LEFT JOIN, and the anti-join pattern.
-
-> **Next steps**: Practice is everything. The exercises.Rmd file has 30 exercises using flight data - try them out! The more you write SQL, the more natural it becomes.
-
-> Any final questions?"
-
----
-
-## Quick Reference Card (For Your Notes)
-
-```
-SELECT column1, column2      -- what columns to show
-  FROM table_name            -- which table
- WHERE condition             -- filter rows (before grouping)
- GROUP BY column             -- create groups for aggregation
-HAVING aggregate_condition   -- filter groups (after grouping)
- ORDER BY column DESC;       -- sort results
-
--- Wildcards
-%  = any characters (LIKE 'A%')
-_  = exactly one character (LIKE '_BC')
+-- Wildcards inside LIKE
+%   any characters          LIKE 'A%'      starts with A
+_   exactly one character   LIKE '__ar%'   2 chars + 'ar' + anything
 
 -- Aggregates
-COUNT(*), SUM(col), AVG(col), MIN(col), MAX(col)
+COUNT(*) SUM(col) AVG(col) MIN(col) MAX(col)
 
--- Joins
-INNER JOIN -- only matching rows from both tables
-LEFT JOIN  -- all from left table + matching from right
+-- JOIN syntax
+SELECT a.col, b.col
+  FROM table_a AS a
+ INNER JOIN table_b AS b ON a.key = b.key;
+-- LEFT JOIN keeps every left row; right cols are NULL on no match.
+-- Anti-join = LEFT JOIN + WHERE right.key IS NULL.
 ```
 
+# Appendix B — Going long? Going short?
+
+**If you're 5 min behind** at the end of any block, drop in this order:
+1. Aliasing 2 (Example 6)
+2. One LIKE example (collapse 21/22 into one)
+3. Categorical MIN/MAX (Example 32/33)
+4. Either Example 42 or Example 43, not both
+5. The "common JOIN mistakes" callout in Block 3
+
+**If you have 10 extra minutes** at the end:
+1. Click into the static **Exercises** site and have students try `query1` and `query11` together.
+2. Show the Scratchpad with a slightly absurd query against the 16 MB flights table (count flights per carrier), demonstrating that the database is real and queries take milliseconds even at 200k rows.
+3. Open the **Joining Techniques** *Examples* page and demo one of the multi-match LEFT JOIN examples you skipped.
+
+# Appendix C — Common student questions and quick answers
+
+**Q: Why all-caps for keywords if it doesn't matter?**
+A: Convention. Skim-readability. Senior engineers and code reviewers expect it.
+
+**Q: Why semicolons if every editor box runs one query?**
+A: Habit. The moment you write multi-statement SQL (or paste into a different tool) you'll need them.
+
+**Q: Why does `WHERE NULL = NULL` not work?**
+A: `NULL` is 'unknown.' SQL can't decide whether two unknowns are equal — so the answer is also unknown, which `WHERE` treats as false. Use `IS NULL`.
+
+**Q: Difference between `COUNT(*)` and `COUNT(column)`?**
+A: `COUNT(*)` counts rows. `COUNT(column)` counts rows where that column is NOT NULL. Sometimes that distinction matters.
+
+**Q: Why use `LEFT JOIN` over `INNER JOIN` if I always want matches?**
+A: Use `INNER`. `LEFT` is for when missing-on-the-right is meaningful information (audit/report contexts).
+
+**Q: When do I need `GROUP BY` explicitly?**
+A: Any non-aggregated column in `SELECT` must appear in `GROUP BY`. SQLite is lenient here, but Postgres/MySQL will error. Get the habit early.
+
+**Q: What if my query is slow?**
+A: A topic for a follow-up session. Short answer: read up on indexes and `EXPLAIN`.
