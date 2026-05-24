@@ -1,0 +1,123 @@
+---
+import "../styles/global.css";
+import ThemeToggle from "../components/ThemeToggle.astro";
+import Sidebar from "../components/Sidebar.astro";
+import SectionFooter from "../components/SectionFooter.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  frontmatter?: { title?: string; description?: string };
+}
+const { frontmatter } = Astro.props;
+const title = Astro.props.title ?? frontmatter?.title ?? "SQL Tutorial";
+const description =
+  Astro.props.description ??
+  frontmatter?.description ??
+  "Learn SQL in your browser with the Pacific Northwest towns, counties, and flights data.";
+const base = import.meta.env.BASE_URL;
+const path = Astro.url.pathname;
+const navLinks = [
+  { href: `${base}`, label: "Home" },
+  { href: `${base}examples/`, label: "Examples" },
+  { href: `${base}exercises/`, label: "Exercises" },
+  { href: `${base}scratchpad`, label: "Scratchpad" },
+  { href: `${base}progress`, label: "Progress" },
+];
+
+// Determine if we're on a section page (e.g. /examples/selection-techniques/)
+const sectionMatch = path.match(/\/(examples|exercises)\/([^/]+)\/?$/);
+const sectionKind = sectionMatch?.[1] as "examples" | "exercises" | undefined;
+const sectionSlug = sectionMatch?.[2];
+const isIndexPage = sectionSlug === undefined || sectionSlug === "";
+const showSidebar = path.startsWith(`${base}examples`) || path.startsWith(`${base}exercises`);
+
+// Opt-in analytics. Configure via PUBLIC_* env vars in your build environment:
+//   PUBLIC_ANALYTICS_PROVIDER = "plausible" | "goatcounter" | "umami"
+//   PUBLIC_ANALYTICS_DOMAIN   = "yoursite.example"            (plausible/umami)
+//   PUBLIC_ANALYTICS_SRC      = "https://stats.example/...js" (umami / custom)
+//   PUBLIC_ANALYTICS_GC_URL   = "https://you.goatcounter.com/count" (goatcounter)
+const analytics = {
+  provider: import.meta.env.PUBLIC_ANALYTICS_PROVIDER ?? "",
+  domain: import.meta.env.PUBLIC_ANALYTICS_DOMAIN ?? "",
+  src: import.meta.env.PUBLIC_ANALYTICS_SRC ?? "",
+  gcUrl: import.meta.env.PUBLIC_ANALYTICS_GC_URL ?? "",
+};
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <title>{title} · SQL Tutorial</title>
+    <meta name="description" content={description} />
+    <script is:inline>
+      (function () {
+        try {
+          const t = localStorage.getItem("sqlt:theme") || "system";
+          const dark = t === "dark" || (t === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          document.documentElement.classList.toggle("dark", dark);
+        } catch (_) {}
+      })();
+    </script>
+    {analytics.provider === "plausible" && analytics.domain && (
+      <script is:inline defer data-domain={analytics.domain} src="https://plausible.io/js/script.js"></script>
+    )}
+    {analytics.provider === "goatcounter" && analytics.gcUrl && (
+      <script is:inline data-goatcounter={analytics.gcUrl} async src="//gc.zgo.at/count.js"></script>
+    )}
+    {analytics.provider === "umami" && analytics.src && analytics.domain && (
+      <script is:inline defer src={analytics.src} data-website-id={analytics.domain}></script>
+    )}
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <header class="sticky top-0 z-20 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur">
+      <div class="mx-auto max-w-5xl flex items-center gap-4 px-4 h-14">
+        <a href={base} class="font-semibold text-base no-underline text-slate-900 dark:text-slate-100">
+          <span class="text-brand-600 dark:text-brand-100">SQL</span> Tutorial
+        </a>
+        <nav class="flex-1 hidden md:flex items-center gap-1 text-sm">
+          {navLinks.slice(1).map((l) => (
+            <a href={l.href} class="px-2 py-1 rounded text-slate-700 dark:text-slate-300 no-underline hover:bg-slate-100 dark:hover:bg-slate-800">{l.label}</a>
+          ))}
+        </nav>
+        <div class="flex-1 md:hidden"></div>
+        <ThemeToggle />
+      </div>
+      <nav class="md:hidden border-t border-slate-200 dark:border-slate-800 px-4 py-2 flex flex-wrap gap-1 text-sm">
+        {navLinks.slice(1).map((l) => (
+          <a href={l.href} class="px-2 py-1 rounded text-slate-700 dark:text-slate-300 no-underline hover:bg-slate-100 dark:hover:bg-slate-800">{l.label}</a>
+        ))}
+      </nav>
+    </header>
+
+    {showSidebar ? (
+      <div class="flex-1 flex w-full">
+        <Sidebar />
+        <main class="flex-1 min-w-0 mx-auto w-full max-w-3xl px-4 py-8">
+          <slot />
+          {sectionKind && sectionSlug && !isIndexPage && (
+            <SectionFooter kind={sectionKind} slug={sectionSlug} />
+          )}
+        </main>
+      </div>
+    ) : (
+      <main class="mx-auto w-full max-w-5xl px-4 py-8 flex-1">
+        <slot />
+      </main>
+    )}
+
+    <footer class="border-t border-slate-200 dark:border-slate-800 mt-12">
+      <div class="mx-auto max-w-5xl px-4 py-6 text-sm text-slate-500 dark:text-slate-400">
+        © Dr. Chester Ismay · Built with Astro + sql.js · Source on
+        <a href="https://github.com/ismayc/sql-tutorial">GitHub</a>.
+      </div>
+    </footer>
+
+    <script>
+      import { initTheme } from "../lib/theme";
+      initTheme();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,311 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Filtering Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Filtering Techniques
+
+<SchemaReference db="pnw_flights_database.sqlite" />
+
+## Filtering rows/records
+
+9. Select Boeing Planes' Tail Numbers and Models
+
+<SqlExercise
+  id="query11"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select tail numbers and models 
+-- of all Boeing planes.
+`}
+  solution={`-- SOLUTION: This query selects tail numbers and models of planes manufactured by Boeing.
+SELECT tailnum, model 
+FROM planes 
+WHERE manufacturer = 'BOEING';`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use a WHERE clause to filter for specific conditions. Syntax example:
+SELECT column1, column2 
+FROM table_name 
+WHERE condition;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blanks to select tail numbers and models from the planes table for Boeing planes.
+SELECT ___, ___ 
+FROM planes 
+WHERE manufacturer = '___';
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+10. Select airports (faa, name, lat) above 40 latitude and in the America/New_York time zone.
+
+<SqlExercise
+  id="query12"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select airports that meet specific criteria.
+`}
+  solution={`-- SOLUTION: This query selects certain columns from airports based on specified conditions.
+SELECT faa, name, lat 
+FROM airports 
+WHERE lat > 40 
+AND tzone = 'America/New_York';`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use WHERE to filter records based on conditions. Remember to use AND for multiple conditions.
+SELECT column1, column2, column3 
+FROM table_name 
+WHERE condition1 AND condition2;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete the query to select certain airports. Fill in the blanks appropriately.
+SELECT ___, ___, ___ 
+FROM airports 
+WHERE ___ > ___ 
+AND ___ = '___';
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+11. Select airports (faa code, name, and lat) within 40 to 42 degrees latitude.
+
+<SqlExercise
+  id="query13"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select airports within a specific latitude range
+`}
+  solution={`-- SOLUTION: This query selects FAA codes, names, and latitudes of airports within a specific latitude range.
+SELECT faa, name, lat 
+FROM airports 
+WHERE lat BETWEEN 40 AND 42;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use BETWEEN to filter records within a range. Example syntax:
+SELECT column1, column2 
+FROM table_name 
+WHERE column3 BETWEEN value1 AND value2;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to select airports based on their latitude. Remember to fill in the blanks:
+SELECT ___, ___, ___ 
+FROM airports 
+WHERE lat BETWEEN ___ AND ___;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## Filtering text
+
+12. Select airlines (carrier code and name) with name starting with an "A"
+
+<SqlExercise
+  id="query14"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select airlines with names starting with a 
+-- specific letter.
+`}
+  solution={`-- SOLUTION: This query selects the carrier code and name of airlines with names starting with 'A'.
+SELECT carrier, name 
+FROM airlines 
+WHERE name LIKE 'A%';`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use LIKE to filter records based on a pattern. Example syntax:
+SELECT column1 
+FROM table_name 
+WHERE column1 LIKE 'pattern%';
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to select airlines based on the starting letter of their names. Remember to fill in the blanks:
+SELECT ___, ___ 
+FROM airlines 
+WHERE name LIKE '___%';
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+13. Select flights having 101 as the second, third, and fourth characters of the tail number.
+
+<SqlExercise
+  id="query15"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select flights with tail numbers matching 
+-- a specific pattern.
+`}
+  solution={`-- SOLUTION: This query selects flights with tail numbers that have '101' as the second, third, and fourth characters.
+SELECT tailnum 
+FROM flights 
+WHERE tailnum LIKE '_101%';`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use LIKE with underscores (_) to represent single characters in a pattern. For example:
+SELECT column 
+FROM table_name 
+WHERE column LIKE '_pattern%';
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blanks to complete the query for selecting flights by their tail number pattern.
+SELECT ___ 
+FROM flights 
+WHERE tailnum LIKE '_pattern%';
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+14. Select flights (all columns) where the carrier is either "AS" or "HA"
+
+<SqlExercise
+  id="query16"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select flights where the carrier is either 
+-- "AS" or "HA".
+`}
+  solution={`-- SOLUTION: This query selects all flights where the carrier is either "AS" or "HA".
+SELECT * 
+FROM flights 
+WHERE carrier IN ('AS', 'HA');`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use the IN operator to specify multiple possible values for a column. Example syntax:
+SELECT * 
+FROM table_name 
+WHERE column_name IN ('value1', 'value2');
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to select flights from specific carriers. Remember to fill in the blanks:
+SELECT ___ 
+FROM flights 
+WHERE carrier IN ('___', '___');
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+15. Select weather records (all columns) where wind direction is missing
+
+<SqlExercise
+  id="query17"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select weather records where the 
+-- wind direction is missing.
+`}
+  solution={`-- SOLUTION: This query selects all weather records where the wind direction is missing.
+SELECT * 
+FROM weather 
+WHERE wind_dir IS NULL;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use IS NULL to check for missing values in a column. Example syntax:
+SELECT * 
+FROM table_name 
+WHERE column_name IS NULL;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to select records with missing information. Remember to fill in the blanks:
+SELECT ___ 
+FROM weather 
+WHERE ___ IS NULL;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+16. Select weather records where temperature is not missing
+
+<SqlExercise
+  id="query18"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select weather records where the temperature 
+-- is not missing.
+`}
+  solution={`-- SOLUTION: This query selects all weather records where the temperature is not missing.
+SELECT * 
+FROM weather 
+WHERE temp IS NOT NULL;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use IS NOT NULL to check for non-missing values in a column. Example syntax:
+SELECT * 
+FROM table_name 
+WHERE column_name IS NOT NULL;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to select records with available temperature information. Remember to fill in the blanks:
+SELECT ___ 
+FROM weather 
+WHERE ___ IS NOT NULL;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>

@@ -1,0 +1,171 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Filtering Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Filtering Techniques
+
+<SchemaReference db="pnw_database.sqlite" />
+
+## Filtering rows/records
+
+### Filtering 1: Towns with greater than 150,000 people
+
+<SqlExercise
+  id="example12"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 150000;`}
+/>
+
+### Filtering 2: Towns with greater than 150,000 people and in Oregon
+
+<SqlExercise
+  id="example13"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 150000
+   AND state = 'Oregon';`}
+/>
+
+### Filtering 3: Towns with greater than 150,000 people or in Oregon
+
+<SqlExercise
+  id="example14"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state, population_2020_census 
+  FROM pnw_towns 
+ WHERE population_2020_census > 150000
+    OR state = 'Oregon';`}
+/>
+
+### Filtering 4: Counties established after 1920 with a population greater than 100,000
+
+<SqlExercise
+  id="example15"
+  db="pnw_database.sqlite"
+  solution={`SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE year_established > 1920
+   AND population_2022 > 100000;`}
+/>
+
+### Filtering 5: Counties established after 1880 with a population greater than 100,000
+
+<SqlExercise
+  id="example16"
+  db="pnw_database.sqlite"
+  solution={`SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE year_established > 1880
+   AND population_2022 > 100000;`}
+/>
+
+### Filtering 6: Towns with a land area between 12 and 15 square miles
+
+<SqlExercise
+  id="example17"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state, land_area_sq_mi
+  FROM pnw_towns
+ WHERE land_area_sq_mi >= 12
+   AND land_area_sq_mi <= 15;`}
+/>
+
+### Filtering 7: Towns with a land area between 10 and 15 square miles (simplified)
+
+<SqlExercise
+  id="example18"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state, land_area_sq_mi
+  FROM pnw_towns
+ WHERE land_area_sq_mi BETWEEN 12 AND 15;`}
+/>
+
+### Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022
+
+<SqlExercise
+  id="example19"
+  db="pnw_database.sqlite"
+  solution={`SELECT county, state, year_established, population_2022
+  FROM pnw_counties
+ WHERE (state = 'Washington' AND year_established BETWEEN 1890 AND 1900)
+    OR (state = 'Oregon' AND population_2022 > 300000);`}
+/>
+
+## Filtering text
+
+### Filtering 9: Counties that start with the letter "K":
+
+<SqlExercise
+  id="example20"
+  db="pnw_database.sqlite"
+  solution={`SELECT county, state
+  FROM pnw_counties
+ WHERE county LIKE 'K%';`}
+/>
+
+### Filtering 10: Towns that end with the letters "ia":
+
+<SqlExercise
+  id="example21"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state
+  FROM pnw_towns
+ WHERE town LIKE '%ia';`}
+/>
+
+### Filtering 11: Towns that contain the phrase "mount":
+
+<SqlExercise
+  id="example22"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state
+  FROM pnw_towns
+ WHERE town LIKE '%mount%';`}
+/>
+
+### Filtering 12: Counties with specific pattern in third and fourth position ("ar")
+
+<SqlExercise
+  id="example23"
+  db="pnw_database.sqlite"
+  solution={`SELECT county
+  FROM pnw_counties
+ WHERE county LIKE '__ar%';`}
+/>
+
+### Filtering 13: Towns that are in Multnomah or Spokane counties
+
+<SqlExercise
+  id="example24"
+  db="pnw_database.sqlite"
+  solution={`SELECT * 
+  FROM pnw_towns 
+ WHERE primary_county IN ('Multnomah', 'Spokane');`}
+/>
+
+### Filtering 14: Towns with missing values for secondary county
+
+<SqlExercise
+  id="example25"
+  db="pnw_database.sqlite"
+  solution={`SELECT * 
+ FROM pnw_towns 
+WHERE secondary_county IS NULL;`}
+/>
+
+### Filtering 15: Towns without missing values for secondary county
+
+<SqlExercise
+  id="example26"
+  db="pnw_database.sqlite"
+  solution={`SELECT * 
+ FROM pnw_towns 
+WHERE secondary_county IS NOT NULL;`}
+/>

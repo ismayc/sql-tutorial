@@ -1,0 +1,79 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ZoomImage from "../../components/ZoomImage.astro";
+import toc from "../../generated-toc.json";
+const base = import.meta.env.BASE_URL;
+const sections = toc.exercises;
+---
+<BaseLayout title="Exercises">
+  <div class="prose-narrow">
+    <h1>Exercises — PNW flights</h1>
+    <p>
+      Practice on the Seattle & Portland flights dataset. Write a query,
+      click <strong>Run</strong> to execute it, then <strong>Check answer</strong>
+      to compare your result against the expected result. Use <strong>Hint</strong>
+      for a nudge or <strong>Show solution</strong> if you're stuck — your
+      progress is saved in your browser.
+    </p>
+
+    <p class="text-sm text-slate-600 dark:text-slate-400">
+      Tables: <code>airlines</code>, <code>airports</code>, <code>flights</code>,
+      <code>planes</code>, <code>weather</code>.
+    </p>
+  </div>
+
+  <div class="my-4">
+    <ZoomImage
+      src={`${base}images/pnwflights_mermaid.png`}
+      alt="ER diagram for the Pacific Northwest flights database — five tables: airlines, airports, flights, planes, and weather. A full text description is available below the image."
+      caption="ER diagram · PNW flights"
+    >
+      <Fragment slot="description">
+        <p>Five tables centred on <code>flights</code>.</p>
+        <ul>
+          <li><strong><code>airlines</code></strong> — one row per carrier. Columns: <code>carrier</code> (PK), <code>name</code>.</li>
+          <li><strong><code>airports</code></strong> — one row per airport. Columns: <code>faa</code> (PK), <code>name</code>, <code>lat</code>, <code>lon</code>, <code>alt</code>, <code>tz</code>, <code>dst</code>, <code>tzone</code>.</li>
+          <li><strong><code>flights</code></strong> — one row per scheduled flight. Columns: <code>year</code>, <code>month</code>, <code>day</code>, <code>dep_time</code>, <code>sched_dep_time</code>, <code>dep_delay</code>, <code>arr_time</code>, <code>sched_arr_time</code>, <code>arr_delay</code>, <code>carrier</code>, <code>flight</code>, <code>tailnum</code>, <code>origin</code>, <code>dest</code>, <code>air_time</code>, <code>distance</code>, <code>hour</code>, <code>minute</code>, <code>time_hour</code>.</li>
+          <li><strong><code>planes</code></strong> — one row per aircraft. Columns: <code>tailnum</code> (PK), <code>year</code>, <code>type</code>, <code>manufacturer</code>, <code>model</code>, <code>engines</code>, <code>seats</code>, <code>speed</code>, <code>engine</code>.</li>
+          <li><strong><code>weather</code></strong> — hourly observations per origin airport. Columns: <code>origin</code>, <code>year</code>, <code>month</code>, <code>day</code>, <code>hour</code>, <code>temp</code>, <code>dewp</code>, <code>humid</code>, <code>wind_dir</code>, <code>wind_speed</code>, <code>wind_gust</code>, <code>precip</code>, <code>pressure</code>, <code>visib</code>, <code>time_hour</code>.</li>
+        </ul>
+        <p><strong>Relationships:</strong></p>
+        <ul>
+          <li><code>flights.carrier</code> → <code>airlines.carrier</code></li>
+          <li><code>flights.origin</code> → <code>airports.faa</code></li>
+          <li><code>flights.dest</code> → <code>airports.faa</code></li>
+          <li><code>flights.tailnum</code> → <code>planes.tailnum</code></li>
+          <li><code>weather.origin</code> → <code>airports.faa</code></li>
+        </ul>
+      </Fragment>
+    </ZoomImage>
+  </div>
+
+  <ul class="not-prose list-none grid gap-3 my-8 p-0">
+    {sections.map((s, i) => (
+      <li class="list-none">
+        <a
+          href={`${base}exercises/${s.slug}`}
+          data-toc-link
+          data-checkable-ids={s.checkableIds.join(",")}
+          class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 dark:border-slate-800 p-4 no-underline hover:border-brand-500 transition"
+        >
+          <span class="flex items-baseline gap-3 min-w-0">
+            <span class="text-slate-400 dark:text-slate-500 font-mono text-sm w-6 text-right flex-shrink-0">{i + 1}.</span>
+            <span class="font-semibold truncate">{s.title}</span>
+          </span>
+          <span class="flex items-center gap-2 flex-shrink-0 text-sm">
+            <span class="text-slate-400" data-section-progress>{s.checkableIds.length ? `0/${s.checkableIds.length}` : ""}</span>
+            <span class="hidden text-emerald-600 dark:text-emerald-400" data-section-complete>✓ Complete</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <script>
+    import { refreshSidebarProgress } from "../../lib/sidebar";
+    refreshSidebarProgress();
+    window.addEventListener("sqlt:progress-changed", refreshSidebarProgress);
+  </script>
+</BaseLayout>

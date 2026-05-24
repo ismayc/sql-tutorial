@@ -1,0 +1,159 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Aggregating Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Aggregating Techniques
+
+<SchemaReference db="pnw_flights_database.sqlite" />
+
+## Numerical summaries
+
+17. Calculate the average temperature from the weather table as `avg_temperature`
+
+<SqlExercise
+  id="query19"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to calculate the average temperature from 
+-- the weather table.
+`}
+  solution={`-- SOLUTION: This query calculates the average temperature from the weather table.
+SELECT AVG(temp) AS avg_temperature
+FROM weather;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use AVG() function to calculate the average of a column. Example syntax:
+SELECT AVG(column_name) AS alias
+FROM table_name;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to calculate the average temperature. Remember to fill in the blanks:
+SELECT AVG(___ ) AS ___
+FROM weather;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+18. Find the maximum arrival time for flights destined to ORD as `max_arr_time`
+
+<SqlExercise
+  id="query20"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to find the maximum arrival time for flights 
+-- destined to ORD (Chicago O'Hare).
+`}
+  solution={`-- SOLUTION: This query finds the maximum arrival time for flights destined to ORD.
+SELECT MAX(arr_time) AS max_arr_time
+FROM flights
+WHERE dest = 'ORD';`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use MAX() function to find the maximum value of a column. Syntax example:
+SELECT MAX(column_name) AS alias
+FROM table_name
+WHERE condition;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blanks to complete the query for finding the maximum arrival time to ORD:
+SELECT MAX(___) AS ___
+FROM flights
+WHERE dest = 'ORD';
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## Categorical summaries
+
+19. Find the first destination alphabetically for flights from SEA as `first_sea_dest`
+
+<SqlExercise
+  id="query21"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to find the first destination alphabetically 
+-- for flights from SEA.
+`}
+  solution={`-- SOLUTION: This query finds the first destination alphabetically for flights destined to SEA.
+SELECT MIN(dest) AS first_sea_dest
+FROM flights
+WHERE origin = 'SEA';`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use MIN() function to find the minimum (first alphabetically) value of a column. Syntax example:
+SELECT MIN(column_name) AS alias
+FROM table_name
+WHERE condition;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to find the first destination alphabetically where flights are destined to SEA. Fill in the blanks:
+SELECT MIN(___) AS first_sea_dest
+FROM flights
+WHERE origin = 'SEA';
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## Rounding summaries
+
+20. Round wind gust values in the weather table to 0 decimal places as `rounded_wind_gust`
+
+<SqlExercise
+  id="query22"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to round wind gust values in the weather 
+-- table to 0 decimal places.
+`}
+  solution={`-- SOLUTION: This query rounds wind gust values in the weather table to 0 decimal places.
+SELECT ROUND(wind_gust, 0) AS rounded_wind_gust
+FROM weather;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use the ROUND() function to round numerical values to a specified number of decimal places. Syntax example:
+SELECT ROUND(column_name, number_of_decimal_places) AS alias
+FROM table_name;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to round wind gust values in the weather table to 0 decimal places. Fill in the blanks:
+SELECT ROUND(___, 0) AS rounded_wind_gust
+FROM weather;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>

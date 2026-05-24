@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Home">
+  <div class="prose-narrow">
+    <h1>Learn SQL in your browser</h1>
+    <p>
+      Worked examples and self-checking exercises on Pacific Northwest
+      towns, counties, and flight data — no install, no account, no servers.
+      Everything runs in your browser via SQLite-compiled-to-WebAssembly.
+    </p>
+
+    <div class="grid sm:grid-cols-3 gap-4 mt-8 not-prose">
+      <a href={`${base}examples/`} class="block rounded-xl border border-slate-200 dark:border-slate-800 p-5 no-underline hover:border-brand-500 transition">
+        <div class="font-semibold text-lg mb-1">📘 Examples</div>
+        <p class="text-sm text-slate-600 dark:text-slate-300 m-0">
+          Walkthroughs of SQL patterns on the PNW towns + counties data, with the solution available up front.
+        </p>
+      </a>
+      <a href={`${base}exercises/`} class="block rounded-xl border border-slate-200 dark:border-slate-800 p-5 no-underline hover:border-brand-500 transition">
+        <div class="font-semibold text-lg mb-1">🛫 Exercises</div>
+        <p class="text-sm text-slate-600 dark:text-slate-300 m-0">
+          Practice problems on the flight data. Write a query, click <em>Check answer</em>, get instant feedback.
+        </p>
+      </a>
+      <a href={`${base}scratchpad`} class="block rounded-xl border border-slate-200 dark:border-slate-800 p-5 no-underline hover:border-brand-500 transition">
+        <div class="font-semibold text-lg mb-1">🧪 Scratchpad</div>
+        <p class="text-sm text-slate-600 dark:text-slate-300 m-0">
+          Free-form query editor. Pick a database and explore.
+        </p>
+      </a>
+    </div>
+
+    <h2>How it works</h2>
+    <ul>
+      <li><strong>SQLite in your browser</strong> — both databases are loaded once and cached locally.</li>
+      <li><strong>Self-check exercises</strong> — your query's result is compared against the reference solution. Row order doesn't matter unless the problem says otherwise.</li>
+      <li><strong>Hints &amp; solutions on demand</strong> — reveal one hint at a time, or show the full solution when you're truly stuck.</li>
+      <li><strong>Progress is saved locally</strong> — your work persists in your browser via <code>localStorage</code>.</li>
+    </ul>
+  </div>
+</BaseLayout>

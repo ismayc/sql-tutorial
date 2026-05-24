@@ -1,0 +1,97 @@
+---
+import toc from "../generated-toc.json";
+const base = import.meta.env.BASE_URL;
+const path = Astro.url.pathname.replace(/\/$/, "");
+
+function isActive(href: string): boolean {
+  return path === href.replace(/\/$/, "");
+}
+
+const groups = [
+  {
+    key: "examples",
+    label: "Examples",
+    subtitle: "towns & counties",
+    indexHref: `${base}examples/`,
+    sections: toc.examples as Array<{ slug: string; title: string; checkableIds: string[] }>,
+  },
+  {
+    key: "exercises",
+    label: "Exercises",
+    subtitle: "PNW flights",
+    indexHref: `${base}exercises/`,
+    sections: toc.exercises as Array<{ slug: string; title: string; checkableIds: string[] }>,
+  },
+];
+
+const expandedGroups = new Set<string>();
+for (const g of groups) {
+  if (path.startsWith(g.indexHref.replace(/\/$/, ""))) expandedGroups.add(g.key);
+}
+if (expandedGroups.size === 0) {
+  expandedGroups.add("examples");
+  expandedGroups.add("exercises");
+}
+---
+<aside
+  id="sqlt-sidebar"
+  class="sqlt-sidebar hidden lg:block lg:sticky lg:top-14 lg:self-start lg:h-[calc(100vh-3.5rem)] lg:overflow-y-auto lg:border-r lg:border-slate-200 dark:lg:border-slate-800 lg:px-4 lg:py-6 lg:w-64 lg:flex-shrink-0"
+  data-toc
+>
+  <nav aria-label="Tutorial sections" class="sqlt-toc">
+    {groups.map((g, gi) => {
+      const groupOpen = expandedGroups.has(g.key);
+      const groupCheckable = g.sections.reduce((n, s) => n + s.checkableIds.length, 0);
+      return (
+        <details open={groupOpen} class={`sqlt-toc-group ${gi > 0 ? "mt-4 pt-4 border-t border-slate-200 dark:border-slate-800" : ""}`} data-group={g.key}>
+          <summary>
+            <span class="sqlt-toc-caret">
+              <svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M4 2l4 4-4 4z"/></svg>
+            </span>
+            <span class="sqlt-toc-grouplabel">
+              <span class="sqlt-toc-grouptitle">{g.label}</span>
+              <span class="sqlt-toc-groupsub">{g.subtitle}</span>
+            </span>
+            <span class="sqlt-toc-groupcount" data-group-progress={g.key}>0/{groupCheckable}</span>
+          </summary>
+          <ul class="sqlt-toc-list">
+            <li>
+              <a
+                href={g.indexHref}
+                class:list={["sqlt-toc-item sqlt-toc-overview", { active: isActive(g.indexHref) }]}
+              >
+                Overview
+              </a>
+            </li>
+            {g.sections.map((s) => {
+              const href = `${base}${g.key}/${s.slug}`;
+              return (
+                <li>
+                  <a
+                    href={href}
+                    data-toc-link
+                    data-checkable-ids={s.checkableIds.join(",")}
+                    class:list={["sqlt-toc-item", { active: isActive(href) }]}
+                  >
+                    <span class="sqlt-toc-itemtitle">{s.title}</span>
+                    <span class="sqlt-toc-itemmeta">
+                      <span class="sqlt-toc-progress" data-section-progress>{s.checkableIds.length ? `0/${s.checkableIds.length}` : ""}</span>
+                      <span class="sqlt-toc-check" data-section-complete aria-label="completed" hidden>✓</span>
+                    </span>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </details>
+      );
+    })}
+  </nav>
+</aside>
+
+<script>
+  import { refreshSidebarProgress } from "../lib/sidebar";
+  refreshSidebarProgress();
+  window.addEventListener("focus", refreshSidebarProgress);
+  window.addEventListener("sqlt:progress-changed", refreshSidebarProgress);
+</script>

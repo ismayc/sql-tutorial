@@ -1,0 +1,50 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Transforming Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Transforming Techniques
+
+<SchemaReference db="pnw_database.sqlite" />
+
+### Transforming 1: Classifying towns by population size using CASE WHEN
+
+<SqlExercise
+  id="example41"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, 
+       population_2010_census,
+       CASE 
+           WHEN population_2010_census > 100000 THEN 'Large'
+           WHEN population_2010_census BETWEEN 50000 AND 100000 THEN 'Medium'
+           ELSE 'Small'
+       END AS town_size
+  FROM pnw_towns
+  ORDER BY population_2010_census DESC;`}
+  requireOrdering
+/>
+
+### Transforming 2: Percentage increase in population from 2010 to 2020
+
+<SqlExercise
+  id="example42"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state, (population_2020_census - population_2010_census) / population_2010_census * 100 AS pct_change
+  FROM pnw_towns
+  ORDER BY pct_change DESC;`}
+  requireOrdering
+/>
+
+### Transforming 3: Population density
+
+<SqlExercise
+  id="example43"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density
+  FROM pnw_towns
+ ORDER BY pop_density DESC;`}
+  requireOrdering
+/>

@@ -1,0 +1,151 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Joining Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Joining Techniques
+
+<SchemaReference db="pnw_flights_database.sqlite" />
+
+## INNER JOIN
+
+28. Join flights (as `f`) with weather (as `w`) on `origin` and `time_hour` (returning only the rows matching between both tables). Select the `origin`, `dest`,
+`temp`, and `humid` fields.
+
+<SqlExercise
+  id="query30"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to join flights with weather on origin 
+-- and time_hour.
+`}
+  solution={`-- SOLUTION: This query joins the flights table with the weather table on matching origin and time_hour, selecting origin, destination, temperature, and humidity.
+SELECT f.origin, f.dest, w.temp, w.humid
+FROM flights AS f
+INNER JOIN weather AS w ON f.origin = w.origin AND f.time_hour = w.time_hour;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use an INNER JOIN to combine rows from flights and weather tables where the origin in flights matches the origin in weather, and the time_hour in flights matches the time_hour in weather. Select the flight's origin, destination, and the weather's temperature and humidity.
+SELECT f.origin, f.dest, w.temp, w.humid
+FROM flights AS f
+INNER JOIN weather AS w ON f.origin = w.origin AND f.time_hour = w.time_hour;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blanks to complete the INNER JOIN between flights and weather tables.
+SELECT f.origin, f.dest, w.temp, w.humid
+FROM flights AS f
+INNER JOIN weather AS w ON f.___ = w.___ AND f.___ = w.___;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## LEFT JOIN
+
+29. Left join flights with planes on tailnum (returning all rows from flights and only the rows from planes that match). Select the `tailnum`, `origin`, `dest`, `manufacturer`, and `model` fields.
+
+<SqlExercise
+  id="query31"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to left join flights with planes on tailnum.
+`}
+  solution={`-- SOLUTION: This query left joins the flights table with the planes table on matching tailnum, selecting tailnum, origin, destination, manufacturer, and model.
+SELECT f.tailnum, f.origin, f.dest, p.manufacturer, p.model
+FROM flights AS f
+LEFT JOIN planes AS p ON f.tailnum = p.tailnum;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use a LEFT JOIN to combine rows from flights and planes tables where the tailnum in flights matches the tailnum in planes. Select the flight's tailnum, origin, destination, and the plane's manufacturer and model.
+SELECT f.tailnum, f.origin, f.dest, p.manufacturer, p.model
+FROM flights AS f
+LEFT JOIN planes AS p ON f.tailnum = p.tailnum;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blanks to complete the LEFT JOIN between flights and planes tables.
+SELECT f.tailnum, f.origin, f.dest, p.manufacturer, p.model
+FROM flights AS f
+LEFT JOIN planes AS p ON f.___ = p.___;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## Anti-Join
+
+30. Anti-join flights (as `f`) with planes (as `p`) where plane's tailnum is missing. Select the `tailnum`, `origin`, and `dest` fields.
+
+<SqlExercise
+  id="query33"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to left join flights with planes where the 
+-- plane's tailnum is missing.
+`}
+  solution={`-- SOLUTION: This query left joins the flights table with the planes table on matching tailnum, selecting flights' tailnum, origin, and destination where the corresponding tailnum in planes is missing.
+SELECT f.tailnum, f.origin, f.dest
+FROM flights AS f
+LEFT JOIN planes AS p ON f.tailnum = p.tailnum
+WHERE p.tailnum IS NULL;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use a LEFT JOIN to combine rows from flights and planes tables where the tailnum in flights matches the tailnum in planes. Select flights' tailnum, origin, and destination where the corresponding tailnum in planes is missing.
+SELECT ___, ___, ___
+FROM flights AS ___
+LEFT JOIN planes AS ___ ON ___ = ___
+WHERE ___ IS NULL;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blanks to complete the LEFT JOIN between flights and planes tables, and select where the plane's tailnum is missing.
+SELECT f.tailnum, f.origin, f.dest
+FROM flights AS f
+LEFT JOIN planes AS p ON f.___ = p.___
+WHERE p.___ IS NULL;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## Write your own queries!
+
+<SqlExercise
+  id="query34"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your own query here determining a different result than what
+-- has been done so far from these tables
+`}
+  solution=""
+/>
+
+<SqlExercise
+  id="query35"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write another query here determining a different result than what
+-- has been done so far from these tables
+`}
+  solution=""
+/>

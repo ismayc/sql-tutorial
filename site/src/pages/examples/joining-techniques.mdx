@@ -1,0 +1,79 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Joining Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Joining Techniques
+
+<SchemaReference db="pnw_database.sqlite" />
+
+![](/sql-tutorial/images/00-setup.png)
+
+## INNER JOIN
+
+### Setup
+
+![](/sql-tutorial/images/01a-INNER-JOIN.png)
+
+### Action
+
+![](/sql-tutorial/images/01b-INNER-JOIN.png)
+
+### Output
+
+![](/sql-tutorial/images/01c-INNER-JOIN.png)
+
+### Joining 1: Get population of each county seat
+
+<SqlExercise
+  id="example44"
+  db="pnw_database.sqlite"
+  solution={`SELECT c.county, c.county_seat, t.population_2020_census
+  FROM pnw_counties AS c
+ INNER JOIN pnw_towns AS t ON c.county_seat = t.town;`}
+/>
+
+## LEFT JOIN
+
+### Action
+
+![](/sql-tutorial/images/02a-LEFT-JOIN.png)
+### Output
+
+![](/sql-tutorial/images/02b-LEFT-JOIN.png)
+
+### If multiple matches
+
+### Output
+
+![](/sql-tutorial/images/02c-LEFT-JOIN-multiple.png)
+
+### Joining 2: Show ALL counties, even those whose seat isn't in our towns data
+
+<SqlExercise
+  id="example45"
+  db="pnw_database.sqlite"
+  solution={`SELECT c.county, c.county_seat, t.population_2020_census
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;`}
+/>
+
+## Anti-Join
+
+### Output
+
+![](/sql-tutorial/images/12-Anti-join.png)
+
+### Joining 3: Find counties that don't have any towns listed
+
+<SqlExercise
+  id="example47"
+  db="pnw_database.sqlite"
+  solution={`SELECT c.county
+ FROM pnw_counties AS c
+LEFT JOIN pnw_towns AS t ON c.county = t.primary_county
+WHERE t.town IS NULL;`}
+/>

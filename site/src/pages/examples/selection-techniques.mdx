@@ -1,0 +1,103 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Selection Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Selection Techniques
+
+<SchemaReference db="pnw_database.sqlite" />
+
+## Selecting columns/fields
+
+### Selection 1: Select all town names
+
+<SqlExercise
+  id="example1"
+  db="pnw_database.sqlite"
+  solution={`SELECT town
+  FROM pnw_towns;`}
+/>
+
+### Selection 2: Select all county names
+
+<SqlExercise
+  id="example2"
+  db="pnw_database.sqlite"
+  solution={`SELECT county
+  FROM pnw_counties;`}
+/>
+
+### Selection 3: Select all columns for towns table
+
+<SqlExercise
+  id="example3"
+  db="pnw_database.sqlite"
+  solution={`SELECT *
+  FROM pnw_towns;`}
+/>
+
+### Selection 4: Select county names and population for 2022 
+
+<SqlExercise
+  id="example4"
+  db="pnw_database.sqlite"
+  solution={`SELECT county, population_2022
+  FROM pnw_counties;`}
+/>
+
+## Aliasing
+
+### Aliasing 1: Select county names, population for 2022, and land area (Aliased)
+
+<SqlExercise
+  id="example5"
+  db="pnw_database.sqlite"
+  solution={`SELECT county AS cty, 
+       population_2022 AS pop2022,
+       land_area_sq_mi AS area
+  FROM pnw_counties;`}
+/>
+
+### Aliasing 2: Alias the table name
+
+<SqlExercise
+  id="example6"
+  db="pnw_database.sqlite"
+  solution={`SELECT counties.county,
+       counties.origin
+  FROM pnw_counties AS counties;`}
+/>
+
+## Unique entries
+
+### Unique 1: Select distinct states from the `pnw_towns` table
+
+<SqlExercise
+  id="example7"
+  db="pnw_database.sqlite"
+  solution={`SELECT DISTINCT state
+  FROM pnw_towns;`}
+/>
+
+## Counting
+
+### Counting 1: Count the number of records in the `pnw_towns` table
+
+<SqlExercise
+  id="example10"
+  db="pnw_database.sqlite"
+  solution={`SELECT COUNT(*) AS num_towns
+  FROM pnw_towns;`}
+/>
+
+### Counting 2: Count the number of distinct states in `pnw_counties`
+
+<SqlExercise
+  id="example11"
+  db="pnw_database.sqlite"
+  solution={`SELECT COUNT(DISTINCT state) AS num_unique_states
+  FROM pnw_counties;`}
+/>

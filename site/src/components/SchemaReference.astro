@@ -1,0 +1,28 @@
+---
+import schemas from "../generated-schemas.json";
+
+interface Props { db: string; open?: boolean; }
+const { db, open = false } = Astro.props;
+const schema = (schemas as Record<string, Record<string, string[]>>)[db] ?? {};
+const tableNames = Object.keys(schema);
+const dbLabel = db === "pnw_database.sqlite" ? "towns & counties" : db === "pnw_flights_database.sqlite" ? "PNW flights" : db;
+---
+<details class="schema-reference my-4" open={open}>
+  <summary class="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold text-sm select-none list-none">
+    <span class="schema-caret" aria-hidden="true">▸</span>
+    📚 Schema reference · {dbLabel}
+    <span class="text-xs font-normal text-slate-500 dark:text-slate-400">{tableNames.length} tables</span>
+  </summary>
+  <div class="mt-3 grid sm:grid-cols-2 gap-3">
+    {tableNames.map((t) => (
+      <div class="rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/40 p-3">
+        <div class="font-mono text-sm font-semibold text-brand-700 dark:text-brand-100 mb-1">{t}</div>
+        <ul class="schema-cols m-0 p-0 list-none text-xs font-mono text-slate-700 dark:text-slate-300 leading-relaxed">
+          {schema[t].map((col) => (
+            <li class="truncate">{col}</li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</details>

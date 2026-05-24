@@ -1,0 +1,63 @@
+---
+interface Props {
+  id: string;
+  db?: string;
+  solution: string;
+  initial?: string;
+  requireOrdering?: boolean;
+  title?: string;
+}
+const {
+  id,
+  db = "pnw_flights_database.sqlite",
+  solution,
+  initial = "-- Write your SQL query here\n",
+  requireOrdering = false,
+  title,
+} = Astro.props;
+---
+<section
+  class="sql-exercise"
+  id={id}
+  data-id={id}
+  data-db={db}
+  data-require-ordering={requireOrdering ? "1" : "0"}
+  aria-labelledby={`${id}-title`}
+>
+  {title && (
+    <h4 id={`${id}-title`} class="!mt-0 !mb-2">
+      {title}
+      <span class="completed-badge" hidden>✓ Completed</span>
+    </h4>
+  )}
+  {!title && (
+    <span class="completed-badge" hidden>✓ Completed</span>
+  )}
+
+  <div class="editor-mount"></div>
+
+  <div class="actions">
+    <button type="button" class="btn btn-primary" data-action="run">▶ Run</button>
+    <button type="button" class="btn" data-action="check">Check answer</button>
+    <button type="button" class="btn" data-action="hint">Hint</button>
+    <button type="button" class="btn" data-action="solution">Show solution</button>
+    <button type="button" class="btn" data-action="format" title="Pretty-print the SQL">✨ Format</button>
+    <button type="button" class="btn" data-action="share" title="Copy a shareable link with your current SQL">🔗 Share</button>
+    <button type="button" class="btn" data-action="reset">Reset</button>
+  </div>
+
+  <div class="sql-status" data-kind="info" role="status" aria-live="polite"></div>
+  <div class="result-mount"></div>
+
+  <div class="hints">
+    <slot name="hints" />
+  </div>
+
+  <template data-initial>{initial}</template>
+  <template data-solution>{solution}</template>
+</section>
+
+<script>
+  import { initInteractive } from "../lib/exercise";
+  initInteractive();
+</script>

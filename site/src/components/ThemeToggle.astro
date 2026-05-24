@@ -1,0 +1,48 @@
+---
+---
+<button
+  type="button"
+  id="sqlt-theme-toggle"
+  aria-label="Toggle color theme"
+  class="btn !px-2 !py-1.5"
+  title="Toggle theme (light → dark → system)"
+>
+  <span data-theme-icon-light hidden>☀️</span>
+  <span data-theme-icon-dark hidden>🌙</span>
+  <span data-theme-icon-system hidden>🖥️</span>
+  <span data-theme-label class="ml-1 hidden sm:inline">Theme</span>
+</button>
+
+<script>
+  import { getStoredTheme, setTheme, nextTheme, type Theme } from "../lib/theme";
+
+  function refreshIcon(btn: HTMLElement) {
+    const t = getStoredTheme();
+    const showFor = (which: Theme) => {
+      const el = btn.querySelector<HTMLElement>(`[data-theme-icon-${which}]`);
+      if (el) el.hidden = t !== which;
+    };
+    showFor("light");
+    showFor("dark");
+    showFor("system");
+    const label = btn.querySelector<HTMLElement>("[data-theme-label]");
+    if (label) label.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+  }
+
+  function init() {
+    const btn = document.getElementById("sqlt-theme-toggle");
+    if (!btn) return;
+    refreshIcon(btn);
+    btn.addEventListener("click", () => {
+      const next = nextTheme(getStoredTheme());
+      setTheme(next);
+      refreshIcon(btn);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+</script>

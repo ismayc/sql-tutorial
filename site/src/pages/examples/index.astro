@@ -1,0 +1,67 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ZoomImage from "../../components/ZoomImage.astro";
+import toc from "../../generated-toc.json";
+const base = import.meta.env.BASE_URL;
+const sections = toc.examples;
+---
+<BaseLayout title="Examples">
+  <div class="prose-narrow">
+    <h1>Examples — towns & counties</h1>
+    <p>
+      Worked SQL examples on the Pacific Northwest <code>pnw_towns</code>,
+      <code>pnw_counties</code>, and <code>fips</code> tables. Each section
+      has runnable examples with starter editors — click <strong>Show solution</strong>
+      to populate one, then <strong>Run</strong> to see the result. You can
+      also try your own version first and use <strong>Check answer</strong>
+      to confirm.
+    </p>
+  </div>
+
+  <div class="my-4">
+    <ZoomImage
+      src={`${base}images/pnw_towns_counties_mermaid.png`}
+      alt="ER diagram for the Pacific Northwest towns and counties database — three tables: pnw_towns, pnw_counties, and fips. A full text description is available below the image."
+      caption="ER diagram · towns & counties"
+    >
+      <Fragment slot="description">
+        <p>Three tables and two helper views.</p>
+        <ul>
+          <li><strong><code>pnw_towns</code></strong> — one row per town. Columns: <code>town</code>, <code>state</code>, <code>primary_county</code>, <code>secondary_county</code>, <code>tertiary_county</code>, <code>population_2020_census</code>, <code>population_2010_census</code>, <code>land_area_sq_mi</code>.</li>
+          <li><strong><code>pnw_counties</code></strong> — one row per county. Columns: <code>county</code>, <code>state</code>, <code>fips_short</code>, <code>county_seat</code>, <code>year_established</code>, <code>origin</code>, <code>etymology</code>, <code>population_2022</code>, <code>land_area_sq_mi</code>.</li>
+          <li><strong><code>fips</code></strong> — FIPS state codes. Columns: <code>fips</code>, <code>name</code>, <code>state</code>.</li>
+        </ul>
+        <p><strong>Relationships:</strong> a town's <code>primary_county</code> (and optionally <code>secondary_county</code>/<code>tertiary_county</code>) corresponds to a <code>county</code> in <code>pnw_counties</code>. Both tables share a <code>state</code> column that can join to <code>fips.state</code>.</p>
+        <p><strong>Helper views:</strong> <code>towns_with_county</code> and <code>towns_with_counties</code> both project <code>(town, primary_county)</code> from <code>pnw_towns</code>.</p>
+      </Fragment>
+    </ZoomImage>
+  </div>
+
+  <ul class="not-prose list-none grid gap-3 my-8 p-0">
+    {sections.map((s, i) => (
+      <li class="list-none">
+        <a
+          href={`${base}examples/${s.slug}`}
+          data-toc-link
+          data-checkable-ids={s.checkableIds.join(",")}
+          class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 dark:border-slate-800 p-4 no-underline hover:border-brand-500 transition"
+        >
+          <span class="flex items-baseline gap-3 min-w-0">
+            <span class="text-slate-400 dark:text-slate-500 font-mono text-sm w-6 text-right flex-shrink-0">{i + 1}.</span>
+            <span class="font-semibold truncate">{s.title}</span>
+          </span>
+          <span class="flex items-center gap-2 flex-shrink-0 text-sm">
+            <span class="text-slate-400" data-section-progress>{s.checkableIds.length ? `0/${s.checkableIds.length}` : ""}</span>
+            <span class="hidden text-emerald-600 dark:text-emerald-400" data-section-complete>✓ Complete</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <script>
+    import { refreshSidebarProgress } from "../../lib/sidebar";
+    refreshSidebarProgress();
+    window.addEventListener("sqlt:progress-changed", refreshSidebarProgress);
+  </script>
+</BaseLayout>

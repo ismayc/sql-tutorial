@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SqlScratchpad from "../components/SqlScratchpad.astro";
+import ZoomImage from "../components/ZoomImage.astro";
+const base = import.meta.env.BASE_URL;
+---
+<BaseLayout title="Scratchpad">
+  <div class="prose-narrow">
+    <h1>SQL Scratchpad</h1>
+    <p>
+      Run arbitrary SQL against either database. Press <kbd class="rounded border border-slate-300 dark:border-slate-700 px-1.5 py-0.5 text-xs font-mono">⌘/Ctrl + Enter</kbd> to run.
+    </p>
+  </div>
+
+  <section>
+    <h2 class="!mt-6">Pacific Northwest towns &amp; counties</h2>
+    <p>Tables: <code>pnw_towns</code>, <code>pnw_counties</code>, <code>fips</code>.</p>
+    <ZoomImage
+      src={`${base}images/pnw_towns_counties_mermaid.png`}
+      alt="ER diagram for the Pacific Northwest towns and counties database — three tables: pnw_towns, pnw_counties, and fips. A full text description is available below the image."
+      caption="ER diagram · towns & counties"
+    >
+      <Fragment slot="description">
+        <p>Three tables and two helper views.</p>
+        <ul>
+          <li><strong><code>pnw_towns</code></strong> — one row per town. Columns: <code>town</code>, <code>state</code>, <code>primary_county</code>, <code>secondary_county</code>, <code>tertiary_county</code>, <code>population_2020_census</code>, <code>population_2010_census</code>, <code>land_area_sq_mi</code>.</li>
+          <li><strong><code>pnw_counties</code></strong> — one row per county. Columns: <code>county</code>, <code>state</code>, <code>fips_short</code>, <code>county_seat</code>, <code>year_established</code>, <code>origin</code>, <code>etymology</code>, <code>population_2022</code>, <code>land_area_sq_mi</code>.</li>
+          <li><strong><code>fips</code></strong> — FIPS state codes. Columns: <code>fips</code>, <code>name</code>, <code>state</code>.</li>
+        </ul>
+        <p><strong>Relationships:</strong> a town's <code>primary_county</code> corresponds to a <code>county</code> in <code>pnw_counties</code>. Both tables share a <code>state</code> column that joins to <code>fips.state</code>.</p>
+      </Fragment>
+    </ZoomImage>
+    <SqlScratchpad
+      db="pnw_database.sqlite"
+      initial={`-- List all tables in the towns/counties database\nSELECT name FROM sqlite_master WHERE type = 'table';\n`}
+    />
+  </section>
+
+  <section>
+    <h2 class="!mt-10">Pacific Northwest flights</h2>
+    <p>Tables: <code>airlines</code>, <code>airports</code>, <code>flights</code>, <code>planes</code>, <code>weather</code>.</p>
+    <ZoomImage
+      src={`${base}images/pnwflights_mermaid.png`}
+      alt="ER diagram for the Pacific Northwest flights database — five tables: airlines, airports, flights, planes, and weather. A full text description is available below the image."
+      caption="ER diagram · PNW flights"
+    >
+      <Fragment slot="description">
+        <p>Five tables centred on <code>flights</code>.</p>
+        <ul>
+          <li><strong><code>airlines</code></strong> — one row per carrier. Columns: <code>carrier</code> (PK), <code>name</code>.</li>
+          <li><strong><code>airports</code></strong> — one row per airport. Columns: <code>faa</code> (PK), <code>name</code>, <code>lat</code>, <code>lon</code>, <code>alt</code>, <code>tz</code>, <code>dst</code>, <code>tzone</code>.</li>
+          <li><strong><code>flights</code></strong> — one row per scheduled flight. Columns: <code>year</code>, <code>month</code>, <code>day</code>, <code>dep_time</code>, <code>sched_dep_time</code>, <code>dep_delay</code>, <code>arr_time</code>, <code>sched_arr_time</code>, <code>arr_delay</code>, <code>carrier</code>, <code>flight</code>, <code>tailnum</code>, <code>origin</code>, <code>dest</code>, <code>air_time</code>, <code>distance</code>, <code>hour</code>, <code>minute</code>, <code>time_hour</code>.</li>
+          <li><strong><code>planes</code></strong> — one row per aircraft. Columns: <code>tailnum</code> (PK), <code>year</code>, <code>type</code>, <code>manufacturer</code>, <code>model</code>, <code>engines</code>, <code>seats</code>, <code>speed</code>, <code>engine</code>.</li>
+          <li><strong><code>weather</code></strong> — hourly observations per origin airport. Columns: <code>origin</code>, <code>year</code>, <code>month</code>, <code>day</code>, <code>hour</code>, <code>temp</code>, <code>dewp</code>, <code>humid</code>, <code>wind_dir</code>, <code>wind_speed</code>, <code>wind_gust</code>, <code>precip</code>, <code>pressure</code>, <code>visib</code>, <code>time_hour</code>.</li>
+        </ul>
+        <p><strong>Relationships:</strong> <code>flights.carrier</code> → <code>airlines.carrier</code>; <code>flights.origin</code> → <code>airports.faa</code>; <code>flights.dest</code> → <code>airports.faa</code>; <code>flights.tailnum</code> → <code>planes.tailnum</code>; <code>weather.origin</code> → <code>airports.faa</code>.</p>
+      </Fragment>
+    </ZoomImage>
+    <SqlScratchpad
+      db="pnw_flights_database.sqlite"
+      initial={`-- How many flights per carrier?\nSELECT carrier, COUNT(*) AS n\n  FROM flights\n GROUP BY carrier\n ORDER BY n DESC;\n`}
+    />
+  </section>
+</BaseLayout>

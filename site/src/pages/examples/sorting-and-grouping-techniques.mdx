@@ -1,0 +1,104 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Sorting and Grouping Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Sorting and Grouping Techniques
+
+<SchemaReference db="pnw_database.sqlite" />
+
+## Sorting
+
+### Sorting 1: Sorting towns by 2020 census population
+
+<SqlExercise
+  id="example35"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, population_2020_census
+  FROM pnw_towns
+ ORDER BY population_2020_census;`}
+  requireOrdering
+/>
+
+### Sorting 2: Sorting towns by 2020 census population in ascending and descending order
+
+- 2a: Ascending order:
+
+<SqlExercise
+  id="example36a"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, population_2020_census
+  FROM pnw_towns
+ORDER BY population_2020_census ASC;`}
+  requireOrdering
+/>
+
+- 2b: Descending order:
+
+<SqlExercise
+  id="example36b"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, population_2020_census
+  FROM pnw_towns
+ ORDER BY population_2020_census DESC;`}
+  requireOrdering
+/>
+
+### Sorting 3: Sorting counties by state and population in 2022
+
+<SqlExercise
+  id="example37"
+  db="pnw_database.sqlite"
+  solution={`SELECT county, state, population_2022
+  FROM pnw_counties
+ ORDER BY state, population_2022 DESC;`}
+  requireOrdering
+/>
+
+## Grouping
+
+### Grouping 1: Grouping towns by state
+
+<SqlExercise
+  id="example38"
+  db="pnw_database.sqlite"
+  solution={`SELECT state, COUNT(*) AS total_towns
+  FROM pnw_towns
+ GROUP BY state;`}
+/>
+
+### Grouping 2: Grouping and ordering counties by state and average population
+
+<SqlExercise
+  id="example39"
+  db="pnw_database.sqlite"
+  solution={`SELECT state, AVG(population_2022) AS avg_population
+  FROM pnw_counties
+ GROUP BY state
+ ORDER BY avg_population DESC;`}
+  requireOrdering
+/>
+
+### Grouping 3: Filtering on grouped data
+
+- Trying with `WHERE`
+
+<SqlExercise
+  id="example40a"
+  db="pnw_database.sqlite"
+  solution=""
+/>
+
+- Trying with `HAVING`
+
+<SqlExercise
+  id="example40b"
+  db="pnw_database.sqlite"
+  solution={`SELECT primary_county, state, COUNT(*) AS total_towns
+  FROM pnw_towns
+ GROUP BY primary_county
+HAVING COUNT(*) > 10;`}
+/>

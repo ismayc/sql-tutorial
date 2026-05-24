@@ -1,0 +1,51 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  description?: string;
+  caption?: string;
+  thumbClass?: string;
+}
+// Thumbnail caps at 40vw width and ~240px tall so portrait diagrams stay compact
+const { src, alt, description, caption, thumbClass = "max-w-[40vw] max-h-60" } = Astro.props;
+const hasDescriptionSlot = Astro.slots.has("description");
+const showDescription = hasDescriptionSlot || !!description;
+---
+<figure class="my-4 inline-block">
+  <button
+    type="button"
+    class="zoom-image group block bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800 p-2 hover:border-brand-500 transition cursor-zoom-in"
+    data-zoom-target
+    aria-label={`Enlarge: ${alt}`}
+  >
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      class:list={["block w-auto object-contain", thumbClass]}
+    />
+    <span
+      class="block text-xs text-slate-500 dark:text-slate-400 mt-1 group-hover:text-brand-600 dark:group-hover:text-brand-100"
+      aria-hidden="true"
+    >🔍 Click to enlarge</span>
+  </button>
+  {caption && <figcaption class="text-xs text-slate-500 mt-1">{caption}</figcaption>}
+  {showDescription && (
+    <details class="zoom-description mt-2 not-prose text-sm">
+      <summary class="cursor-pointer text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-100 select-none inline-block py-1 list-none">
+        <span class="zoom-description-caret" aria-hidden="true">▸</span>
+        Text description of this diagram
+      </summary>
+      <div class="zoom-description-body mt-2 px-3 py-2 bg-slate-50 dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+        {hasDescriptionSlot ? <slot name="description" /> : (
+          description!.split("\n\n").map((p) => <p>{p}</p>)
+        )}
+      </div>
+    </details>
+  )}
+</figure>
+
+<script>
+  import { initZoomImages } from "../lib/zoom";
+  initZoomImages();
+</script>

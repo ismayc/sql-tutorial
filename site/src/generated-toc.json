@@ -1,0 +1,926 @@
+{
+  "examples": [
+    {
+      "slug": "selection-techniques",
+      "title": "Selection Techniques",
+      "exerciseIds": [
+        "example1",
+        "example2",
+        "example3",
+        "example4",
+        "example5",
+        "example6",
+        "example7",
+        "example10",
+        "example11"
+      ],
+      "checkableIds": [
+        "example1",
+        "example2",
+        "example3",
+        "example4",
+        "example5",
+        "example6",
+        "example7",
+        "example10",
+        "example11"
+      ],
+      "exerciseCount": 9,
+      "exercises": [
+        {
+          "id": "example1",
+          "title": "Selection 1: Select all town names",
+          "solution": "SELECT town\n  FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example2",
+          "title": "Selection 2: Select all county names",
+          "solution": "SELECT county\n  FROM pnw_counties;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example3",
+          "title": "Selection 3: Select all columns for towns table",
+          "solution": "SELECT *\n  FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example4",
+          "title": "Selection 4: Select county names and population for 2022",
+          "solution": "SELECT county, population_2022\n  FROM pnw_counties;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example5",
+          "title": "Aliasing 1: Select county names, population for 2022, and land area (Aliased)",
+          "solution": "SELECT county AS cty, \n       population_2022 AS pop2022,\n       land_area_sq_mi AS area\n  FROM pnw_counties;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example6",
+          "title": "Aliasing 2: Alias the table name",
+          "solution": "SELECT counties.county,\n       counties.origin\n  FROM pnw_counties AS counties;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example7",
+          "title": "Unique 1: Select distinct states from the `pnw_towns` table",
+          "solution": "SELECT DISTINCT state\n  FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example10",
+          "title": "Counting 1: Count the number of records in the `pnw_towns` table",
+          "solution": "SELECT COUNT(*) AS num_towns\n  FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example11",
+          "title": "Counting 2: Count the number of distinct states in `pnw_counties`",
+          "solution": "SELECT COUNT(DISTINCT state) AS num_unique_states\n  FROM pnw_counties;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "filtering-techniques",
+      "title": "Filtering Techniques",
+      "exerciseIds": [
+        "example12",
+        "example13",
+        "example14",
+        "example15",
+        "example16",
+        "example17",
+        "example18",
+        "example19",
+        "example20",
+        "example21",
+        "example22",
+        "example23",
+        "example24",
+        "example25",
+        "example26"
+      ],
+      "checkableIds": [
+        "example12",
+        "example13",
+        "example14",
+        "example15",
+        "example16",
+        "example17",
+        "example18",
+        "example19",
+        "example20",
+        "example21",
+        "example22",
+        "example23",
+        "example24",
+        "example25",
+        "example26"
+      ],
+      "exerciseCount": 15,
+      "exercises": [
+        {
+          "id": "example12",
+          "title": "Filtering 1: Towns with greater than 150,000 people",
+          "solution": "SELECT town, state, population_2020_census \n  FROM pnw_towns \n WHERE population_2020_census > 150000;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example13",
+          "title": "Filtering 2: Towns with greater than 150,000 people and in Oregon",
+          "solution": "SELECT town, state, population_2020_census \n  FROM pnw_towns \n WHERE population_2020_census > 150000\n   AND state = 'Oregon';",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example14",
+          "title": "Filtering 3: Towns with greater than 150,000 people or in Oregon",
+          "solution": "SELECT town, state, population_2020_census \n  FROM pnw_towns \n WHERE population_2020_census > 150000\n    OR state = 'Oregon';",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example15",
+          "title": "Filtering 4: Counties established after 1920 with a population greater than 100,000",
+          "solution": "SELECT county, state, year_established, population_2022\n  FROM pnw_counties\n WHERE year_established > 1920\n   AND population_2022 > 100000;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example16",
+          "title": "Filtering 5: Counties established after 1880 with a population greater than 100,000",
+          "solution": "SELECT county, state, year_established, population_2022\n  FROM pnw_counties\n WHERE year_established > 1880\n   AND population_2022 > 100000;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example17",
+          "title": "Filtering 6: Towns with a land area between 12 and 15 square miles",
+          "solution": "SELECT town, state, land_area_sq_mi\n  FROM pnw_towns\n WHERE land_area_sq_mi >= 12\n   AND land_area_sq_mi <= 15;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example18",
+          "title": "Filtering 7: Towns with a land area between 10 and 15 square miles (simplified)",
+          "solution": "SELECT town, state, land_area_sq_mi\n  FROM pnw_towns\n WHERE land_area_sq_mi BETWEEN 12 AND 15;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example19",
+          "title": "Filtering 8: Counties in Washington established between 1890 and 1900 or counties in Oregon with a population greater than 300,000 in 2022",
+          "solution": "SELECT county, state, year_established, population_2022\n  FROM pnw_counties\n WHERE (state = 'Washington' AND year_established BETWEEN 1890 AND 1900)\n    OR (state = 'Oregon' AND population_2022 > 300000);",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example20",
+          "title": "Filtering 9: Counties that start with the letter \"K\":",
+          "solution": "SELECT county, state\n  FROM pnw_counties\n WHERE county LIKE 'K%';",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example21",
+          "title": "Filtering 10: Towns that end with the letters \"ia\":",
+          "solution": "SELECT town, state\n  FROM pnw_towns\n WHERE town LIKE '%ia';",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example22",
+          "title": "Filtering 11: Towns that contain the phrase \"mount\":",
+          "solution": "SELECT town, state\n  FROM pnw_towns\n WHERE town LIKE '%mount%';",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example23",
+          "title": "Filtering 12: Counties with specific pattern in third and fourth position (\"ar\")",
+          "solution": "SELECT county\n  FROM pnw_counties\n WHERE county LIKE '__ar%';",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example24",
+          "title": "Filtering 13: Towns that are in Multnomah or Spokane counties",
+          "solution": "SELECT * \n  FROM pnw_towns \n WHERE primary_county IN ('Multnomah', 'Spokane');",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example25",
+          "title": "Filtering 14: Towns with missing values for secondary county",
+          "solution": "SELECT * \n FROM pnw_towns \nWHERE secondary_county IS NULL;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example26",
+          "title": "Filtering 15: Towns without missing values for secondary county",
+          "solution": "SELECT * \n FROM pnw_towns \nWHERE secondary_county IS NOT NULL;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "aggregating-techniques",
+      "title": "Aggregating Techniques",
+      "exerciseIds": [
+        "example27",
+        "example28",
+        "example29",
+        "example30",
+        "example31",
+        "example32",
+        "example33",
+        "example34a",
+        "example34b"
+      ],
+      "checkableIds": [
+        "example27",
+        "example28",
+        "example29",
+        "example30",
+        "example31",
+        "example32",
+        "example33",
+        "example34a",
+        "example34b"
+      ],
+      "exerciseCount": 9,
+      "exercises": [
+        {
+          "id": "example27",
+          "title": "Aggregating 1: Average population across all towns in Washington",
+          "solution": "SELECT AVG(population_2020_census) AS avg_population\n  FROM pnw_towns\n WHERE state = 'Washington';",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example28",
+          "title": "Aggregating 2: Total population across all towns in Oregon",
+          "solution": "SELECT SUM(population_2020_census) AS total_population\n  FROM pnw_towns\n WHERE state = 'Oregon';",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example29",
+          "title": "Aggregating 3: Minimum population across all towns",
+          "solution": "SELECT MIN(population_2020_census) AS min_population\n  FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example30",
+          "title": "Aggregating 4: Maximum population across all towns",
+          "solution": "SELECT MAX(population_2020_census) AS max_population\n  FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example31",
+          "title": "Aggregating 5: Total number of towns",
+          "solution": "SELECT COUNT(*) AS total_towns\n  FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example32",
+          "title": "Aggregating 6: First town alphabetically",
+          "solution": "SELECT MIN(town) AS first_town\n  FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example33",
+          "title": "Aggregating 7: Last county alphabetically",
+          "solution": "SELECT MAX(county) AS last_county\n  FROM pnw_counties;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example34a",
+          "title": "Aggregating 8: Rounded average land areas",
+          "solution": "  SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area\n    FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example34b",
+          "title": "example34b",
+          "solution": "  SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area\n    FROM pnw_towns;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "sorting-and-grouping-techniques",
+      "title": "Sorting and Grouping Techniques",
+      "exerciseIds": [
+        "example35",
+        "example36a",
+        "example36b",
+        "example37",
+        "example38",
+        "example39",
+        "example40a",
+        "example40b"
+      ],
+      "checkableIds": [
+        "example35",
+        "example36a",
+        "example36b",
+        "example37",
+        "example38",
+        "example39",
+        "example40a",
+        "example40b"
+      ],
+      "exerciseCount": 8,
+      "exercises": [
+        {
+          "id": "example35",
+          "title": "Sorting 1: Sorting towns by 2020 census population",
+          "solution": "SELECT town, population_2020_census\n  FROM pnw_towns\n ORDER BY population_2020_census;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example36a",
+          "title": "Sorting 2: Sorting towns by 2020 census population in ascending and descending order",
+          "solution": "SELECT town, population_2020_census\n  FROM pnw_towns\nORDER BY population_2020_census ASC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example36b",
+          "title": "example36b",
+          "solution": "SELECT town, population_2020_census\n  FROM pnw_towns\n ORDER BY population_2020_census DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example37",
+          "title": "Sorting 3: Sorting counties by state and population in 2022",
+          "solution": "SELECT county, state, population_2022\n  FROM pnw_counties\n ORDER BY state, population_2022 DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example38",
+          "title": "Grouping 1: Grouping towns by state",
+          "solution": "SELECT state, COUNT(*) AS total_towns\n  FROM pnw_towns\n GROUP BY state;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example39",
+          "title": "Grouping 2: Grouping and ordering counties by state and average population",
+          "solution": "SELECT state, AVG(population_2022) AS avg_population\n  FROM pnw_counties\n GROUP BY state\n ORDER BY avg_population DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example40a",
+          "title": "Grouping 3: Filtering on grouped data",
+          "solution": "",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": false
+        },
+        {
+          "id": "example40b",
+          "title": "example40b",
+          "solution": "SELECT primary_county, state, COUNT(*) AS total_towns\n  FROM pnw_towns\n GROUP BY primary_county\nHAVING COUNT(*) > 10;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "transforming-techniques",
+      "title": "Transforming Techniques",
+      "exerciseIds": [
+        "example41",
+        "example42",
+        "example43"
+      ],
+      "checkableIds": [
+        "example41",
+        "example42",
+        "example43"
+      ],
+      "exerciseCount": 3,
+      "exercises": [
+        {
+          "id": "example41",
+          "title": "Transforming 1: Classifying towns by population size using CASE WHEN",
+          "solution": "SELECT town, \n       population_2010_census,\n       CASE \n           WHEN population_2010_census > 100000 THEN 'Large'\n           WHEN population_2010_census BETWEEN 50000 AND 100000 THEN 'Medium'\n           ELSE 'Small'\n       END AS town_size\n  FROM pnw_towns\n  ORDER BY population_2010_census DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example42",
+          "title": "Transforming 2: Percentage increase in population from 2010 to 2020",
+          "solution": "SELECT town, state, (population_2020_census - population_2010_census) / population_2010_census * 100 AS pct_change\n  FROM pnw_towns\n  ORDER BY pct_change DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "example43",
+          "title": "Transforming 3: Population density",
+          "solution": "SELECT town, state, population_2020_census / land_area_sq_mi AS pop_density\n  FROM pnw_towns\n ORDER BY pop_density DESC;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "joining-techniques",
+      "title": "Joining Techniques",
+      "exerciseIds": [
+        "example44",
+        "example45",
+        "example47"
+      ],
+      "checkableIds": [
+        "example44",
+        "example45",
+        "example47"
+      ],
+      "exerciseCount": 3,
+      "exercises": [
+        {
+          "id": "example44",
+          "title": "Joining 1: Get population of each county seat",
+          "solution": "SELECT c.county, c.county_seat, t.population_2020_census\n  FROM pnw_counties AS c\n INNER JOIN pnw_towns AS t ON c.county_seat = t.town;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example45",
+          "title": "Joining 2: Show ALL counties, even those whose seat isn't in our towns data",
+          "solution": "SELECT c.county, c.county_seat, t.population_2020_census\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t ON c.county_seat = t.town;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "example47",
+          "title": "Joining 3: Find counties that don't have any towns listed",
+          "solution": "SELECT c.county\n FROM pnw_counties AS c\nLEFT JOIN pnw_towns AS t ON c.county = t.primary_county\nWHERE t.town IS NULL;",
+          "db": "pnw_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        }
+      ]
+    }
+  ],
+  "exercises": [
+    {
+      "slug": "selection-techniques",
+      "title": "Selection Techniques",
+      "exerciseIds": [
+        "query1",
+        "query2",
+        "query3",
+        "query4",
+        "query5",
+        "query6",
+        "query9",
+        "query10"
+      ],
+      "checkableIds": [
+        "query1",
+        "query2",
+        "query3",
+        "query4",
+        "query5",
+        "query6",
+        "query9",
+        "query10"
+      ],
+      "exerciseCount": 8,
+      "exercises": [
+        {
+          "id": "query1",
+          "title": "Select all airline names from the `airlines` table.",
+          "solution": "-- SOLUTION: Here's one way to select all airline names from the airlines table\nSELECT name\nFROM airlines;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query2",
+          "title": "Select all columns from the `weather` table.",
+          "solution": "-- SOLUTION: Here is one way to select all fields from the `weather` table:\nSELECT *\nFROM weather;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query3",
+          "title": "Select the FAA code and name from the `airports` table.",
+          "solution": "-- SOLUTION: Here is one way to select the FAA code and name from the airports table:\nSELECT faa, name\nFROM airports;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query4",
+          "title": "Select and alias specific columns from the airports table",
+          "solution": "-- SOLUTION: Here is how you can select and alias the FAA code, name, and altitude from the airports table:\nSELECT faa AS code, name AS airport_name, alt AS altitude\nFROM airports;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query5",
+          "title": "Choose the destination airport code and air time from the flights table with an alias `f`",
+          "solution": "-- SOLUTION: Here's how to select the destination airport code and air time from the flights table using an alias:\nSELECT f.dest, f.air_time\nFROM flights AS f;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query6",
+          "title": "Select all distinct time zones (`tz`) from the `airports` table.",
+          "solution": "-- SOLUTION: Here's how to select all distinct time zones from the airports table:\nSELECT DISTINCT tz\nFROM airports;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query9",
+          "title": "Count the records in the flights table (aliased as `total_flights`)",
+          "solution": "-- SOLUTION: Here's how to count all records in the flights table:\nSELECT COUNT(*) AS total_flights\nFROM flights;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query10",
+          "title": "Count all distinct carriers in the flights table as `total_distinct_carriers`",
+          "solution": "-- SOLUTION: This query counts all distinct carriers in the flights table.\nSELECT COUNT(DISTINCT carrier) AS total_distinct_carriers\nFROM flights;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "filtering-techniques",
+      "title": "Filtering Techniques",
+      "exerciseIds": [
+        "query11",
+        "query12",
+        "query13",
+        "query14",
+        "query15",
+        "query16",
+        "query17",
+        "query18"
+      ],
+      "checkableIds": [
+        "query11",
+        "query12",
+        "query13",
+        "query14",
+        "query15",
+        "query16",
+        "query17",
+        "query18"
+      ],
+      "exerciseCount": 8,
+      "exercises": [
+        {
+          "id": "query11",
+          "title": "Select Boeing Planes' Tail Numbers and Models",
+          "solution": "-- SOLUTION: This query selects tail numbers and models of planes manufactured by Boeing.\nSELECT tailnum, model \nFROM planes \nWHERE manufacturer = 'BOEING';",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query12",
+          "title": "Select airports (faa, name, lat) above 40 latitude and in the America/New_York time zone.",
+          "solution": "-- SOLUTION: This query selects certain columns from airports based on specified conditions.\nSELECT faa, name, lat \nFROM airports \nWHERE lat > 40 \nAND tzone = 'America/New_York';",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query13",
+          "title": "Select airports (faa code, name, and lat) within 40 to 42 degrees latitude.",
+          "solution": "-- SOLUTION: This query selects FAA codes, names, and latitudes of airports within a specific latitude range.\nSELECT faa, name, lat \nFROM airports \nWHERE lat BETWEEN 40 AND 42;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query14",
+          "title": "Select airlines (carrier code and name) with name starting with an \"A\"",
+          "solution": "-- SOLUTION: This query selects the carrier code and name of airlines with names starting with 'A'.\nSELECT carrier, name \nFROM airlines \nWHERE name LIKE 'A%';",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query15",
+          "title": "Select flights having 101 as the second, third, and fourth characters of the tail number.",
+          "solution": "-- SOLUTION: This query selects flights with tail numbers that have '101' as the second, third, and fourth characters.\nSELECT tailnum \nFROM flights \nWHERE tailnum LIKE '_101%';",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query16",
+          "title": "Select flights (all columns) where the carrier is either \"AS\" or \"HA\"",
+          "solution": "-- SOLUTION: This query selects all flights where the carrier is either \"AS\" or \"HA\".\nSELECT * \nFROM flights \nWHERE carrier IN ('AS', 'HA');",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query17",
+          "title": "Select weather records (all columns) where wind direction is missing",
+          "solution": "-- SOLUTION: This query selects all weather records where the wind direction is missing.\nSELECT * \nFROM weather \nWHERE wind_dir IS NULL;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query18",
+          "title": "Select weather records where temperature is not missing",
+          "solution": "-- SOLUTION: This query selects all weather records where the temperature is not missing.\nSELECT * \nFROM weather \nWHERE temp IS NOT NULL;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "aggregating-techniques",
+      "title": "Aggregating Techniques",
+      "exerciseIds": [
+        "query19",
+        "query20",
+        "query21",
+        "query22"
+      ],
+      "checkableIds": [
+        "query19",
+        "query20",
+        "query21",
+        "query22"
+      ],
+      "exerciseCount": 4,
+      "exercises": [
+        {
+          "id": "query19",
+          "title": "Calculate the average temperature from the weather table as `avg_temperature`",
+          "solution": "-- SOLUTION: This query calculates the average temperature from the weather table.\nSELECT AVG(temp) AS avg_temperature\nFROM weather;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query20",
+          "title": "Find the maximum arrival time for flights destined to ORD as `max_arr_time`",
+          "solution": "-- SOLUTION: This query finds the maximum arrival time for flights destined to ORD.\nSELECT MAX(arr_time) AS max_arr_time\nFROM flights\nWHERE dest = 'ORD';",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query21",
+          "title": "Find the first destination alphabetically for flights from SEA as `first_sea_dest`",
+          "solution": "-- SOLUTION: This query finds the first destination alphabetically for flights destined to SEA.\nSELECT MIN(dest) AS first_sea_dest\nFROM flights\nWHERE origin = 'SEA';",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query22",
+          "title": "Round wind gust values in the weather table to 0 decimal places as `rounded_wind_gust`",
+          "solution": "-- SOLUTION: This query rounds wind gust values in the weather table to 0 decimal places.\nSELECT ROUND(wind_gust, 0) AS rounded_wind_gust\nFROM weather;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "sorting-and-grouping-techniques",
+      "title": "Sorting and Grouping Techniques",
+      "exerciseIds": [
+        "query23",
+        "query24",
+        "query25",
+        "query26",
+        "query27"
+      ],
+      "checkableIds": [
+        "query23",
+        "query24",
+        "query25",
+        "query26",
+        "query27"
+      ],
+      "exerciseCount": 5,
+      "exercises": [
+        {
+          "id": "query23",
+          "title": "Sort flights by departure delay",
+          "solution": "-- SOLUTION: This query sorts flights by departure delay.\nSELECT *\nFROM flights\nORDER BY dep_delay;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "query24",
+          "title": "Sort flights by descending arrival delay",
+          "solution": "-- SOLUTION: This query sorts flights by descending arrival delay.\nSELECT *\nFROM flights\nORDER BY arr_delay DESC;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "query25",
+          "title": "Sort weather data by descending visibility and then descending wind speed",
+          "solution": "-- SOLUTION: This query sorts weather data by descending visibility and then by descending wind speed.\nSELECT *\nFROM weather\nORDER BY visib DESC, wind_speed DESC;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        },
+        {
+          "id": "query26",
+          "title": "Group flights by origin and calculate the average arrival delay as `avg_arr_delay`",
+          "solution": "-- SOLUTION: This query groups flights by origin and calculates the average arrival delay.\nSELECT origin, AVG(arr_delay) AS avg_arr_delay\nFROM flights\nGROUP BY origin;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query27",
+          "title": "Group flights by destination and count the number of flights for each destination having more than 100 flights as `total_flights`",
+          "solution": "-- SOLUTION: This query groups flights by destination and counts the number of flights for each, only including those destinations with more than 100 flights.\nSELECT dest, COUNT(*) AS total_flights\nFROM flights\nGROUP BY dest\nHAVING COUNT(*) > 100;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "transforming-techniques",
+      "title": "Transforming Techniques",
+      "exerciseIds": [
+        "query28",
+        "query29"
+      ],
+      "checkableIds": [
+        "query28",
+        "query29"
+      ],
+      "exerciseCount": 2,
+      "exercises": [
+        {
+          "id": "query28",
+          "title": "Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.",
+          "solution": "-- SOLUTION: This query categorizes flights by distance as 'Short', 'Medium', or 'Long'.\nSELECT distance, CASE \nWHEN distance < 500 THEN 'Short'\nWHEN distance BETWEEN 500 AND 2000 THEN 'Medium'\nELSE 'Long'\nEND AS flight_distance_category\nFROM flights;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query29",
+          "title": "Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed",
+          "solution": "-- SOLUTION: This query calculates the average speed of flights from each origin to each destination and orders the results by the fastest average speeds.\nSELECT origin, dest,\nAVG(distance / (air_time / 60)) AS avg_speed\nFROM flights\nGROUP BY origin, dest\nORDER BY avg_speed DESC;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": true,
+          "hasSolution": true
+        }
+      ]
+    },
+    {
+      "slug": "joining-techniques",
+      "title": "Joining Techniques",
+      "exerciseIds": [
+        "query30",
+        "query31",
+        "query33",
+        "query34",
+        "query35"
+      ],
+      "checkableIds": [
+        "query30",
+        "query31",
+        "query33"
+      ],
+      "exerciseCount": 5,
+      "exercises": [
+        {
+          "id": "query30",
+          "title": "Join flights (as `f`) with weather (as `w`) on `origin` and `time_hour` (returning only the rows matching between both tables). Select the `origin`, `dest`,",
+          "solution": "-- SOLUTION: This query joins the flights table with the weather table on matching origin and time_hour, selecting origin, destination, temperature, and humidity.\nSELECT f.origin, f.dest, w.temp, w.humid\nFROM flights AS f\nINNER JOIN weather AS w ON f.origin = w.origin AND f.time_hour = w.time_hour;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query31",
+          "title": "Left join flights with planes on tailnum (returning all rows from flights and only the rows from planes that match). Select the `tailnum`, `origin`, `dest`, `manufacturer`, and `model` fields.",
+          "solution": "-- SOLUTION: This query left joins the flights table with the planes table on matching tailnum, selecting tailnum, origin, destination, manufacturer, and model.\nSELECT f.tailnum, f.origin, f.dest, p.manufacturer, p.model\nFROM flights AS f\nLEFT JOIN planes AS p ON f.tailnum = p.tailnum;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query33",
+          "title": "Anti-join flights (as `f`) with planes (as `p`) where plane's tailnum is missing. Select the `tailnum`, `origin`, and `dest` fields.",
+          "solution": "-- SOLUTION: This query left joins the flights table with the planes table on matching tailnum, selecting flights' tailnum, origin, and destination where the corresponding tailnum in planes is missing.\nSELECT f.tailnum, f.origin, f.dest\nFROM flights AS f\nLEFT JOIN planes AS p ON f.tailnum = p.tailnum\nWHERE p.tailnum IS NULL;",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": true
+        },
+        {
+          "id": "query34",
+          "title": "query34",
+          "solution": "",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": false
+        },
+        {
+          "id": "query35",
+          "title": "query35",
+          "solution": "",
+          "db": "pnw_flights_database.sqlite",
+          "requireOrdering": false,
+          "hasSolution": false
+        }
+      ]
+    }
+  ]
+}

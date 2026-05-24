@@ -1,0 +1,95 @@
+{
+  "pnw_database.sqlite": {
+    "fips": [
+      "fips",
+      "name",
+      "state"
+    ],
+    "pnw_counties": [
+      "county",
+      "state",
+      "fips_short",
+      "county_seat",
+      "year_established",
+      "origin",
+      "etymology",
+      "population_2022",
+      "land_area_sq_mi"
+    ],
+    "pnw_towns": [
+      "town",
+      "state",
+      "primary_county",
+      "secondary_county",
+      "tertiary_county",
+      "population_2020_census",
+      "population_2010_census",
+      "land_area_sq_mi"
+    ]
+  },
+  "pnw_flights_database.sqlite": {
+    "airlines": [
+      "carrier",
+      "name"
+    ],
+    "airports": [
+      "faa",
+      "name",
+      "lat",
+      "lon",
+      "alt",
+      "tz",
+      "dst",
+      "tzone"
+    ],
+    "flights": [
+      "year",
+      "month",
+      "day",
+      "dep_time",
+      "sched_dep_time",
+      "dep_delay",
+      "arr_time",
+      "sched_arr_time",
+      "arr_delay",
+      "carrier",
+      "flight",
+      "tailnum",
+      "origin",
+      "dest",
+      "air_time",
+      "distance",
+      "hour",
+      "minute",
+      "time_hour"
+    ],
+    "planes": [
+      "tailnum",
+      "year",
+      "type",
+      "manufacturer",
+      "model",
+      "engines",
+      "seats",
+      "speed",
+      "engine"
+    ],
+    "weather": [
+      "origin",
+      "year",
+      "month",
+      "day",
+      "hour",
+      "temp",
+      "dewp",
+      "humid",
+      "wind_dir",
+      "wind_speed",
+      "wind_gust",
+      "precip",
+      "pressure",
+      "visib",
+      "time_hour"
+    ]
+  }
+}

@@ -1,0 +1,205 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Sorting and Grouping Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Sorting and Grouping Techniques
+
+<SchemaReference db="pnw_flights_database.sqlite" />
+
+## Sorting
+
+21. Sort flights by departure delay
+
+<SqlExercise
+  id="query23"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to sort flights by departure delay.
+`}
+  solution={`-- SOLUTION: This query sorts flights by departure delay.
+SELECT *
+FROM flights
+ORDER BY dep_delay;`}
+  requireOrdering
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use the ORDER BY clause to sort results by a specific column. Syntax example:
+SELECT column_name
+FROM table_name
+ORDER BY column_name;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to sort flights by departure delay. Fill in the blanks:
+SELECT ___
+FROM flights
+ORDER BY ___;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+22. Sort flights by descending arrival delay
+
+<SqlExercise
+  id="query24"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to sort flights by descending arrival delay.
+`}
+  solution={`-- SOLUTION: This query sorts flights by descending arrival delay.
+SELECT *
+FROM flights
+ORDER BY arr_delay DESC;`}
+  requireOrdering
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use the ORDER BY clause along with DESC to sort results in descending order. Example:
+SELECT column_name
+FROM table_name
+ORDER BY column_name DESC;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to sort flights by descending arrival delay. Fill in the blanks:
+SELECT ___
+FROM flights
+ORDER BY ___ DESC;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## Grouping
+
+23. Sort weather data by descending visibility and then descending wind speed
+
+<SqlExercise
+  id="query25"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to sort weather data by descending visibility 
+-- and descending wind speed.
+`}
+  solution={`-- SOLUTION: This query sorts weather data by descending visibility and then by descending wind speed.
+SELECT *
+FROM weather
+ORDER BY visib DESC, wind_speed DESC;`}
+  requireOrdering
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use the ORDER BY clause to sort results by multiple columns. You can add DESC to sort in descending order. Example:
+SELECT column1, column2
+FROM table_name
+ORDER BY column1 DESC, column2 DESC;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Complete this query to sort weather data by descending visibility and then by descending wind speed. Fill in the blanks:
+SELECT ___
+FROM weather
+ORDER BY ___ DESC, ___ DESC;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+24. Group flights by origin and calculate the average arrival delay as `avg_arr_delay`
+
+<SqlExercise
+  id="query26"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to group flights by origin and 
+-- calculate the average arrival delay.
+`}
+  solution={`-- SOLUTION: This query groups flights by origin and calculates the average arrival delay.
+SELECT origin, AVG(arr_delay) AS avg_arr_delay
+FROM flights
+GROUP BY origin;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use the GROUP BY clause to aggregate data by a specific column. AVG() function calculates the average. Example:
+SELECT column1, AVG(column2) AS avg_column
+FROM table_name
+GROUP BY column1;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blanks to complete the query for calculating the average arrival delay grouped by origin.
+SELECT ___, AVG(___) AS avg_arr_delay
+FROM flights
+GROUP BY ___;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+25. Group flights by destination and count the number of flights for each destination having more than 100 flights as `total_flights`
+
+<SqlExercise
+  id="query27"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to group flights by destination and count the 
+-- number of flights for each, only for those destinations with 
+-- more than 100 flights.
+`}
+  solution={`-- SOLUTION: This query groups flights by destination and counts the number of flights for each, only including those destinations with more than 100 flights.
+SELECT dest, COUNT(*) AS total_flights
+FROM flights
+GROUP BY dest
+HAVING COUNT(*) > 100;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use GROUP BY to aggregate data by a specific column and HAVING to filter aggregated results. COUNT() function counts the number of records. Example:
+SELECT column1, COUNT(*) AS count_column
+FROM table_name
+GROUP BY column1
+HAVING COUNT(*) > condition;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blanks to complete the query for counting the number of flights grouped by destination, only including those with more than 100 flights.
+SELECT ___, COUNT(*) AS total_flights
+FROM flights
+GROUP BY ___
+HAVING COUNT(*) > ___;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>

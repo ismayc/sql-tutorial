@@ -1,0 +1,102 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Aggregating Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Aggregating Techniques
+
+<SchemaReference db="pnw_database.sqlite" />
+
+## Numerical summaries
+
+### Aggregating 1: Average population across all towns in Washington
+
+<SqlExercise
+  id="example27"
+  db="pnw_database.sqlite"
+  solution={`SELECT AVG(population_2020_census) AS avg_population
+  FROM pnw_towns
+ WHERE state = 'Washington';`}
+/>
+
+### Aggregating 2: Total population across all towns in Oregon
+
+<SqlExercise
+  id="example28"
+  db="pnw_database.sqlite"
+  solution={`SELECT SUM(population_2020_census) AS total_population
+  FROM pnw_towns
+ WHERE state = 'Oregon';`}
+/>
+
+### Aggregating 3: Minimum population across all towns
+
+<SqlExercise
+  id="example29"
+  db="pnw_database.sqlite"
+  solution={`SELECT MIN(population_2020_census) AS min_population
+  FROM pnw_towns;`}
+/>
+
+### Aggregating 4: Maximum population across all towns
+
+<SqlExercise
+  id="example30"
+  db="pnw_database.sqlite"
+  solution={`SELECT MAX(population_2020_census) AS max_population
+  FROM pnw_towns;`}
+/>
+
+### Aggregating 5: Total number of towns
+
+<SqlExercise
+  id="example31"
+  db="pnw_database.sqlite"
+  solution={`SELECT COUNT(*) AS total_towns
+  FROM pnw_towns;`}
+/>
+
+## Categorical summaries
+
+### Aggregating 6: First town alphabetically
+
+<SqlExercise
+  id="example32"
+  db="pnw_database.sqlite"
+  solution={`SELECT MIN(town) AS first_town
+  FROM pnw_towns;`}
+/>
+
+### Aggregating 7: Last county alphabetically
+
+<SqlExercise
+  id="example33"
+  db="pnw_database.sqlite"
+  solution={`SELECT MAX(county) AS last_county
+  FROM pnw_counties;`}
+/>
+
+## Rounding summaries
+
+### Aggregating 8: Rounded average land areas
+
+- 8a: Rounding to 2 decimal places:
+
+<SqlExercise
+  id="example34a"
+  db="pnw_database.sqlite"
+  solution={`  SELECT town, ROUND(land_area_sq_mi, 2) AS rounded_area
+    FROM pnw_towns;`}
+/>
+
+- 8b: Rounding to 0 decimal places:
+
+<SqlExercise
+  id="example34b"
+  db="pnw_database.sqlite"
+  solution={`  SELECT town, ROUND(land_area_sq_mi, 0) AS rounded_area
+    FROM pnw_towns;`}
+/>

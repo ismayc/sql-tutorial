@@ -1,0 +1,26 @@
+---
+interface Props {
+  db?: string;
+  initial?: string;
+}
+const {
+  db = "pnw_flights_database.sqlite",
+  initial = "-- Try a query against the database\nSELECT name FROM sqlite_master WHERE type = 'table';\n",
+} = Astro.props;
+---
+<section class="sql-scratchpad" data-db={db}>
+  <div class="editor-mount"></div>
+  <div class="actions">
+    <button type="button" class="btn btn-primary" data-action="run">▶ Run query</button>
+    <button type="button" class="btn" data-action="format" title="Pretty-print the SQL">✨ Format</button>
+    <button type="button" class="btn" data-action="share" title="Copy a shareable link with your current SQL">🔗 Share</button>
+  </div>
+  <div class="sql-status" data-kind="info" role="status" aria-live="polite"></div>
+  <div class="result-mount"></div>
+  <template data-initial>{initial}</template>
+</section>
+
+<script>
+  import { initInteractive } from "../lib/exercise";
+  initInteractive();
+</script>

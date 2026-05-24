@@ -1,0 +1,288 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Selection Techniques
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+
+# Selection Techniques
+
+<SchemaReference db="pnw_flights_database.sqlite" />
+
+## Selecting columns/fields
+
+1. Select all airline names from the `airlines` table.
+
+<SqlExercise
+  id="query1"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select all airline names from the airlines table
+`}
+  solution={`-- SOLUTION: Here's one way to select all airline names from the airlines table
+SELECT name
+FROM airlines;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: The syntax for selecting all columns from a table is:
+SELECT ___
+FROM ___;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: The syntax for selecting specific columns from airlines is:
+SELECT ___
+FROM airlines;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+2. Select all columns from the `weather` table.
+
+<SqlExercise
+  id="query2"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select all columns/fields from the weather table
+`}
+  solution={`-- SOLUTION: Here is one way to select all fields from the \`weather\` table:
+SELECT *
+FROM weather;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use SELECT * to select all columns from a table.
+SELECT *
+___ ___;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Use FROM to specify which table to pull all columns from.
+SELECT *
+FROM ___;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+3. Select the FAA code and name from the `airports` table.
+
+<SqlExercise
+  id="query3"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select the FAA code and name from the 
+-- airports table
+`}
+  solution={`-- SOLUTION: Here is one way to select the FAA code and name from the airports table:
+SELECT faa, name
+FROM airports;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: The syntax for selecting specific columns from a table is:
+SELECT ___, ___
+FROM ___;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: You need to specify the columns and table you're selecting from:
+SELECT faa, ___
+FROM airports;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## Aliasing
+
+4. Select and alias specific columns from the airports table
+
+<SqlExercise
+  id="query4"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select the FAA code, name, 
+-- and alt from the airports table with aliases of 
+-- code, airport_name, and altitude, respectively
+`}
+  solution={`-- SOLUTION: Here is how you can select and alias the FAA code, name, and altitude from the airports table:
+SELECT faa AS code, name AS airport_name, alt AS altitude
+FROM airports;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Start by selecting columns and use AS to give them aliases. For example:
+SELECT column_name AS alias_name
+FROM table_name;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Your query should look something like this, fill in the blanks:
+SELECT faa AS code, name AS ___, alt AS ___
+FROM airports;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+5. Choose the destination airport code and air time from the flights table with an alias `f`
+
+<SqlExercise
+  id="query5"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select the destination airport code and 
+-- air time from the flights table with an alias
+`}
+  solution={`-- SOLUTION: Here's how to select the destination airport code and air time from the flights table using an alias:
+SELECT f.dest, f.air_time
+FROM flights AS f;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use the SELECT statement to choose columns and AS to alias the table. For example:
+SELECT column_name
+FROM table_name AS table_alias;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Your query should include the table alias and select specific columns like this:
+SELECT f.dest, f.air_time
+FROM flights AS f;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## Unique entries
+
+6. Select all distinct time zones (`tz`) from the `airports` table.
+
+<SqlExercise
+  id="query6"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to select all distinct time zones from
+-- the airports table
+`}
+  solution={`-- SOLUTION: Here's how to select all distinct time zones from the airports table:
+SELECT DISTINCT tz
+FROM airports;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use SELECT DISTINCT to get unique values from a column. For example:
+SELECT DISTINCT column_name
+FROM table_name;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blank with the appropriate column name:
+SELECT DISTINCT ___
+FROM airports;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+## Counting
+
+7. Count the records in the flights table (aliased as `total_flights`)
+
+<SqlExercise
+  id="query9"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to count all records in the flights table
+`}
+  solution={`-- SOLUTION: Here's how to count all records in the flights table:
+SELECT COUNT(*) AS total_flights
+FROM flights;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: Use the COUNT() function to count the number of records. For example:
+SELECT COUNT(*) AS alias
+FROM table_name;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Apply the COUNT() function to the flights table to count all its records:
+SELECT ___ AS ___
+FROM ___;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>
+
+8. Count all distinct carriers in the flights table as `total_distinct_carriers`
+
+<SqlExercise
+  id="query10"
+  db="pnw_flights_database.sqlite"
+  initial={`-- Write your SQL query here to count all distinct carriers in the flights table
+`}
+  solution={`-- SOLUTION: This query counts all distinct carriers in the flights table.
+SELECT COUNT(DISTINCT carrier) AS total_distinct_carriers
+FROM flights;`}
+>
+  <Fragment slot="hints">
+  <Hint label="Hint 1">
+
+```sql
+-- HINT: To count unique values from a column, use
+SELECT COUNT(DISTINCT column) AS alias
+FROM table_name;
+```
+
+  </Hint>
+  <Hint label="Hint 2">
+
+```sql
+-- HINT: Fill in the blank to complete the query for counting distinct carriers.
+SELECT COUNT(DISTINCT ___) AS ___
+FROM flights;
+```
+
+  </Hint>
+  </Fragment>
+</SqlExercise>

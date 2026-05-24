@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Progress">
+  <div class="prose-narrow">
+    <h1>Your progress</h1>
+    <p>
+      Your work on every exercise is saved in this browser's <code>localStorage</code>.
+      Use these tools to move it between devices, share a snapshot with your instructor,
+      or wipe everything and start fresh.
+    </p>
+
+    <div class="not-prose my-8 grid sm:grid-cols-3 gap-4">
+      <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col">
+        <h3 class="font-semibold text-lg mt-0">📥 Export</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-300 flex-1">Download every saved query + completion flag as a single JSON file.</p>
+        <button type="button" id="export-btn" class="btn btn-primary w-full justify-center">Download progress.json</button>
+      </div>
+      <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col">
+        <h3 class="font-semibold text-lg mt-0">📤 Import</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-300 flex-1">Merge a previously-exported JSON into this browser. By default, newer entries win.</p>
+        <input id="import-input" type="file" accept="application/json,.json" class="hidden" />
+        <button type="button" id="import-btn" class="btn w-full justify-center">Choose file…</button>
+      </div>
+      <div class="rounded-xl border border-rose-300 dark:border-rose-800 p-5 flex flex-col">
+        <h3 class="font-semibold text-lg mt-0 text-rose-700 dark:text-rose-400">⚠️ Reset</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-300 flex-1">Erase every saved query and completion flag in this browser. Cannot be undone.</p>
+        <button type="button" id="reset-btn" class="btn w-full justify-center text-rose-700 dark:text-rose-400 border-rose-300 dark:border-rose-800 hover:bg-rose-50 dark:hover:bg-rose-950/40">Reset everything…</button>
+      </div>
+    </div>
+
+    <div id="progress-status" class="my-6 text-sm" role="status" aria-live="polite"></div>
+
+    <h2>What's saved right now</h2>
+    <div id="progress-summary" class="not-prose">Loading…</div>
+  </div>
+
+  <script>
+    import { initProgressPage } from "../lib/progress-page";
+    initProgressPage();
+  </script>
+</BaseLayout>
