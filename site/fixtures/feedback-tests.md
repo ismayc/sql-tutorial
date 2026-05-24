@@ -1,8 +1,8 @@
 # Feedback regression report
 
-Generated: 2026-05-24T20:58:44.976Z
+Generated: 2026-05-24T21:37:32.056Z
 Base URL: `http://localhost:4321/sql-tutorial`
-Total cases: **319** · matching expectation: **319** (100.0%) · runtime: 36.8s
+Total cases: **319** · matching expectation: **319** (100.0%) · runtime: 46.5s
 
 ### Reading this report
 

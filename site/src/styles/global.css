@@ -63,27 +63,66 @@
 
 /* Result table */
 .sql-result-table {
-  @apply w-full border-collapse text-sm my-3;
+  @apply w-full border-collapse text-sm my-0;
 }
 .sql-result-table th,
 .sql-result-table td {
   @apply border border-slate-200 dark:border-slate-700 px-3 py-2 text-left align-top;
 }
 .sql-result-table th {
-  @apply bg-slate-100 dark:bg-slate-800 font-semibold;
+  @apply bg-slate-100 dark:bg-slate-800 font-semibold cursor-default;
 }
 .sql-result-table tr:nth-child(even) td {
   @apply bg-slate-50/50 dark:bg-slate-900/40;
 }
 .sql-result-wrap {
-  @apply overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700;
+  @apply overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700 my-3;
 }
 .sql-result-empty {
   @apply text-sm text-slate-500 italic px-3 py-2;
 }
 .sql-result-truncated {
-  @apply text-xs text-slate-500 px-3 py-2;
+  @apply text-xs text-slate-500 px-3 py-2 border-t border-slate-200 dark:border-slate-700;
 }
+
+/* simple-datatables enhancements (applies when table has > 25 rows) */
+.datatable-container { @apply overflow-x-auto; }
+.datatable-top,
+.datatable-bottom {
+  @apply flex flex-wrap items-center gap-3 px-3 py-2 bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-700 text-sm;
+}
+.datatable-bottom { @apply border-b-0 border-t justify-between; }
+.datatable-search { @apply flex items-center gap-2 ml-auto; }
+.datatable-input {
+  @apply rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-sm w-44 focus:outline-none focus:ring-2 focus:ring-brand-500/40;
+}
+.datatable-selector,
+.datatable-dropdown select {
+  @apply rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-2 py-1 text-xs mx-1;
+}
+.datatable-info {
+  @apply text-xs text-slate-500 dark:text-slate-400 tabular-nums;
+}
+.datatable-pagination { @apply ml-auto; }
+.datatable-pagination-list {
+  @apply flex items-center gap-1 list-none m-0 p-0;
+}
+.datatable-pagination-list-item { @apply list-none m-0 p-0; }
+.datatable-pagination-list-item-link {
+  @apply inline-flex items-center justify-center min-w-[1.75rem] h-7 px-2 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-xs no-underline text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800;
+}
+.datatable-pagination-list-item.datatable-active .datatable-pagination-list-item-link {
+  @apply bg-brand-600 dark:bg-brand-500 text-white border-transparent;
+}
+.datatable-pagination-list-item.datatable-disabled .datatable-pagination-list-item-link {
+  @apply opacity-40 cursor-not-allowed pointer-events-none;
+}
+/* Sortable column headers */
+.sql-result-table th.datatable-sorter {
+  @apply cursor-pointer select-none hover:bg-slate-200 dark:hover:bg-slate-700;
+}
+.sql-result-table th.datatable-ascending::after { content: " ↑"; color: var(--color-brand-600); }
+.sql-result-table th.datatable-descending::after { content: " ↓"; color: var(--color-brand-600); }
 
 /* Status pills */
 .sql-status {

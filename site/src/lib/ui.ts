@@ -1,6 +1,11 @@
+import { DataTable } from "simple-datatables";
 import type { QueryResult } from "./sql";
 
-const MAX_DISPLAY_ROWS = 500;
+const MAX_DISPLAY_ROWS = 2000;
+const DATATABLE_THRESHOLD = 25; // rows; below this, render a plain table (no pagination/search)
+
+let nextTableId = 0;
+const activeTables = new WeakMap<HTMLTableElement, DataTable>();
 
 function escapeHTML(s: string): string {
   return s
@@ -21,10 +26,20 @@ function formatCell(v: unknown): string {
 }
 
 export function renderResultTable(target: HTMLElement, result: QueryResult): void {
+  // Tear down any previous DataTable instance attached to a table inside target
+  target.querySelectorAll<HTMLTableElement>("table").forEach((t) => {
+    const dt = activeTables.get(t);
+    if (dt) {
+      try { dt.destroy(); } catch { /* ignore */ }
+      activeTables.delete(t);
+    }
+  });
+
   if (result.columns.length === 0) {
     target.innerHTML = `<div class="sql-result-empty">Statement executed (no rows returned).</div>`;
     return;
   }
+
   if (result.rows.length === 0) {
     target.innerHTML = `<div class="sql-result-wrap"><table class="sql-result-table"><thead><tr>${result.columns
       .map((c) => `<th>${escapeHTML(c)}</th>`)
@@ -34,7 +49,10 @@ export function renderResultTable(target: HTMLElement, result: QueryResult): voi
 
   const visibleRows = result.rows.slice(0, MAX_DISPLAY_ROWS);
   const truncated = result.rows.length > MAX_DISPLAY_ROWS;
+  const totalRows = result.rows.length;
+  const usePagination = visibleRows.length > DATATABLE_THRESHOLD;
 
+  const tableId = `sql-result-${++nextTableId}`;
   const head = `<thead><tr>${result.columns
     .map((c) => `<th>${escapeHTML(c)}</th>`)
     .join("")}</tr></thead>`;
@@ -45,11 +63,30 @@ export function renderResultTable(target: HTMLElement, result: QueryResult): voi
     )
     .join("")}</tbody>`;
 
-  target.innerHTML = `<div class="sql-result-wrap"><table class="sql-result-table">${head}${body}</table>${
-    truncated
-      ? `<div class="sql-result-truncated">Showing first ${MAX_DISPLAY_ROWS.toLocaleString()} of ${result.rows.length.toLocaleString()} rows.</div>`
-      : ""
-  }</div>`;
+  target.innerHTML = `<div class="sql-result-wrap${usePagination ? " sql-result-wrap--paginated" : ""}">
+    <table id="${tableId}" class="sql-result-table">${head}${body}</table>
+    ${truncated ? `<div class="sql-result-truncated">Showing first ${MAX_DISPLAY_ROWS.toLocaleString()} of ${totalRows.toLocaleString()} rows.</div>` : ""}
+  </div>`;
+
+  if (!usePagination) return;
+
+  const tableEl = target.querySelector<HTMLTableElement>(`#${tableId}`);
+  if (!tableEl) return;
+
+  const dt = new DataTable(tableEl, {
+    searchable: true,
+    sortable: true,
+    paging: true,
+    perPage: 25,
+    perPageSelect: [10, 25, 50, 100, 250],
+    labels: {
+      placeholder: "Filter rows…",
+      perPage: "rows per page",
+      noRows: "No matching rows",
+      info: "Showing {start} to {end} of {rows} rows",
+    },
+  });
+  activeTables.set(tableEl, dt);
 }
 
 export type StatusKind = "ok" | "warn" | "error" | "info";
