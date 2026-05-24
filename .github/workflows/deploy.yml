@@ -28,7 +28,11 @@ jobs:
           cache: npm
           cache-dependency-path: site/package-lock.json
       - name: Install dependencies
-        run: npm ci
+        # `npm ci` is stricter but trips over platform-specific optional deps that
+        # macOS-generated lockfiles don't record (notably @emnapi/* on Linux). Using
+        # `npm install` with the existing lockfile is functionally equivalent for
+        # version resolution and tolerates the cross-platform gap.
+        run: npm install --no-audit --no-fund
       - name: Copy sql.js WASM into public/
         run: cp node_modules/sql.js/dist/sql-wasm.wasm public/sql-wasm.wasm
       - name: Build site
