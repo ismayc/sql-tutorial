@@ -10,3 +10,7 @@
 # Node — node_modules should always live inside site/, never at the repo root.
 # A stray "npm install" at the root creates these by accident.
 node_modules/
+
+# Instructor-only talking script (kept locally, not published)
+examples_talking_script.md
+examples_talking_script.html
