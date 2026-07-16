@@ -306,8 +306,12 @@ async function waitForStableStatus(page, scope, transient = ["Checking…", "Run
 
 async function runOneCase(page, scope, variant) {
   await setEditor(page, scope, variant.input);
-  // Generous timeout: a prior case may have left a huge result table that keeps
-  // the main thread busy re-rendering while we try to click.
+  // A prior case may have left a huge result table (e.g. SELECT * FROM weather,
+  // ~4,700 rows) still rendering; wait for the main thread to go idle so the
+  // click isn't starved on slow CI runners.
+  await page.evaluate(
+    () => new Promise((r) => (window.requestIdleCallback ?? ((f) => setTimeout(f, 50)))(r, { timeout: 30000 }))
+  );
   await scope.locator("button[data-action='check']").click({ timeout: 60000 });
   const status = await waitForStableStatus(page, scope);
   const actual = classify(status);
