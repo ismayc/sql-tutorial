@@ -1,7 +1,7 @@
 import { EditorView, keymap, lineNumbers, highlightActiveLine, highlightActiveLineGutter } from "@codemirror/view";
 import { EditorState, Compartment } from "@codemirror/state";
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
-import { sql, SQLite } from "@codemirror/lang-sql";
+import { sql, SQLite, SQLDialect } from "@codemirror/lang-sql";
 import { oneDark } from "@codemirror/theme-one-dark";
 import {
   syntaxHighlighting,
@@ -24,6 +24,21 @@ function schemaForDb(dbFile?: string): Record<string, string[]> | undefined {
   if (!dbFile) return undefined;
   return (schemas as Record<string, Record<string, string[]>>)[dbFile];
 }
+
+// The ANSI SQL standard reserves several words (SQLSTATE machinery, datetime
+// fields) that are plain column names in our teaching databases — `state` in
+// counties, `year`/`month`/`day`/`hour`/`minute` in flights, `temp` in weather.
+// lang-sql inherits them into the SQLite dialect and highlights them as
+// keywords, which confuses students. Demote them to ordinary identifiers;
+// SQLite itself does not reserve any of these.
+const DEMOTED_KEYWORDS = new Set(["state", "year", "month", "day", "hour", "minute", "temp"]);
+const TutorialSQLite = SQLDialect.define({
+  ...SQLite.spec,
+  keywords: (SQLite.spec.keywords ?? "")
+    .split(/\s+/)
+    .filter((k) => k && !DEMOTED_KEYWORDS.has(k))
+    .join(" "),
+});
 
 export interface EditorHandle {
   view: EditorView;
@@ -56,7 +71,7 @@ export function createEditor({ parent, initialValue = "", dbFile, onChange, onSu
         indentOnInput(),
         syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         sql({
-          dialect: SQLite,
+          dialect: TutorialSQLite,
           upperCaseKeywords: true,
           ...(schema ? { schema } : {}),
         }),

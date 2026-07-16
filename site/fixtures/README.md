@@ -14,16 +14,34 @@ in headless Chromium.
 ## How it works
 
 For each exercise in `site/src/generated-toc.json` that has a solution, the runner
-generates 2–6 variant queries:
+generates a variant set. Two families:
+
+**Correct-usage robustness** — semantically identical restylings of the solution
+that must still pass, guarding against a checker that's accidentally sensitive
+to formatting:
 
 | Pattern | What it does | Expected outcome |
 |---|---|---|
 | `correct` | The canonical solution unchanged | `ok` (✓ pass) |
+| `correct-lowercase` | Keywords lowercased (outside string literals), trailing `;` removed | `ok` |
+| `correct-whitespace` | Extra indentation and blank lines | `ok` |
+
+**Mistake patterns** — realistic student errors that must produce helpful feedback:
+
+| Pattern | What it does | Expected outcome |
+|---|---|---|
 | `empty` | Empty editor contents | `fail` (warning) |
 | `typo-table` | First table after FROM / JOIN gets an "x" appended | `error` (friendly SQL error) |
 | `typo-column` | First column in the SELECT list gets an "x" appended | `error` |
-| `missing-where` | Strips the WHERE clause (only generated if solution has WHERE) | `fail` |
-| `missing-orderby` | Strips ORDER BY (only generated if `requireOrdering` is true) | `fail` |
+| `missing-where` | Strips the WHERE clause (if solution has WHERE) | `fail` |
+| `missing-orderby` | Strips ORDER BY (if `requireOrdering` is true) | `fail` |
+| `missing-distinct` | Removes DISTINCT (if present) → duplicate rows | `fail` |
+| `missing-groupby` | Strips GROUP BY (if present) → aggregate collapses to one row | `fail` |
+| `missing-limit` | Strips LIMIT (if present) → too many rows | `fail` |
+| `join-no-on` | Removes the first `ON` condition → cartesian product (small towns/counties DB only; a cross join on the flights DB is too heavy for the in-browser engine) | `fail` |
+| `boundary-off-by-one` | First `>=` → `>` (or `<=` → `<`) | `fail` |
+| `swapped-columns` | Swaps the first two SELECT-list items → wrong column order | `fail` |
+| `alias-dropped` | Removes the first `AS alias` → column name mismatch | `fail` |
 
 Each variant is typed into the real CodeMirror editor, the "Check answer" button
 is clicked, and the user-visible status text is captured.
@@ -74,13 +92,20 @@ The dev server must be reachable. Default base URL is
 ```bash
 cd site
 npm run dev          # in one terminal
-node scripts/run-feedback-tests.mjs                       # in another
+npm test             # in another
 # or against a deploy:
 node scripts/run-feedback-tests.mjs --base=https://ismayc.github.io/sql-tutorial
 ```
 
-Takes ~35–45 s for the full 319-case suite. Outputs overwrite the files in this
-directory, so commit them after each run.
+Outputs overwrite the files in this directory, so commit them after each run.
+
+## Continuous integration
+
+The GitHub Pages deploy workflow (`.github/workflows/deploy.yml`) runs the full
+suite against the production build (`npm run preview`) before deploying, via
+`npm run test:ci` (the `--check` flag makes the runner exit non-zero if any case
+doesn't match its expectation). A failing case blocks the deploy, and the
+generated JSONL + Markdown report are uploaded as a workflow artifact either way.
 
 ## When to extend
 

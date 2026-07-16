@@ -3,17 +3,21 @@
  * Feedback regression suite.
  *
  * For each exercise in src/generated-toc.json that has a solution, we generate
- * a handful of variant queries (correct, empty, typo-table, typo-column, plus
- * conditional missing-where / missing-orderby), drive the real UI via Playwright
- * to type each variant into the editor and click "Check answer", then capture
- * the user-visible status text and classify it.
+ * variant queries — correct-answer robustness variants (formatting, keyword
+ * case) that must still pass, and mistake variants (typos, missing clauses,
+ * dropped DISTINCT/GROUP BY/LIMIT/ON, boundary slips, aliasing errors) that
+ * must produce helpful feedback — then drive the real UI via Playwright to
+ * type each variant into the editor and click "Check answer", capture the
+ * user-visible status text, and classify it.
  *
  * Outputs:
  *   site/fixtures/feedback-tests.jsonl  (one test per line, machine-readable)
  *   site/fixtures/feedback-tests.md     (human-readable report grouped by section)
  *
  * Usage:
- *   node site/scripts/run-feedback-tests.mjs [--base=http://localhost:4321/sql-tutorial]
+ *   node site/scripts/run-feedback-tests.mjs [--base=http://localhost:4321/sql-tutorial] [--check]
+ *
+ *   --check   CI mode: exit 1 if any case doesn't match its expectation.
  */
 import { chromium } from "playwright";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
@@ -28,6 +32,10 @@ const JSONL = resolve(OUT_DIR, "feedback-tests.jsonl");
 const REPORT = resolve(OUT_DIR, "feedback-tests.md");
 
 const BASE = (process.argv.find((a) => a.startsWith("--base=")) ?? "--base=http://localhost:4321/sql-tutorial").split("=")[1];
+const CHECK_MODE = process.argv.includes("--check");
+// The big flights DB makes cross-join variants (join-no-on) too heavy for the
+// in-browser engine, so those are only generated for the small towns/counties DB.
+const SMALL_DBS = new Set(["pnw_database.sqlite"]);
 
 // ---------- variant generation ----------
 
@@ -88,10 +96,54 @@ function stripClause(sql, clause) {
   return sql.replace(re, " ").replace(/\s+;/, ";").replace(/\s+/g, " ").trim();
 }
 
-function generateVariants({ id, solution, requireOrdering }) {
+// Split a string on quoted literals so transforms only touch real SQL text.
+// Odd-indexed parts of the result are the quoted segments, untouched.
+function mapOutsideStrings(sql, fn) {
+  const parts = sql.split(/('(?:[^']|'')*'|"(?:[^"]|"")*")/);
+  return parts.map((p, i) => (i % 2 === 1 ? p : fn(p))).join("");
+}
+
+function lowercaseKeywords(sql) {
+  const kw = /\b(SELECT|DISTINCT|FROM|WHERE|GROUP|ORDER|BY|HAVING|LIMIT|OFFSET|INNER|LEFT|OUTER|CROSS|JOIN|ON|USING|AS|AND|OR|NOT|NULL|IS|LIKE|BETWEEN|IN|CASE|WHEN|THEN|ELSE|END|ASC|DESC|UNION|EXCEPT|INTERSECT)\b/g;
+  return mapOutsideStrings(sql, (p) => p.replace(kw, (m) => m.toLowerCase()));
+}
+
+// Raw top-level items of the SELECT list (before any transform), or null.
+function rawSelectItems(sql) {
+  const m = sql.match(/\bSELECT\b\s+(?:DISTINCT\s+)?([\s\S]*?)\bFROM\b/i);
+  if (!m) return null;
+  const list = m[1].trim();
+  if (list === "*" || list.includes("*")) return null;
+  const items = [];
+  let depth = 0;
+  let buf = "";
+  for (const ch of list) {
+    if (ch === "(") depth++;
+    else if (ch === ")") depth--;
+    if (ch === "," && depth === 0) {
+      items.push(buf.trim());
+      buf = "";
+    } else buf += ch;
+  }
+  if (buf.trim()) items.push(buf.trim());
+  return items.length >= 1 ? { items, head: m[0], list } : null;
+}
+
+function generateVariants({ id, solution, requireOrdering, db }) {
   const stripped = stripSqlComments(solution).trim();
   const variants = [];
   variants.push({ pattern: "correct", input: solution, expect: "ok" });
+
+  // ---- correct-answer robustness: same query, different style must still pass ----
+  const restyled = lowercaseKeywords(stripped).replace(/;\s*$/, "");
+  if (restyled !== stripped) {
+    variants.push({ pattern: "correct-lowercase", input: restyled, expect: "ok" });
+  }
+  const reSpaced = stripped.replace(/\n/g, "\n\n  ").trim();
+  if (reSpaced !== stripped) {
+    variants.push({ pattern: "correct-whitespace", input: "  " + reSpaced, expect: "ok" });
+  }
+
   variants.push({ pattern: "empty", input: "", expect: "fail" });
 
   const tables = findFromTables(stripped);
@@ -132,6 +184,75 @@ function generateVariants({ id, solution, requireOrdering }) {
     const noOrder = stripClause(stripped, "ORDER\\s+BY");
     if (noOrder !== stripped) {
       variants.push({ pattern: "missing-orderby", input: noOrder, expect: "fail" });
+    }
+  }
+
+  // ---- dropped DISTINCT → duplicate rows ----
+  if (/\bSELECT\s+DISTINCT\b/i.test(stripped)) {
+    const noDistinct = stripped.replace(/\b(SELECT)\s+DISTINCT\b/i, "$1");
+    variants.push({ pattern: "missing-distinct", input: noDistinct, expect: "fail" });
+  }
+
+  // ---- dropped GROUP BY → aggregate collapses to one row ----
+  if (/\bGROUP\s+BY\b/i.test(stripped)) {
+    const noGroup = stripClause(stripped, "GROUP\\s+BY");
+    if (noGroup !== stripped) {
+      variants.push({ pattern: "missing-groupby", input: noGroup, expect: "fail" });
+    }
+  }
+
+  // ---- dropped LIMIT → too many rows ----
+  if (/\bLIMIT\b/i.test(stripped)) {
+    const noLimit = stripClause(stripped, "LIMIT");
+    if (noLimit !== stripped) {
+      variants.push({ pattern: "missing-limit", input: noLimit, expect: "fail" });
+    }
+  }
+
+  // ---- dropped JOIN ... ON → cartesian product (small DB only; the flights DB
+  //      would build a multi-million-row cross join in the browser) ----
+  if (SMALL_DBS.has(db) && /\bJOIN\b[\s\S]*?\bON\b/i.test(stripped)) {
+    const noOn = stripped.replace(
+      /\bON\b[\s\S]*?(?=\b(?:INNER|LEFT|CROSS)?\s*JOIN\b|\bWHERE\b|\bGROUP\s+BY\b|\bHAVING\b|\bORDER\s+BY\b|\bLIMIT\b|;|$)/i,
+      " "
+    ).replace(/\s+;/, ";").replace(/\s+/g, " ").trim();
+    if (noOn !== stripped) {
+      variants.push({ pattern: "join-no-on", input: noOn, expect: "fail" });
+    }
+  }
+
+  // ---- off-by-one boundary: first >= → > (or <= → <) ----
+  const boundaryOnce = (() => {
+    let done = false;
+    return mapOutsideStrings(stripped, (p) =>
+      done ? p : p.replace(/>=|<=/, (m) => { done = true; return m === ">=" ? ">" : "<"; })
+    );
+  })();
+  if (boundaryOnce !== stripped) {
+    variants.push({ pattern: "boundary-off-by-one", input: boundaryOnce, expect: "fail" });
+  }
+
+  // ---- swapped SELECT column order → wrong column order feedback ----
+  const sel = rawSelectItems(stripped);
+  if (sel && sel.items.length >= 2 && sel.items[0] !== sel.items[1]) {
+    const swapped = [sel.items[1], sel.items[0], ...sel.items.slice(2)].join(", ");
+    const input = stripped.replace(sel.list, swapped);
+    if (input !== stripped) {
+      variants.push({ pattern: "swapped-columns", input, expect: "fail" });
+    }
+  }
+
+  // ---- dropped AS alias → column name mismatch feedback ----
+  if (sel) {
+    const aliased = sel.items.findIndex((it) => /\s+AS\s+\w+$/i.test(it));
+    if (aliased >= 0) {
+      const bare = sel.items[aliased].replace(/\s+AS\s+\w+$/i, "");
+      const newItems = [...sel.items];
+      newItems[aliased] = bare;
+      const input = stripped.replace(sel.list, newItems.join(", "));
+      if (input !== stripped) {
+        variants.push({ pattern: "alias-dropped", input, expect: "fail" });
+      }
     }
   }
 
@@ -182,7 +303,9 @@ async function waitForStableStatus(page, scope, transient = ["Checking…", "Run
 
 async function runOneCase(page, scope, variant) {
   await setEditor(page, scope, variant.input);
-  await scope.locator("button[data-action='check']").click();
+  // Generous timeout: a prior case may have left a huge result table that keeps
+  // the main thread busy re-rendering while we try to click.
+  await scope.locator("button[data-action='check']").click({ timeout: 60000 });
   const status = await waitForStableStatus(page, scope);
   const actual = classify(status);
   const result = {
@@ -348,6 +471,17 @@ async function main() {
   console.log(`  ${totalPass}/${totalCases} cases matched expectation (${((totalPass / totalCases) * 100).toFixed(1)}%)`);
   console.log(`  JSONL: ${JSONL}`);
   console.log(`  Report: ${REPORT}`);
+
+  if (CHECK_MODE && totalPass < totalCases) {
+    console.error(`\n✗ ${totalCases - totalPass} case(s) did not match expectation:`);
+    for (const line of jsonlLines) {
+      const c = JSON.parse(line);
+      if (!c.pass) {
+        console.error(`  - [${c.section}/${c.exerciseId}] ${c.pattern}: expected ${c.expected}, got ${c.actualOutcome} — ${String(c.actualMessage).slice(0, 120)}`);
+      }
+    }
+    process.exit(1);
+  }
 }
 
 main().catch((e) => {
