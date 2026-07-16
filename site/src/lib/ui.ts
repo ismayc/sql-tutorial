@@ -93,5 +93,7 @@ export type StatusKind = "ok" | "warn" | "error" | "info";
 
 export function renderStatus(target: HTMLElement, status: { kind: StatusKind; text: string }): void {
   target.setAttribute("data-kind", status.kind);
-  target.textContent = status.text;
+  // Diagnostic messages use markdown-style `backticks` around identifiers and
+  // SQL snippets — render those as inline code. Escape everything else first.
+  target.innerHTML = escapeHTML(status.text).replace(/`([^`]+)`/g, "<code>$1</code>");
 }

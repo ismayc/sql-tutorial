@@ -132,6 +132,10 @@
 .sql-status[data-kind="warn"] { @apply text-amber-700 dark:text-amber-400; }
 .sql-status[data-kind="error"] { @apply text-rose-700 dark:text-rose-400; }
 .sql-status[data-kind="info"] { @apply text-slate-600 dark:text-slate-300; }
+/* Inline code in diagnostic messages (`town`, `AS alias`, …) */
+.sql-status code {
+  @apply font-mono text-[0.85em] px-1 py-px rounded bg-black/[0.06] dark:bg-white/[0.12];
+}
 
 /* Buttons */
 .btn {
