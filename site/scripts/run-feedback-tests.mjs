@@ -282,7 +282,10 @@ function expectMatches(expected, actual) {
 async function setEditor(page, scope, value) {
   // Click into the CodeMirror content area
   await scope.locator(".cm-content").click({ timeout: 5000 });
-  await page.keyboard.press("Meta+A");
+  // ControlOrMeta = Cmd on macOS, Ctrl on Linux/Windows — plain Meta+A is a
+  // no-op select-all on Linux CI, which left the starter comment in place and
+  // broke every case.
+  await page.keyboard.press("ControlOrMeta+A");
   await page.keyboard.press("Backspace");
   if (value.length > 0) {
     await page.keyboard.insertText(value);
