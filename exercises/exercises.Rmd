@@ -1224,7 +1224,7 @@ grade_this({
 })
 ```
 
-13. Select flights having 101 as the second, third, and fourth characters of the tail number.
+13. Select the tail numbers (`tailnum`) of flights having 101 as the second, third, and fourth characters of the tail number.
 
 ```{sql query15, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select flights with tail numbers matching 
@@ -1409,7 +1409,7 @@ grade_this({
 })
 ```
 
-16. Select weather records where temperature is not missing
+16. Select weather records (all columns) where temperature is not missing
 
 ```{sql query18, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to select weather records where the temperature 
@@ -1580,14 +1580,14 @@ WHERE condition;
 ```
 
 ```{sql query21-hint-2}
--- HINT: Complete this query to find the first destination alphabetically where flights are destined to SEA. Fill in the blanks:
+-- HINT: Complete this query to find the first destination alphabetically for flights departing from SEA. Fill in the blanks:
 SELECT MIN(___) AS first_sea_dest
 FROM flights
 WHERE origin = 'SEA';
 ```
 
 ```{sql query21-solution}
--- SOLUTION: This query finds the first destination alphabetically for flights destined to SEA.
+-- SOLUTION: This query finds the first destination alphabetically for flights departing from SEA.
 SELECT MIN(dest) AS first_sea_dest
 FROM flights
 WHERE origin = 'SEA';
@@ -1672,7 +1672,7 @@ grade_this({
 
 ## Sorting
 
-21. Sort flights by departure delay
+21. Sort flights (all columns) by departure delay
 
 ```{sql query23, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to sort flights by departure delay.
@@ -1733,7 +1733,7 @@ grade_this({
 
 ```
 
-22. Sort flights by descending arrival delay
+22. Sort flights (all columns) by descending arrival delay
 
 ```{sql query24, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to sort flights by descending arrival delay.
@@ -1794,9 +1794,7 @@ grade_this({
 })
 ```
 
-## Grouping
-
-23. Sort weather data by descending visibility and then descending wind speed
+23. Sort weather data (all columns) by descending visibility and then descending wind speed
 
 ```{sql query25, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to sort weather data by descending visibility 
@@ -1856,7 +1854,9 @@ grade_this({
 })
 ```
 
-24. Group flights by origin and calculate the average arrival delay as `avg_arr_delay`
+## Grouping
+
+24. Group flights by origin and show each `origin` along with its average arrival delay as `avg_arr_delay`
 
 ```{sql query26, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to group flights by origin and 
@@ -1924,7 +1924,7 @@ grade_this({
 })
 ```
 
-25. Group flights by destination and count the number of flights for each destination having more than 100 flights as `total_flights`
+25. Group flights by destination and show each `dest` with its count of flights as `total_flights`, only for destinations having more than 100 flights
 
 ```{sql query27, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to group flights by destination and count the 
@@ -1994,7 +1994,7 @@ grade_this({
 
 ## Transforming
 
-26. Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.
+26. Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles. Show the `distance` column alongside the category as `flight_distance_category`.
 
 ```{sql query28, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to categorize flights by distance as 'Short', 
@@ -2069,9 +2069,9 @@ grade_this({
 })
 ```
 
-27. Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed
+27. Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed. Show `origin`, `dest`, and the average speed as `avg_speed`.
 
-    To calculate the average speed, use the `dist` and `air_time` columns. Remember to convert `air_time` from minutes to hours for speed in miles per hour.
+    To calculate the average speed, use the `distance` and `air_time` columns. Remember to convert `air_time` from minutes to hours for speed in miles per hour.
 
 ```{sql query29, exercise=TRUE, exercise.eval=FALSE}
 -- Write your SQL query here to calculate the average speed of flights and 
@@ -2079,11 +2079,10 @@ grade_this({
 ```
 
 ```{sql query29-hint-1}
--- HINT:  Order the results by the average speed in descending order to get the fastest speeds at the top.
-SELECT origin, dest, AVG(distance / (air_time / 60)) AS avg_speed
-FROM flights
-GROUP BY origin, dest
-ORDER BY avg_speed DESC;
+-- HINT: Speed in mph is distance divided by hours, and air_time is in minutes,
+-- so divide air_time by 60 inside the AVG. Group by both origin and dest, and
+-- order the results by the average speed in descending order to get the
+-- fastest speeds at the top.
 ```
 
 ```{sql query29-hint-2}

@@ -16,7 +16,7 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
 
 ### Filtering 1: Which towns qualify as "cities" (population over 50,000)?
 
-*Scenario: You're researching urban development and need to identify the larger municipalities.*
+*Scenario: You're researching urban development and need to identify the larger municipalities. Show each town with its state and population_2020_census, largest first.*
 
 <SqlExercise
   id="example12"
@@ -30,7 +30,7 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
 
 ### Filtering 2: Find large Oregon cities for a state-specific grant
 
-*Scenario: An Oregon-only grant targets cities over 50,000 people. Who qualifies?*
+*Scenario: An Oregon-only grant targets cities over 50,000 people. Who qualifies? Show each town and its population_2020_census, largest first — since every result is in Oregon, the state column is deliberately left out.*
 
 <SqlExercise
   id="example13"
@@ -45,7 +45,7 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
 
 ### Filtering 3: Find either large cities OR any Oregon town
 
-*Scenario: A regional initiative includes all Oregon towns plus major cities from Washington. The OR operator creates a union of conditions.*
+*Scenario: A regional initiative includes all Oregon towns plus major cities from Washington. The OR operator creates a union of conditions. Show town, state, and population_2020_census.*
 
 <SqlExercise
   id="example14"
@@ -60,7 +60,7 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
 
 ### Filtering 4: Find historically significant, populous counties
 
-*Scenario: A heritage tourism initiative targets counties established before 1860 that now have substantial populations (over 50,000).*
+*Scenario: A heritage tourism initiative targets counties established before 1860 that now have substantial populations (over 50,000). Show each county with its state, year_established, and population_2022.*
 
 <SqlExercise
   id="example15"
@@ -75,7 +75,7 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
 
 ### Filtering 5: Find mid-sized towns (population between 10,000 and 50,000)
 
-*Scenario: A "Main Street" revitalization program targets mid-sized towns. BETWEEN provides a clean way to specify ranges.*
+*Scenario: A "Main Street" revitalization program targets mid-sized towns. BETWEEN provides a clean way to specify ranges. Show town, state, and population_2020_census.*
 
 <SqlExercise
   id="example16"
@@ -89,7 +89,7 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
 
 ### Filtering 6: Find compact towns (small land area)
 
-*Scenario: Urban planners studying density want towns under 2 square miles.*
+*Scenario: Urban planners studying density want towns under 2 square miles. Show each town with its state, land_area_sq_mi, and population_2020_census.*
 
 <SqlExercise
   id="example17"
@@ -103,7 +103,7 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
 
 ### Filtering 7: Complex criteria with parentheses
 
-*Scenario: Find either (a) old Washington counties established before 1860, or (b) any Oregon county with population over 200,000. Parentheses control the logic.*
+*Scenario: Find either (a) old Washington counties established before 1860, or (b) any Oregon county with population over 200,000. Parentheses control the logic. Show county, state, year_established, and population_2022.*
 
 <SqlExercise
   id="example19"
@@ -120,9 +120,9 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
 
 Pattern matching with LIKE lets you search for partial text matches using wildcards: `%` matches any sequence of characters, `_` matches exactly one character.
 
-### Filtering 8: Find all counties named after presidents
+### Filtering 8: Find counties whose etymology mentions a president
 
-*Scenario: For a history article, find counties whose etymology mentions "President".*
+*Scenario: For a history article, search each county's etymology text for the word "President"; show each county with its state and etymology.*
 
 <SqlExercise
   id="example20"
@@ -134,7 +134,7 @@ Pattern matching with LIKE lets you search for partial text matches using wildca
 
 ### Filtering 9: Find towns ending in "ville"
 
-*Scenario: A linguistics researcher is studying town naming conventions.*
+*Scenario: A linguistics researcher is studying town naming conventions. List each matching town with its state.*
 
 <SqlExercise
   id="example21"
@@ -146,7 +146,7 @@ Pattern matching with LIKE lets you search for partial text matches using wildca
 
 ### Filtering 10: Find towns with "Port" in their name
 
-*Scenario: Identify coastal or river port towns for a maritime commerce study.*
+*Scenario: Identify coastal or river port towns for a maritime commerce study. Show town, state, and population_2020_census.*
 
 <SqlExercise
   id="example22"
@@ -159,9 +159,9 @@ Pattern matching with LIKE lets you search for partial text matches using wildca
   requireOrdering
 />
 
-### Filtering 11: Find counties with names starting with "King" or "Clark"
+### Filtering 11: Pull the stat sheet for the four "big city" counties
 
-*Scenario: Using IN for multiple exact matches is cleaner than multiple OR conditions.*
+*Scenario: Your editor is writing a feature on the counties anchoring the Pacific Northwest's biggest cities — King (Seattle), Pierce (Tacoma), Multnomah (Portland), and Clark (Vancouver). Report each county with its state and 2022 population, largest first. An `IN` list matches all four names exactly in one condition — far cleaner than chaining four `OR`s.*
 
 <SqlExercise
   id="example24"
@@ -175,7 +175,7 @@ Pattern matching with LIKE lets you search for partial text matches using wildca
 
 ### Filtering 12: Find towns that span multiple counties
 
-*Scenario: Administrative complexity - which towns cross county boundaries?*
+*Scenario: Administrative complexity - which towns cross county boundaries? Show each town with its state, primary_county, secondary_county, and tertiary_county.*
 
 <SqlExercise
   id="example25"
@@ -189,7 +189,7 @@ Pattern matching with LIKE lets you search for partial text matches using wildca
 
 ### Filtering 13: Find towns entirely within one county
 
-*Scenario: The opposite query - towns that don't span county lines.*
+*Scenario: The opposite query - towns that don't span county lines. Show each town with its state and primary_county, sorted by population even though population itself isn't selected.*
 
 <SqlExercise
   id="example26"

@@ -16,7 +16,7 @@ Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summ
 
 ### Aggregating 1: What's the average town size in each state?
 
-*Scenario: Compare typical town sizes between Oregon and Washington.*
+*Scenario: Compare typical town sizes between Oregon and Washington. For each state, report the average town population rounded to a whole number as avg_population.*
 
 <SqlExercise
   id="example27"
@@ -29,7 +29,7 @@ Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summ
 
 ### Aggregating 2: What's the total urban population by state?
 
-*Scenario: How much of each state's population lives in incorporated towns?*
+*Scenario: How much of each state's population lives in incorporated towns? For each state, report the summed town population as total_town_population.*
 
 <SqlExercise
   id="example28"
@@ -42,7 +42,7 @@ Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summ
 
 ### Aggregating 3: Find the smallest incorporated town
 
-*Scenario: A journalist wants to profile the smallest town in the Pacific Northwest.*
+*Scenario: A journalist wants to profile the smallest town in the Pacific Northwest. Show the town with its state and population_2020_census.*
 
 <SqlExercise
   id="example29"
@@ -54,7 +54,7 @@ Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summ
 
 ### Aggregating 4: Find the largest city
 
-*Scenario: Identify the region's largest metropolitan center.*
+*Scenario: Identify the region's largest metropolitan center. Show the town with its state and population_2020_census.*
 
 <SqlExercise
   id="example30"
@@ -66,14 +66,14 @@ Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summ
 
 ### Aggregating 5: Summary statistics for county land areas
 
-*Scenario: Get a complete statistical overview of county sizes.*
+*Scenario: Get a complete statistical overview of county sizes: the count of counties as num_counties, the smallest and largest land areas as smallest_area and largest_area, the average rounded to a whole number as avg_size, and the sum as total_area.*
 
 <SqlExercise
   id="example31"
   db="pnw_database.sqlite"
   solution={`SELECT COUNT(*) AS num_counties,
-       MIN(land_area_sq_mi) AS smallest_county,
-       MAX(land_area_sq_mi) AS largest_county,
+       MIN(land_area_sq_mi) AS smallest_area,
+       MAX(land_area_sq_mi) AS largest_area,
        ROUND(AVG(land_area_sq_mi), 0) AS avg_size,
        SUM(land_area_sq_mi) AS total_area
   FROM pnw_counties;`}
@@ -81,23 +81,23 @@ Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summ
 
 ## Categorical summaries
 
-MIN and MAX work on text too, returning alphabetically first/last values.
+MIN and MAX aren't just for measurements — they also pick out the extremes of columns like `year_established` (and they even work on text, returning alphabetically first/last values).
 
-### Aggregating 6: Which county was established first and last?
+### Aggregating 6: When were the earliest and most recent counties established?
 
-*Scenario: Historical research on regional development.*
+*Scenario: Historical research on regional development. Report the earliest establishment year as earliest_year and the most recent as newest_year.*
 
 <SqlExercise
   id="example32"
   db="pnw_database.sqlite"
-  solution={`SELECT MIN(year_established) AS earliest_county,
-       MAX(year_established) AS newest_county
+  solution={`SELECT MIN(year_established) AS earliest_year,
+       MAX(year_established) AS newest_year
   FROM pnw_counties;`}
 />
 
 ### Aggregating 7: Find the actual earliest and newest counties
 
-*Scenario: Get the county names, not just the years.*
+*Scenario: Get the county names, not just the years. Show each county with its state and year_established.*
 
 <SqlExercise
   id="example33"
@@ -116,7 +116,7 @@ ROUND helps create cleaner, more readable output for reports and presentations.
 
 ### Aggregating 8: Calculate and round population density
 
-*Scenario: Create a readable density report (people per square mile).*
+*Scenario: Create a readable density report (people per square mile). Show each town with its state, population_2020_census, land_area_sq_mi, and the density rounded to 1 decimal as people_per_sq_mile.*
 
 <SqlExercise
   id="example34a"
@@ -134,7 +134,7 @@ ROUND helps create cleaner, more readable output for reports and presentations.
 
 ### Aggregating 9: Round to whole numbers for simpler reporting
 
-*Scenario: Executive summaries often need whole numbers.*
+*Scenario: Executive summaries often need whole numbers. For each state, report the average town population as avg_town_pop and the average town land area as avg_town_area, both rounded to whole numbers.*
 
 <SqlExercise
   id="example34b"

@@ -32,7 +32,7 @@ An INNER JOIN returns only rows where there's a match in BOTH tables. Think of i
 
 ### Joining 1: Enrich town data with county information
 
-*Scenario: You want to see each town alongside when its county was established and the county's etymology. This requires combining data from both tables.*
+*Scenario: You want to see each town alongside when its county was established and the county's etymology. This requires combining data from both tables. Show town, population_2020_census, county, year_established, and etymology (state isn't selected here).*
 
 <SqlExercise
   id="example44"
@@ -43,16 +43,17 @@ An INNER JOIN returns only rows where there's a match in BOTH tables. Think of i
        c.year_established,
        c.etymology
   FROM pnw_towns AS t
- INNER JOIN pnw_counties AS c 
-    ON t.primary_county = c.county 
-   AND t.state = c.state
+ INNER JOIN pnw_counties AS c
+    ON t.primary_county_id = c.county_id
  ORDER BY t.population_2020_census DESC;`}
   requireOrdering
 />
 
+Notice the join condition: `pnw_towns.primary_county_id` is a *foreign key* pointing at `pnw_counties.county_id`, so one equality is all it takes. Joining on names instead would need **two** conditions (`t.primary_county = c.county AND t.state = c.state`) — leave out the state and every town in Washington County, Oregon happily matches the *state* of Washington's counties too. ID joins sidestep that trap entirely, which is why real warehouses key everything this way.
+
 ### Joining 2: Find which towns are county seats
 
-*Scenario: County seats often have special administrative importance. Join to identify them.*
+*Scenario: County seats often have special administrative importance. Join to identify them. Show each seat's town and state, its population as town_pop, its county, and the county's population as county_pop.*
 
 <SqlExercise
   id="example44b"
@@ -63,16 +64,15 @@ An INNER JOIN returns only rows where there's a match in BOTH tables. Think of i
        c.county,
        c.population_2022 AS county_pop
   FROM pnw_towns AS t
- INNER JOIN pnw_counties AS c 
-    ON t.town = c.county_seat 
-   AND t.state = c.state
+ INNER JOIN pnw_counties AS c
+    ON t.town_id = c.county_seat_town_id
  ORDER BY t.population_2020_census DESC;`}
   requireOrdering
 />
 
 ### Joining 3: Compare town population to county population
 
-*Scenario: What percentage of each county's population lives in each town?*
+*Scenario: What percentage of each county's population lives in each town? Show town, its population as town_pop, the county, its population as county_pop, and the percentage (1 decimal) as pct_of_county.*
 
 <SqlExercise
   id="example44c"
@@ -83,9 +83,8 @@ An INNER JOIN returns only rows where there's a match in BOTH tables. Think of i
        c.population_2022 AS county_pop,
        ROUND(t.population_2020_census * 100.0 / c.population_2022, 1) AS pct_of_county
   FROM pnw_towns AS t
- INNER JOIN pnw_counties AS c 
-    ON t.primary_county = c.county 
-   AND t.state = c.state
+ INNER JOIN pnw_counties AS c
+    ON t.primary_county_id = c.county_id
  ORDER BY pct_of_county DESC;`}
   requireOrdering
 />
@@ -110,7 +109,7 @@ A LEFT JOIN returns ALL rows from the left table, plus matching rows from the ri
 
 ### Joining 4: List all counties with their county seat populations (if available)
 
-*Scenario: Some county seats might not be in our towns database. LEFT JOIN ensures all counties appear.*
+*Scenario: Some county seats might not be in our towns database. LEFT JOIN ensures all counties appear. Show county, state, county_seat, and the seat's population as seat_population.*
 
 <SqlExercise
   id="example45"
@@ -120,17 +119,16 @@ A LEFT JOIN returns ALL rows from the left table, plus matching rows from the ri
        c.county_seat,
        t.population_2020_census AS seat_population
   FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t 
-    ON c.county_seat = t.town 
-   AND c.state = t.state
- ORDER BY t.population_2020_census IS NULL DESC, 
+  LEFT JOIN pnw_towns AS t
+    ON c.county_seat_town_id = t.town_id
+ ORDER BY t.population_2020_census IS NULL DESC,
           c.county;`}
   requireOrdering
 />
 
 ### Joining 5: Flag whether each town is a county seat
 
-*Scenario: Add a column indicating county seat status for every town.*
+*Scenario: Add a column indicating county seat status for every town. Show town, state, population_2020_census, an is_county_seat flag of 'Yes' or 'No', and the county served as seat_of_county.*
 
 <SqlExercise
   id="example45b"
@@ -144,16 +142,15 @@ A LEFT JOIN returns ALL rows from the left table, plus matching rows from the ri
        END AS is_county_seat,
        c.county AS seat_of_county
   FROM pnw_towns AS t
-  LEFT JOIN pnw_counties AS c 
-    ON t.town = c.county_seat 
-   AND t.state = c.state
+  LEFT JOIN pnw_counties AS c
+    ON t.town_id = c.county_seat_town_id
  ORDER BY is_county_seat DESC, t.population_2020_census DESC;`}
   requireOrdering
 />
 
 ### Joining 6: Count towns per county (including counties with zero towns)
 
-*Scenario: Some small counties might have no incorporated towns in our database. LEFT JOIN preserves them.*
+*Scenario: Some small counties might have no incorporated towns in our database. LEFT JOIN preserves them. Show county, state, the county's population as county_pop, the town count as num_towns, and the summed town population as total_town_pop (0 when a county has no towns).*
 
 <SqlExercise
   id="example45c"
@@ -164,9 +161,8 @@ A LEFT JOIN returns ALL rows from the left table, plus matching rows from the ri
        COUNT(t.town) AS num_towns,
        COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop
   FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t 
-    ON c.county = t.primary_county 
-   AND c.state = t.state
+  LEFT JOIN pnw_towns AS t
+    ON c.county_id = t.primary_county_id
  GROUP BY c.county, c.state, c.population_2022
  ORDER BY num_towns DESC;`}
   requireOrdering
@@ -182,7 +178,7 @@ An anti-join finds rows in one table that have NO match in another table. It's i
 
 ### Joining 7: Find county seats not in our towns database
 
-*Scenario: Data quality check - which county seats are missing from our towns table?*
+*Scenario: Data quality check - which county seats are missing from our towns table? List each affected county with its state and county_seat.*
 
 <SqlExercise
   id="example47"
@@ -191,17 +187,16 @@ An anti-join finds rows in one table that have NO match in another table. It's i
        c.state,
        c.county_seat
   FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t 
-    ON c.county_seat = t.town 
-   AND c.state = t.state
- WHERE t.town IS NULL
+  LEFT JOIN pnw_towns AS t
+    ON c.county_seat_town_id = t.town_id
+ WHERE t.town_id IS NULL
  ORDER BY c.state, c.county;`}
   requireOrdering
 />
 
 ### Joining 8: Find large towns that are NOT county seats
 
-*Scenario: Identify major population centers that lack county seat status.*
+*Scenario: Identify major population centers that lack county seat status. Show town, state, population_2020_census, and primary_county.*
 
 <SqlExercise
   id="example47b"
@@ -211,10 +206,9 @@ An anti-join finds rows in one table that have NO match in another table. It's i
        t.population_2020_census,
        t.primary_county
   FROM pnw_towns AS t
-  LEFT JOIN pnw_counties AS c 
-    ON t.town = c.county_seat 
-   AND t.state = c.state
- WHERE c.county IS NULL
+  LEFT JOIN pnw_counties AS c
+    ON t.town_id = c.county_seat_town_id
+ WHERE c.county_id IS NULL
    AND t.population_2020_census > 25000
  ORDER BY t.population_2020_census DESC;`}
   requireOrdering
@@ -222,7 +216,7 @@ An anti-join finds rows in one table that have NO match in another table. It's i
 
 ### Joining 9: Find counties with no towns in our database
 
-*Scenario: Which counties have zero incorporated towns listed? This might indicate missing data.*
+*Scenario: Which counties have zero incorporated towns listed? This might indicate missing data. Show each such county with its state, population_2022, and county_seat.*
 
 <SqlExercise
   id="example47c"
@@ -232,10 +226,9 @@ An anti-join finds rows in one table that have NO match in another table. It's i
        c.population_2022,
        c.county_seat
   FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t 
-    ON c.county = t.primary_county 
-   AND c.state = t.state
- WHERE t.town IS NULL
+  LEFT JOIN pnw_towns AS t
+    ON c.county_id = t.primary_county_id
+ WHERE t.town_id IS NULL
  ORDER BY c.population_2022 DESC;`}
   requireOrdering
 />
@@ -246,7 +239,7 @@ Real-world queries often combine joins with filtering, grouping, and transformat
 
 ### Joining 10: Comprehensive county analysis
 
-*Scenario: Create a county dashboard showing establishment era, number of towns, total town population, and the largest town.*
+*Scenario: Create a county dashboard showing each county and state with its year_established, an era of 'Pioneer' (established before 1860), 'Settlement' (before 1900), or 'Modern', the county's population as county_pop, the town count as num_towns, the summed town population as urban_pop, and the population of each county's largest town as largest_town_pop.*
 
 <SqlExercise
   id="example48"
@@ -264,9 +257,8 @@ Real-world queries often combine joins with filtering, grouping, and transformat
        COALESCE(SUM(t.population_2020_census), 0) AS urban_pop,
        MAX(t.population_2020_census) AS largest_town_pop
   FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t 
-    ON c.county = t.primary_county 
-   AND c.state = t.state
+  LEFT JOIN pnw_towns AS t
+    ON c.county_id = t.primary_county_id
  GROUP BY c.county, c.state, c.year_established, c.population_2022
  ORDER BY c.population_2022 DESC;`}
   requireOrdering

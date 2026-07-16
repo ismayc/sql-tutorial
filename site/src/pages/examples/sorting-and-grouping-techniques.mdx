@@ -16,7 +16,7 @@ ORDER BY controls how results are displayed. This is crucial for reports and ide
 
 ### Sorting 1: Rank towns by population (smallest first)
 
-*Scenario: Default ORDER BY sorts ascending (smallest to largest).*
+*Scenario: Default ORDER BY sorts ascending (smallest to largest). Show town, state, and population_2020_census.*
 
 <SqlExercise
   id="example35"
@@ -29,7 +29,7 @@ ORDER BY controls how results are displayed. This is crucial for reports and ide
 
 ### Sorting 2: Rank towns by population (largest first)
 
-*Scenario: DESC reverses the order for "top N" style reports.*
+*Scenario: DESC reverses the order for "top N" style reports. Show town, state, and population_2020_census.*
 
 <SqlExercise
   id="example36b"
@@ -42,7 +42,7 @@ ORDER BY controls how results are displayed. This is crucial for reports and ide
 
 ### Sorting 3: Sort by multiple columns (state, then population within state)
 
-*Scenario: Create a report organized by state, with largest cities first within each state.*
+*Scenario: Create a report organized by state, with largest cities first within each state. Show town, state, and population_2020_census.*
 
 <SqlExercise
   id="example37"
@@ -55,7 +55,7 @@ ORDER BY controls how results are displayed. This is crucial for reports and ide
 
 ### Sorting 4: Sort counties by age (oldest first)
 
-*Scenario: Historical timeline of county formation.*
+*Scenario: Historical timeline of county formation. Show each county with its state, year_established, and etymology.*
 
 <SqlExercise
   id="example37b"
@@ -72,7 +72,7 @@ GROUP BY collapses rows into groups for aggregate calculations. This is one of S
 
 ### Grouping 1: Count towns per state
 
-*Scenario: Basic comparison of how many incorporated towns each state has.*
+*Scenario: Basic comparison of how many incorporated towns each state has. For each state, report the count as number_of_towns.*
 
 <SqlExercise
   id="example38"
@@ -85,7 +85,7 @@ GROUP BY collapses rows into groups for aggregate calculations. This is one of S
 
 ### Grouping 2: Compare states by average county population
 
-*Scenario: Which state has larger counties on average?*
+*Scenario: Which state has larger counties on average? For each state, show the count of counties as num_counties, the average county population (rounded to a whole number) as avg_county_pop, and the summed population as total_state_pop.*
 
 <SqlExercise
   id="example39"
@@ -102,7 +102,7 @@ GROUP BY collapses rows into groups for aggregate calculations. This is one of S
 
 ### Grouping 3: Which counties have the most towns?
 
-*Scenario: Identify counties with many incorporated municipalities.*
+*Scenario: Identify counties with many incorporated municipalities. For each primary_county and state, report the town count as num_towns and the combined town population as total_pop.*
 
 <SqlExercise
   id="example39b"
@@ -119,7 +119,7 @@ GROUP BY collapses rows into groups for aggregate calculations. This is one of S
 
 ### Grouping 4: Filter groups with HAVING
 
-*Scenario: Find only counties with 10 or more towns. HAVING filters after grouping (WHERE filters before).*
+*Scenario: Find only counties with 10 or more towns. HAVING filters after grouping (WHERE filters before). Show each primary_county and state with its town count as num_towns.*
 
 **First, let's see why WHERE doesn't work here:**
 
@@ -149,7 +149,7 @@ HAVING COUNT(*) >= 10
 
 ### Grouping 5: Population growth by county
 
-*Scenario: Which counties saw the most population growth in their towns from 2010 to 2020?*
+*Scenario: Which counties saw the most population growth in their towns from 2010 to 2020? For each primary_county and state, report summed town populations as pop_2010 and pop_2020, plus the difference as growth.*
 
 <SqlExercise
   id="example40c"

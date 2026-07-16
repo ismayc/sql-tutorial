@@ -6,10 +6,12 @@
       "state"
     ],
     "pnw_counties": [
+      "county_id",
       "county",
       "state",
       "fips_short",
       "county_seat",
+      "county_seat_town_id",
       "year_established",
       "origin",
       "etymology",
@@ -17,11 +19,15 @@
       "land_area_sq_mi"
     ],
     "pnw_towns": [
+      "town_id",
       "town",
       "state",
       "primary_county",
       "secondary_county",
       "tertiary_county",
+      "primary_county_id",
+      "secondary_county_id",
+      "tertiary_county_id",
       "population_2020_census",
       "population_2010_census",
       "land_area_sq_mi"

@@ -12,7 +12,7 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 ## Sorting
 
-21. Sort flights by departure delay
+21. Sort flights (all columns) by departure delay
 
 <SqlExercise
   id="query23"
@@ -49,7 +49,7 @@ ORDER BY ___;
   </Fragment>
 </SqlExercise>
 
-22. Sort flights by descending arrival delay
+22. Sort flights (all columns) by descending arrival delay
 
 <SqlExercise
   id="query24"
@@ -86,9 +86,7 @@ ORDER BY ___ DESC;
   </Fragment>
 </SqlExercise>
 
-## Grouping
-
-23. Sort weather data by descending visibility and then descending wind speed
+23. Sort weather data (all columns) by descending visibility and then descending wind speed
 
 <SqlExercise
   id="query25"
@@ -126,7 +124,9 @@ ORDER BY ___ DESC, ___ DESC;
   </Fragment>
 </SqlExercise>
 
-24. Group flights by origin and calculate the average arrival delay as `avg_arr_delay`
+## Grouping
+
+24. Group flights by origin and show each `origin` along with its average arrival delay as `avg_arr_delay`
 
 <SqlExercise
   id="query26"
@@ -163,7 +163,7 @@ GROUP BY ___;
   </Fragment>
 </SqlExercise>
 
-25. Group flights by destination and count the number of flights for each destination having more than 100 flights as `total_flights`
+25. Group flights by destination and show each `dest` with its count of flights as `total_flights`, only for destinations having more than 100 flights
 
 <SqlExercise
   id="query27"

@@ -14,7 +14,7 @@ Transformations create new calculated columns or categorize data based on condit
 
 ### Transforming 1: Classify towns by size category
 
-*Scenario: Create size tiers for a stratified analysis. CASE WHEN acts like an IF-THEN statement.*
+*Scenario: Create size tiers for a stratified analysis. CASE WHEN acts like an IF-THEN statement. Show town, state, population_2020_census, and a size_category labeling each place 'Large City' (100,000 or more), 'Medium City' (25,000 or more), 'Small City' (5,000 or more), or 'Town' otherwise.*
 
 <SqlExercise
   id="example41"
@@ -35,7 +35,7 @@ Transformations create new calculated columns or categorize data based on condit
 
 ### Transforming 2: Calculate population change from 2010 to 2020
 
-*Scenario: Identify growing and shrinking towns.*
+*Scenario: Identify growing and shrinking towns. Show town, state, the census figures as pop_2010 and pop_2020, the difference as pop_change, and the percentage change (1 decimal) as pct_change.*
 
 <SqlExercise
   id="example42"
@@ -54,7 +54,7 @@ Transformations create new calculated columns or categorize data based on condit
 
 ### Transforming 3: Identify fastest-growing and declining towns
 
-*Scenario: Combine CASE WHEN with calculations to flag growth status.*
+*Scenario: Combine CASE WHEN with calculations to flag growth status. Show town, state, pop_2010, pop_2020, and a growth_status labeled 'Rapid Growth (>20%)' for growth above 20%, 'Growing', 'Stable', 'Declining' for declines up to 20%, or 'Rapid Decline (>20%)'.*
 
 <SqlExercise
   id="example42b"
@@ -78,7 +78,7 @@ Transformations create new calculated columns or categorize data based on condit
 
 ### Transforming 4: Calculate and categorize population density
 
-*Scenario: Classify towns as urban, suburban, or rural based on density.*
+*Scenario: Classify towns as urban, suburban, or rural based on density. Show town, state, population_2020_census, land_area_sq_mi, the people per square mile (rounded to a whole number) as density, and a density_class of 'Urban' (over 5,000), 'Suburban' (over 1,000), or 'Rural'.*
 
 <SqlExercise
   id="example43"
@@ -101,7 +101,7 @@ Transformations create new calculated columns or categorize data based on condit
 
 ### Transforming 5: Flag counties by era of establishment
 
-*Scenario: Categorize counties by historical period.*
+*Scenario: Categorize counties by historical period. Show county, state, year_established, and a historical_era of 'Pioneer Era' (before 1850), 'Settlement Era' (before 1890), 'Progressive Era' (before 1920), or 'Modern Era'.*
 
 <SqlExercise
   id="example43b"

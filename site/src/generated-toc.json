@@ -89,7 +89,7 @@
         },
         {
           "id": "example8",
-          "title": "Unique 2: Which counties have towns that span multiple counties?",
+          "title": "Unique 2: Which counties appear as a secondary county for any town?",
           "solution": "SELECT DISTINCT secondary_county\n  FROM pnw_towns\n WHERE secondary_county IS NOT NULL;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
@@ -113,7 +113,7 @@
         },
         {
           "id": "example11b",
-          "title": "Counting 3: How many towns have incomplete data (missing secondary county info)?",
+          "title": "Counting 3: How many towns lie entirely within a single county?",
           "solution": "SELECT COUNT(*) AS towns_single_county\n  FROM pnw_towns\n WHERE secondary_county IS NULL;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
@@ -214,7 +214,7 @@
         },
         {
           "id": "example20",
-          "title": "Filtering 8: Find all counties named after presidents",
+          "title": "Filtering 8: Find counties whose etymology mentions a president",
           "solution": "SELECT county, state, etymology\n  FROM pnw_counties\n WHERE etymology LIKE '%President%';",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
@@ -238,7 +238,7 @@
         },
         {
           "id": "example24",
-          "title": "Filtering 11: Find counties with names starting with \"King\" or \"Clark\"",
+          "title": "Filtering 11: Pull the stat sheet for the four \"big city\" counties",
           "solution": "SELECT county, state, population_2022 \n  FROM pnw_counties \n WHERE county IN ('King', 'Clark', 'Pierce', 'Multnomah')\n ORDER BY population_2022 DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
@@ -324,15 +324,15 @@
         {
           "id": "example31",
           "title": "Aggregating 5: Summary statistics for county land areas",
-          "solution": "SELECT COUNT(*) AS num_counties,\n       MIN(land_area_sq_mi) AS smallest_county,\n       MAX(land_area_sq_mi) AS largest_county,\n       ROUND(AVG(land_area_sq_mi), 0) AS avg_size,\n       SUM(land_area_sq_mi) AS total_area\n  FROM pnw_counties;",
+          "solution": "SELECT COUNT(*) AS num_counties,\n       MIN(land_area_sq_mi) AS smallest_area,\n       MAX(land_area_sq_mi) AS largest_area,\n       ROUND(AVG(land_area_sq_mi), 0) AS avg_size,\n       SUM(land_area_sq_mi) AS total_area\n  FROM pnw_counties;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
         },
         {
           "id": "example32",
-          "title": "Aggregating 6: Which county was established first and last?",
-          "solution": "SELECT MIN(year_established) AS earliest_county,\n       MAX(year_established) AS newest_county\n  FROM pnw_counties;",
+          "title": "Aggregating 6: When were the earliest and most recent counties established?",
+          "solution": "SELECT MIN(year_established) AS earliest_year,\n       MAX(year_established) AS newest_year\n  FROM pnw_counties;",
           "db": "pnw_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
@@ -567,7 +567,7 @@
         {
           "id": "example44",
           "title": "Joining 1: Enrich town data with county information",
-          "solution": "SELECT t.town,\n       t.population_2020_census,\n       c.county,\n       c.year_established,\n       c.etymology\n  FROM pnw_towns AS t\n INNER JOIN pnw_counties AS c \n    ON t.primary_county = c.county \n   AND t.state = c.state\n ORDER BY t.population_2020_census DESC;",
+          "solution": "SELECT t.town,\n       t.population_2020_census,\n       c.county,\n       c.year_established,\n       c.etymology\n  FROM pnw_towns AS t\n INNER JOIN pnw_counties AS c\n    ON t.primary_county_id = c.county_id\n ORDER BY t.population_2020_census DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -575,7 +575,7 @@
         {
           "id": "example44b",
           "title": "Joining 2: Find which towns are county seats",
-          "solution": "SELECT t.town,\n       t.state,\n       t.population_2020_census AS town_pop,\n       c.county,\n       c.population_2022 AS county_pop\n  FROM pnw_towns AS t\n INNER JOIN pnw_counties AS c \n    ON t.town = c.county_seat \n   AND t.state = c.state\n ORDER BY t.population_2020_census DESC;",
+          "solution": "SELECT t.town,\n       t.state,\n       t.population_2020_census AS town_pop,\n       c.county,\n       c.population_2022 AS county_pop\n  FROM pnw_towns AS t\n INNER JOIN pnw_counties AS c\n    ON t.town_id = c.county_seat_town_id\n ORDER BY t.population_2020_census DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -583,7 +583,7 @@
         {
           "id": "example44c",
           "title": "Joining 3: Compare town population to county population",
-          "solution": "SELECT t.town,\n       t.population_2020_census AS town_pop,\n       c.county,\n       c.population_2022 AS county_pop,\n       ROUND(t.population_2020_census * 100.0 / c.population_2022, 1) AS pct_of_county\n  FROM pnw_towns AS t\n INNER JOIN pnw_counties AS c \n    ON t.primary_county = c.county \n   AND t.state = c.state\n ORDER BY pct_of_county DESC;",
+          "solution": "SELECT t.town,\n       t.population_2020_census AS town_pop,\n       c.county,\n       c.population_2022 AS county_pop,\n       ROUND(t.population_2020_census * 100.0 / c.population_2022, 1) AS pct_of_county\n  FROM pnw_towns AS t\n INNER JOIN pnw_counties AS c\n    ON t.primary_county_id = c.county_id\n ORDER BY pct_of_county DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -591,7 +591,7 @@
         {
           "id": "example45",
           "title": "Joining 4: List all counties with their county seat populations (if available)",
-          "solution": "SELECT c.county,\n       c.state,\n       c.county_seat,\n       t.population_2020_census AS seat_population\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county_seat = t.town \n   AND c.state = t.state\n ORDER BY t.population_2020_census IS NULL DESC, \n          c.county;",
+          "solution": "SELECT c.county,\n       c.state,\n       c.county_seat,\n       t.population_2020_census AS seat_population\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t\n    ON c.county_seat_town_id = t.town_id\n ORDER BY t.population_2020_census IS NULL DESC,\n          c.county;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -599,7 +599,7 @@
         {
           "id": "example45b",
           "title": "Joining 5: Flag whether each town is a county seat",
-          "solution": "SELECT t.town,\n       t.state,\n       t.population_2020_census,\n       CASE \n           WHEN c.county IS NOT NULL THEN 'Yes'\n           ELSE 'No'\n       END AS is_county_seat,\n       c.county AS seat_of_county\n  FROM pnw_towns AS t\n  LEFT JOIN pnw_counties AS c \n    ON t.town = c.county_seat \n   AND t.state = c.state\n ORDER BY is_county_seat DESC, t.population_2020_census DESC;",
+          "solution": "SELECT t.town,\n       t.state,\n       t.population_2020_census,\n       CASE \n           WHEN c.county IS NOT NULL THEN 'Yes'\n           ELSE 'No'\n       END AS is_county_seat,\n       c.county AS seat_of_county\n  FROM pnw_towns AS t\n  LEFT JOIN pnw_counties AS c\n    ON t.town_id = c.county_seat_town_id\n ORDER BY is_county_seat DESC, t.population_2020_census DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -607,7 +607,7 @@
         {
           "id": "example45c",
           "title": "Joining 6: Count towns per county (including counties with zero towns)",
-          "solution": "SELECT c.county,\n       c.state,\n       c.population_2022 AS county_pop,\n       COUNT(t.town) AS num_towns,\n       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county = t.primary_county \n   AND c.state = t.state\n GROUP BY c.county, c.state, c.population_2022\n ORDER BY num_towns DESC;",
+          "solution": "SELECT c.county,\n       c.state,\n       c.population_2022 AS county_pop,\n       COUNT(t.town) AS num_towns,\n       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t\n    ON c.county_id = t.primary_county_id\n GROUP BY c.county, c.state, c.population_2022\n ORDER BY num_towns DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -615,7 +615,7 @@
         {
           "id": "example47",
           "title": "Joining 7: Find county seats not in our towns database",
-          "solution": "SELECT c.county,\n       c.state,\n       c.county_seat\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county_seat = t.town \n   AND c.state = t.state\n WHERE t.town IS NULL\n ORDER BY c.state, c.county;",
+          "solution": "SELECT c.county,\n       c.state,\n       c.county_seat\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t\n    ON c.county_seat_town_id = t.town_id\n WHERE t.town_id IS NULL\n ORDER BY c.state, c.county;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -623,7 +623,7 @@
         {
           "id": "example47b",
           "title": "Joining 8: Find large towns that are NOT county seats",
-          "solution": "SELECT t.town,\n       t.state,\n       t.population_2020_census,\n       t.primary_county\n  FROM pnw_towns AS t\n  LEFT JOIN pnw_counties AS c \n    ON t.town = c.county_seat \n   AND t.state = c.state\n WHERE c.county IS NULL\n   AND t.population_2020_census > 25000\n ORDER BY t.population_2020_census DESC;",
+          "solution": "SELECT t.town,\n       t.state,\n       t.population_2020_census,\n       t.primary_county\n  FROM pnw_towns AS t\n  LEFT JOIN pnw_counties AS c\n    ON t.town_id = c.county_seat_town_id\n WHERE c.county_id IS NULL\n   AND t.population_2020_census > 25000\n ORDER BY t.population_2020_census DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -631,7 +631,7 @@
         {
           "id": "example47c",
           "title": "Joining 9: Find counties with no towns in our database",
-          "solution": "SELECT c.county,\n       c.state,\n       c.population_2022,\n       c.county_seat\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county = t.primary_county \n   AND c.state = t.state\n WHERE t.town IS NULL\n ORDER BY c.population_2022 DESC;",
+          "solution": "SELECT c.county,\n       c.state,\n       c.population_2022,\n       c.county_seat\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t\n    ON c.county_id = t.primary_county_id\n WHERE t.town_id IS NULL\n ORDER BY c.population_2022 DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -639,7 +639,7 @@
         {
           "id": "example48",
           "title": "Joining 10: Comprehensive county analysis",
-          "solution": "SELECT c.county,\n       c.state,\n       c.year_established,\n       CASE \n           WHEN c.year_established < 1860 THEN 'Pioneer'\n           WHEN c.year_established < 1900 THEN 'Settlement'\n           ELSE 'Modern'\n       END AS era,\n       c.population_2022 AS county_pop,\n       COUNT(t.town) AS num_towns,\n       COALESCE(SUM(t.population_2020_census), 0) AS urban_pop,\n       MAX(t.population_2020_census) AS largest_town_pop\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t \n    ON c.county = t.primary_county \n   AND c.state = t.state\n GROUP BY c.county, c.state, c.year_established, c.population_2022\n ORDER BY c.population_2022 DESC;",
+          "solution": "SELECT c.county,\n       c.state,\n       c.year_established,\n       CASE \n           WHEN c.year_established < 1860 THEN 'Pioneer'\n           WHEN c.year_established < 1900 THEN 'Settlement'\n           ELSE 'Modern'\n       END AS era,\n       c.population_2022 AS county_pop,\n       COUNT(t.town) AS num_towns,\n       COALESCE(SUM(t.population_2020_census), 0) AS urban_pop,\n       MAX(t.population_2020_census) AS largest_town_pop\n  FROM pnw_counties AS c\n  LEFT JOIN pnw_towns AS t\n    ON c.county_id = t.primary_county_id\n GROUP BY c.county, c.state, c.year_established, c.population_2022\n ORDER BY c.population_2022 DESC;",
           "db": "pnw_database.sqlite",
           "requireOrdering": true,
           "hasSolution": true
@@ -798,7 +798,7 @@
         },
         {
           "id": "query15",
-          "title": "Select flights having 101 as the second, third, and fourth characters of the tail number.",
+          "title": "Select the tail numbers (`tailnum`) of flights having 101 as the second, third, and fourth characters of the tail number.",
           "solution": "-- SOLUTION: This query selects flights with tail numbers that have '101' as the second, third, and fourth characters.\nSELECT tailnum \nFROM flights \nWHERE tailnum LIKE '_101%';",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": false,
@@ -822,7 +822,7 @@
         },
         {
           "id": "query18",
-          "title": "Select weather records where temperature is not missing",
+          "title": "Select weather records (all columns) where temperature is not missing",
           "solution": "-- SOLUTION: This query selects all weather records where the temperature is not missing.\nSELECT * \nFROM weather \nWHERE temp IS NOT NULL;",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": false,
@@ -866,7 +866,7 @@
         {
           "id": "query21",
           "title": "Find the first destination alphabetically for flights from SEA as `first_sea_dest`",
-          "solution": "-- SOLUTION: This query finds the first destination alphabetically for flights destined to SEA.\nSELECT MIN(dest) AS first_sea_dest\nFROM flights\nWHERE origin = 'SEA';",
+          "solution": "-- SOLUTION: This query finds the first destination alphabetically for flights departing from SEA.\nSELECT MIN(dest) AS first_sea_dest\nFROM flights\nWHERE origin = 'SEA';",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": false,
           "hasSolution": true
@@ -902,7 +902,7 @@
       "exercises": [
         {
           "id": "query23",
-          "title": "Sort flights by departure delay",
+          "title": "Sort flights (all columns) by departure delay",
           "solution": "-- SOLUTION: This query sorts flights by departure delay.\nSELECT *\nFROM flights\nORDER BY dep_delay;",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": true,
@@ -910,7 +910,7 @@
         },
         {
           "id": "query24",
-          "title": "Sort flights by descending arrival delay",
+          "title": "Sort flights (all columns) by descending arrival delay",
           "solution": "-- SOLUTION: This query sorts flights by descending arrival delay.\nSELECT *\nFROM flights\nORDER BY arr_delay DESC;",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": true,
@@ -918,7 +918,7 @@
         },
         {
           "id": "query25",
-          "title": "Sort weather data by descending visibility and then descending wind speed",
+          "title": "Sort weather data (all columns) by descending visibility and then descending wind speed",
           "solution": "-- SOLUTION: This query sorts weather data by descending visibility and then by descending wind speed.\nSELECT *\nFROM weather\nORDER BY visib DESC, wind_speed DESC;",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": true,
@@ -926,7 +926,7 @@
         },
         {
           "id": "query26",
-          "title": "Group flights by origin and calculate the average arrival delay as `avg_arr_delay`",
+          "title": "Group flights by origin and show each `origin` along with its average arrival delay as `avg_arr_delay`",
           "solution": "-- SOLUTION: This query groups flights by origin and calculates the average arrival delay.\nSELECT origin, AVG(arr_delay) AS avg_arr_delay\nFROM flights\nGROUP BY origin;",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": false,
@@ -934,7 +934,7 @@
         },
         {
           "id": "query27",
-          "title": "Group flights by destination and count the number of flights for each destination having more than 100 flights as `total_flights`",
+          "title": "Group flights by destination and show each `dest` with its count of flights as `total_flights`, only for destinations having more than 100 flights",
           "solution": "-- SOLUTION: This query groups flights by destination and counts the number of flights for each, only including those destinations with more than 100 flights.\nSELECT dest, COUNT(*) AS total_flights\nFROM flights\nGROUP BY dest\nHAVING COUNT(*) > 100;",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": false,
@@ -957,7 +957,7 @@
       "exercises": [
         {
           "id": "query28",
-          "title": "Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.",
+          "title": "Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles. Show the `distance` column alongside the category as `flight_distance_category`.",
           "solution": "-- SOLUTION: This query categorizes flights by distance as 'Short', 'Medium', or 'Long'.\nSELECT distance, CASE \nWHEN distance < 500 THEN 'Short'\nWHEN distance BETWEEN 500 AND 2000 THEN 'Medium'\nELSE 'Long'\nEND AS flight_distance_category\nFROM flights;",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": false,
@@ -965,7 +965,7 @@
         },
         {
           "id": "query29",
-          "title": "Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed",
+          "title": "Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed. Show `origin`, `dest`, and the average speed as `avg_speed`.",
           "solution": "-- SOLUTION: This query calculates the average speed of flights from each origin to each destination and orders the results by the fastest average speeds.\nSELECT origin, dest,\nAVG(distance / (air_time / 60)) AS avg_speed\nFROM flights\nGROUP BY origin, dest\nORDER BY avg_speed DESC;",
           "db": "pnw_flights_database.sqlite",
           "requireOrdering": true,

@@ -12,7 +12,7 @@ import SchemaReference from "../../components/SchemaReference.astro";
 
 ## Transforming
 
-26. Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles.
+26. Categorize flights by distance as Short, Medium, or Long. Use 'Short' for distances less than 500 miles, 'Medium' for 500 to 2000 miles, and 'Long' for more than 2000 miles. Show the `distance` column alongside the category as `flight_distance_category`.
 
 <SqlExercise
   id="query28"
@@ -59,9 +59,9 @@ FROM flights;
   </Fragment>
 </SqlExercise>
 
-27. Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed
+27. Calculate the average speed of flights grouped by origin and destination and order by the fastest average speed. Show `origin`, `dest`, and the average speed as `avg_speed`.
 
-    To calculate the average speed, use the `dist` and `air_time` columns. Remember to convert `air_time` from minutes to hours for speed in miles per hour.
+    To calculate the average speed, use the `distance` and `air_time` columns. Remember to convert `air_time` from minutes to hours for speed in miles per hour.
 
 <SqlExercise
   id="query29"
@@ -81,11 +81,10 @@ ORDER BY avg_speed DESC;`}
   <Hint label="Hint 1">
 
 ```sql
--- HINT:  Order the results by the average speed in descending order to get the fastest speeds at the top.
-SELECT origin, dest, AVG(distance / (air_time / 60)) AS avg_speed
-FROM flights
-GROUP BY origin, dest
-ORDER BY avg_speed DESC;
+-- HINT: Speed in mph is distance divided by hours, and air_time is in minutes,
+-- so divide air_time by 60 inside the AVG. Group by both origin and dest, and
+-- order the results by the average speed in descending order to get the
+-- fastest speeds at the top.
 ```
 
   </Hint>

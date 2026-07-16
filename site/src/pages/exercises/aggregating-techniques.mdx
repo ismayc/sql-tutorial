@@ -93,7 +93,7 @@ WHERE dest = 'ORD';
   initial={`-- Write your SQL query here to find the first destination alphabetically 
 -- for flights from SEA.
 `}
-  solution={`-- SOLUTION: This query finds the first destination alphabetically for flights destined to SEA.
+  solution={`-- SOLUTION: This query finds the first destination alphabetically for flights departing from SEA.
 SELECT MIN(dest) AS first_sea_dest
 FROM flights
 WHERE origin = 'SEA';`}
@@ -112,7 +112,7 @@ WHERE condition;
   <Hint label="Hint 2">
 
 ```sql
--- HINT: Complete this query to find the first destination alphabetically where flights are destined to SEA. Fill in the blanks:
+-- HINT: Complete this query to find the first destination alphabetically for flights departing from SEA. Fill in the blanks:
 SELECT MIN(___) AS first_sea_dest
 FROM flights
 WHERE origin = 'SEA';
