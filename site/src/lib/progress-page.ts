@@ -151,6 +151,27 @@ function run() {
     }
   });
 
+  // Scoped resets: wipe only the ids that belong to the Examples (or
+  // Exercises) pages, restoring their starter code, without touching the rest.
+  const resetKind = (kind: "examples" | "exercises") => {
+    const label = kind === "examples" ? "Examples" : "Exercises";
+    if (!confirm(`This erases every saved query and completion flag for all ${label} in this browser, restoring the starter code. There's no undo. Continue?`)) return;
+    const ids = new Set((toc as Record<string, { exerciseIds: string[] }[]>)[kind].flatMap((s) => s.exerciseIds));
+    const all = readAll();
+    let cleared = 0;
+    for (const id of Object.keys(all)) {
+      if (ids.has(id)) {
+        localStorage.removeItem(PREFIX + id);
+        cleared++;
+      }
+    }
+    window.dispatchEvent(new CustomEvent("sqlt:progress-changed"));
+    setStatus(statusEl, `${label} reset — ${cleared} saved entr${cleared === 1 ? "y" : "ies"} cleared.`, "warn");
+    refresh();
+  };
+  document.getElementById("reset-examples-btn")!.addEventListener("click", () => resetKind("examples"));
+  document.getElementById("reset-exercises-btn")!.addEventListener("click", () => resetKind("exercises"));
+
   document.getElementById("reset-btn")!.addEventListener("click", () => {
     if (!confirm("This erases every saved query and every completion flag in this browser. There's no undo. Continue?")) return;
     const all = readAll();
