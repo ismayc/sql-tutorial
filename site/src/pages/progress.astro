@@ -10,11 +10,16 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       or wipe everything and start fresh.
     </p>
 
-    <div class="not-prose my-8 grid sm:grid-cols-3 gap-4">
+    <div class="not-prose my-8 grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
       <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col">
-        <h3 class="font-semibold text-lg mt-0">📥 Export</h3>
-        <p class="text-sm text-slate-600 dark:text-slate-300 flex-1">Download every saved query + completion flag as a single JSON file.</p>
+        <h3 class="font-semibold text-lg mt-0">📥 Export backup</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-300 flex-1">Download every saved query + completion flag as a single JSON file (re-importable below).</p>
         <button type="button" id="export-btn" class="btn btn-primary w-full justify-center">Download progress.json</button>
+      </div>
+      <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col">
+        <h3 class="font-semibold text-lg mt-0">📝 Export Markdown</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-300 flex-1">Download all your written SQL as a readable Markdown file, organized by section, with ✓ marks on completed items.</p>
+        <button type="button" id="export-md-btn" class="btn btn-primary w-full justify-center">Download my-work.md</button>
       </div>
       <div class="rounded-xl border border-slate-200 dark:border-slate-800 p-5 flex flex-col">
         <h3 class="font-semibold text-lg mt-0">📤 Import</h3>

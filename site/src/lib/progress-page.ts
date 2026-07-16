@@ -71,8 +71,7 @@ function buildSummary(entries: Record<string, SavedEntry>): string {
   return html.join("");
 }
 
-function downloadJson(filename: string, data: unknown) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+function downloadBlob(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -81,6 +80,72 @@ function downloadJson(filename: string, data: unknown) {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+}
+
+function downloadJson(filename: string, data: unknown) {
+  downloadBlob(filename, new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }));
+}
+
+function downloadMarkdown(filename: string, text: string) {
+  downloadBlob(filename, new Blob([text], { type: "text/markdown" }));
+}
+
+/** Fence that safely wraps code even if the code itself contains backtick fences. */
+function sqlFence(code: string): string {
+  let fence = "```";
+  while (code.includes(fence)) fence += "`";
+  return `${fence}sql\n${code.replace(/\s+$/, "")}\n${fence}`;
+}
+
+interface TocExercise { id: string; title: string; hasSolution: boolean }
+interface TocSection { slug: string; title: string; exercises: TocExercise[] }
+
+function buildMarkdown(entries: Record<string, SavedEntry>): string {
+  const base = `${location.origin}${location.pathname.replace(/progress\/?$/, "")}`;
+  const md: string[] = [];
+  md.push(`# SQL Tutorial — my saved work`);
+  md.push("");
+  md.push(`Exported ${new Date().toLocaleString()} from ${location.origin}${location.pathname}`);
+  const seen = new Set<string>();
+  let totalIncluded = 0;
+
+  for (const kind of ["examples", "exercises"] as const) {
+    const sections = (toc as unknown as Record<string, TocSection[]>)[kind];
+    const kindLines: string[] = [];
+    for (const sec of sections) {
+      const withWork = sec.exercises.filter((ex) => entries[ex.id]?.code?.trim());
+      if (withWork.length === 0) continue;
+      kindLines.push("", `### ${sec.title}`, "");
+      for (const ex of withWork) {
+        const e = entries[ex.id]!;
+        seen.add(ex.id);
+        totalIncluded++;
+        kindLines.push(`#### ${ex.title}${e.completed ? " ✓" : ""}`, "");
+        kindLines.push(sqlFence(e.code), "");
+        kindLines.push(`[Open this ${kind.slice(0, -1)}](${base}${kind}/${sec.slug}/#${ex.id})`, "");
+      }
+    }
+    if (kindLines.length > 0) {
+      md.push("", `## ${kind === "examples" ? "Examples" : "Exercises"}`);
+      md.push(...kindLines);
+    }
+  }
+
+  // Saved entries that don't map to any current exercise (renamed/removed ids)
+  const orphans = Object.keys(entries).filter((id) => !seen.has(id) && entries[id]?.code?.trim());
+  if (orphans.length > 0) {
+    md.push("", `## Other saved drafts`, "");
+    for (const id of orphans) {
+      md.push(`#### ${id}${entries[id]!.completed ? " ✓" : ""}`, "");
+      md.push(sqlFence(entries[id]!.code), "");
+    }
+  }
+
+  if (totalIncluded === 0 && orphans.length === 0) {
+    md.push("", "_No saved work yet — open any example or exercise and start typing._");
+  }
+  md.push("");
+  return md.join("\n");
 }
 
 export function initProgressPage(): void {
@@ -109,6 +174,14 @@ function run() {
     const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
     downloadJson(`sql-tutorial-progress-${stamp}.json`, data);
     setStatus(statusEl, "Downloaded.", "ok");
+  });
+
+  document.getElementById("export-md-btn")!.addEventListener("click", () => {
+    const entries = readAll();
+    const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+    downloadMarkdown(`sql-tutorial-my-work-${stamp}.md`, buildMarkdown(entries));
+    const n = Object.values(entries).filter((e) => e.code?.trim()).length;
+    setStatus(statusEl, `Markdown downloaded — ${n} saved quer${n === 1 ? "y" : "ies"} included.`, "ok");
   });
 
   const importInput = document.getElementById("import-input") as HTMLInputElement;
