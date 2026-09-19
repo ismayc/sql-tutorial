@@ -5,10 +5,16 @@ title: Sorting and Grouping Techniques
 import SqlExercise from "../../components/SqlExercise.astro";
 import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
+import Scrolly from "../../components/Scrolly.astro";
+import { clauseOrderAct, groupByAct } from "../../lib/scrolly-diagrams-sql.mjs";
 
 # Sorting and Grouping Techniques
 
 <SchemaReference db="pnw_database.sqlite" />
+
+A query is written `SELECT ... FROM ... WHERE ... GROUP BY ... HAVING ... ORDER BY ... LIMIT`, but SQL does not run the clauses in that order. Scroll through one query to see the order it actually uses, since it explains most "why can't I use that alias here?" surprises.
+
+<Scrolly act={clauseOrderAct} swap />
 
 ## Sorting
 
@@ -69,6 +75,8 @@ ORDER BY controls how results are displayed. This is crucial for reports and ide
 ## Grouping
 
 GROUP BY collapses rows into groups for aggregate calculations. This is one of SQL's most powerful features.
+
+<Scrolly act={groupByAct} swap />
 
 ### Grouping 1: Count towns per state
 

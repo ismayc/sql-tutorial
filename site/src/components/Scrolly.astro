@@ -1,0 +1,62 @@
+---
+// Scroll-driven diagram. Pass one "act" from src/lib/scrolly-diagrams.mjs:
+//   <Scrolly act={innerAct} />
+// A sticky SVG stage on the left is built up as the reader scrolls the step
+// cards on the right. The driver lives in src/lib/scrolly.ts; styles in
+// global.css (.scrolly-*). Under prefers-reduced-motion the reveals are instant
+// (handled globally), and in print every layer is forced visible.
+interface Step {
+  beat: string;
+  show: string;
+  html: string;
+}
+interface Act {
+  title: string;
+  call: string;
+  viewBox: string;
+  svg: string;
+  steps: Step[];
+}
+// `swap` marks acts whose steps replace one table with the next (clause order,
+// GROUP BY, WHERE precedence). They stack layers at one spot, so in print only
+// the final layer is shown. Join acts leave it off and print every layer.
+const { act, swap = false } = Astro.props as { act: Act; swap?: boolean };
+---
+
+<section class:list={["scrolly not-prose", swap && "scrolly-swap"]} aria-label={act.title}>
+  <div class="scrolly-head">
+    <h4 class="scrolly-title">{act.title}</h4>
+    <pre class="scrolly-call"><code>{act.call}</code></pre>
+    <p class="scrolly-hint">Scroll to build the diagram, one step at a time.</p>
+  </div>
+
+  <div class="scrolly-wrap">
+    <div class="scrolly-stage">
+      <svg viewBox={act.viewBox} role="img" aria-label={act.title} set:html={act.svg}></svg>
+    </div>
+    <div class="scrolly-steps">
+      {act.steps.map((s) => (
+        <div class="scrolly-step" data-show={s.show}>
+          <div class="scrolly-card">
+            <span class="scrolly-beat">{s.beat}</span>
+            <span set:html={s.html} />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <details class="scrolly-textalt">
+    <summary>Text version of this diagram</summary>
+    <ol>
+      {act.steps.map((s) => (
+        <li><b>{s.beat}.</b> <span set:html={s.html} /></li>
+      ))}
+    </ol>
+  </details>
+</section>
+
+<script>
+  import { initScrolly } from "../lib/scrolly";
+  initScrolly();
+</script>

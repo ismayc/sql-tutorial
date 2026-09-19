@@ -449,4 +449,297 @@
   .sqlt-zoom-dialog::backdrop {
     backdrop-filter: none;
   }
+  /* Reveals become instant, but the stage stays sticky so the diagram still
+     builds as you scroll; no motion, just state changes. */
+  .scrolly-stage .lyr,
+  .scrolly-stage .drop,
+  .scrolly-stage .arrow,
+  .scrolly-stage .arrowhead,
+  .scrolly-stage .scan,
+  .scrolly-card {
+    transition: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll-driven diagrams (see src/components/Scrolly.astro, src/lib/scrolly.ts,
+   src/lib/scrolly-diagrams.mjs)
+   --------------------------------------------------------------------------- */
+.scrolly {
+  margin: 2rem 0;
+}
+.scrolly-head {
+  margin-bottom: 0.5rem;
+}
+.scrolly-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--color-brand-700, #1b6ca8);
+  margin: 0 0 0.5rem;
+}
+.dark .scrolly-title {
+  color: var(--color-brand-100, #cfe6f5);
+}
+.scrolly-call {
+  margin: 0;
+  padding: 0.55rem 0.8rem;
+  background: #0f2233;
+  color: #e6f0f7;
+  border-radius: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+.scrolly-call code {
+  background: none;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+.scrolly-hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-slate-500);
+}
+
+.scrolly-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  gap: 1.5rem;
+  align-items: start;
+}
+.scrolly-stage {
+  position: sticky;
+  top: 4.5rem; /* clear the sticky 3.5rem header + breathing room */
+  height: calc(100vh - 5rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f6fafd;
+  border: 1px solid var(--color-slate-200);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+}
+.dark .scrolly-stage {
+  background: #eef4f8; /* keep the diagram on light paper so fixed colors read */
+  border-color: var(--color-slate-700);
+}
+.scrolly-stage svg {
+  width: 100%;
+  height: auto;
+  max-height: calc(100vh - 7rem);
+}
+
+.scrolly-steps {
+  min-width: 0;
+}
+.scrolly-step {
+  min-height: 82vh;
+  display: flex;
+  align-items: center;
+}
+.scrolly-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-slate-200);
+  border-left: 4px solid var(--color-brand-500, #1b6ca8);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  box-shadow: 0 6px 22px rgba(16, 40, 61, 0.09);
+  opacity: 0.34;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+.dark .scrolly-card {
+  background: var(--color-slate-900);
+  border-color: var(--color-slate-700);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+.scrolly-step.is-active .scrolly-card {
+  opacity: 1;
+  transform: none;
+}
+.scrolly-card b {
+  color: var(--color-brand-700, #1b6ca8);
+}
+.dark .scrolly-card b {
+  color: var(--color-brand-100, #cfe6f5);
+}
+.scrolly-card code {
+  background: var(--color-slate-100);
+  padding: 0.05rem 0.3rem;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+}
+.dark .scrolly-card code {
+  background: var(--color-slate-800);
+}
+.scrolly-beat {
+  display: block;
+  font: 600 0.7rem ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-slate-500);
+  margin-bottom: 0.25rem;
+}
+
+.scrolly-textalt {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+}
+.scrolly-textalt summary {
+  cursor: pointer;
+  color: var(--color-slate-600);
+}
+.dark .scrolly-textalt summary {
+  color: var(--color-slate-300);
+}
+.scrolly-textalt ol {
+  margin: 0.5rem 0 0;
+}
+.scrolly-textalt code {
+  background: var(--color-slate-100);
+  padding: 0.05rem 0.3rem;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+}
+.dark .scrolly-textalt code {
+  background: var(--color-slate-800);
+}
+
+/* SVG diagram typography (inline SVG carries no styles of its own) */
+.scrolly-stage .d-ttl {
+  font: 700 22px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  fill: #10283d;
+}
+.scrolly-stage .d-rttl {
+  font: 700 19px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  fill: #10283d;
+}
+.scrolly-stage .d-hdr {
+  font: 600 14px -apple-system, "Segoe UI", Roboto, sans-serif;
+  fill: #5a7184;
+}
+.scrolly-stage .d-cell {
+  font: 500 19px -apple-system, "Segoe UI", Roboto, sans-serif;
+  fill: #111;
+}
+.scrolly-stage .d-nan {
+  font: 600 14px ui-monospace, Menlo, Consolas, monospace;
+  fill: #f2f2f2;
+}
+.scrolly-stage .d-ok {
+  font: 700 20px -apple-system, "Segoe UI", Roboto, sans-serif;
+  fill: #1f7a44;
+}
+.scrolly-stage .d-no {
+  font: 700 20px -apple-system, "Segoe UI", Roboto, sans-serif;
+  fill: #c0261a;
+}
+
+/* Reveal state machine (toggled by src/lib/scrolly.ts) */
+.scrolly-stage .lyr {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.scrolly-stage .lyr.on {
+  opacity: 1;
+}
+.scrolly-stage .drop {
+  transition: opacity 0.5s ease;
+}
+.scrolly-stage .drop.on {
+  opacity: 0.18;
+}
+.scrolly-stage .arrow {
+  stroke-dasharray: 1; /* paired with pathLength="1" so the line "draws" in */
+  stroke-dashoffset: 1;
+  opacity: 0;
+  transition: stroke-dashoffset 0.7s ease, opacity 0.4s ease;
+}
+.scrolly-stage .arrow.on {
+  stroke-dashoffset: 0;
+  opacity: 1;
+}
+.scrolly-stage .arrowhead {
+  opacity: 0;
+  transition: opacity 0.4s ease 0.35s;
+}
+.scrolly-stage .arrowhead.on {
+  opacity: 1;
+}
+.scrolly-stage .scan {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.scrolly-stage .scan.on {
+  opacity: 1;
+}
+
+@media (max-width: 760px) {
+  .scrolly-wrap {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+  .scrolly-stage {
+    top: 4rem;
+    height: 52vh;
+    padding: 0.5rem;
+  }
+  .scrolly-stage svg {
+    max-height: 48vh;
+  }
+  .scrolly-step {
+    min-height: 66vh;
+  }
+}
+
+@media print {
+  .scrolly-hint,
+  .scrolly-beat {
+    display: none;
+  }
+  .scrolly-wrap {
+    display: block;
+  }
+  .scrolly-stage {
+    position: static;
+    height: auto;
+    page-break-inside: avoid;
+  }
+  .scrolly-stage svg {
+    max-height: none;
+    width: 520px;
+  }
+  .scrolly-stage .lyr,
+  .scrolly-stage .arrow,
+  .scrolly-stage .arrowhead {
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
+  }
+  .scrolly-stage .scan {
+    display: none;
+  }
+  .scrolly-stage .drop {
+    opacity: 0.3 !important;
+  }
+  /* Swap-style acts stack layers at one spot; print only the final layer so
+     they don't overlap into a smear. */
+  .scrolly-swap .scrolly-stage .lyr:not(:last-of-type) {
+    display: none !important;
+  }
+  .scrolly-step {
+    min-height: 0;
+    display: block;
+    margin: 0.25rem 0;
+  }
+  .scrolly-card {
+    opacity: 1 !important;
+    transform: none !important;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
 }

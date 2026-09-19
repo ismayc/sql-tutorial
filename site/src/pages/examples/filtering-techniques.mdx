@@ -5,6 +5,8 @@ title: Filtering Techniques
 import SqlExercise from "../../components/SqlExercise.astro";
 import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
+import Scrolly from "../../components/Scrolly.astro";
+import { wherePrecedenceAct } from "../../lib/scrolly-diagrams-sql.mjs";
 
 # Filtering Techniques
 
@@ -100,6 +102,10 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
  ORDER BY land_area_sq_mi;`}
   requireOrdering
 />
+
+Before the exercise, it is worth seeing exactly what those parentheses change. `AND` binds tighter than `OR`, so an unparenthesized mix rarely reads the way it looks. Scroll through both parses of the same three conditions.
+
+<Scrolly act={wherePrecedenceAct} swap />
 
 ### Filtering 7: Complex criteria with parentheses
 

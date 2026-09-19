@@ -5,6 +5,8 @@ title: Joining Techniques
 import SqlExercise from "../../components/SqlExercise.astro";
 import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
+import Scrolly from "../../components/Scrolly.astro";
+import { innerAct, leftAct, multiAct, antiAct } from "../../lib/scrolly-diagrams.mjs";
 
 # Joining Techniques
 
@@ -18,17 +20,7 @@ Joins combine data from multiple tables. This is essential because real database
 
 An INNER JOIN returns only rows where there's a match in BOTH tables. Think of it as finding the intersection.
 
-### Setup
-
-![](/sql-tutorial/images/01a-INNER-JOIN.png)
-
-### Action
-
-![](/sql-tutorial/images/01b-INNER-JOIN.png)
-
-### Output
-
-![](/sql-tutorial/images/01c-INNER-JOIN.png)
+<Scrolly act={innerAct} />
 
 ### Joining 1: Enrich town data with county information
 
@@ -93,19 +85,11 @@ Notice the join condition: `pnw_towns.primary_county_id` is a *foreign key* poin
 
 A LEFT JOIN returns ALL rows from the left table, plus matching rows from the right table. Non-matches get NULL values.
 
-### Action
+<Scrolly act={leftAct} />
 
-![](/sql-tutorial/images/02a-LEFT-JOIN.png)
+One thing to watch: if the right table has more than one row for a key, a matched left row is repeated once per match, so the join can return *more* rows than the left table started with.
 
-### Output
-
-![](/sql-tutorial/images/02b-LEFT-JOIN.png)
-
-### If multiple matches
-
-### Output
-
-![](/sql-tutorial/images/02c-LEFT-JOIN-multiple.png)
+<Scrolly act={multiAct} />
 
 ### Joining 4: List all counties with their county seat populations (if available)
 
@@ -172,9 +156,7 @@ A LEFT JOIN returns ALL rows from the left table, plus matching rows from the ri
 
 An anti-join finds rows in one table that have NO match in another table. It's implemented as a LEFT JOIN with a WHERE clause checking for NULLs.
 
-### Output
-
-![](/sql-tutorial/images/12-Anti-join.png)
+<Scrolly act={antiAct} />
 
 ### Joining 7: Find county seats not in our towns database
 

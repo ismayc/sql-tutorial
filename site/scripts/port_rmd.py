@@ -336,15 +336,18 @@ def collect_exercise_specs(tokens, db: str) -> list[dict]:
     return specs
 
 
-def process(rmd_path: Path, out_dir: Path, db: str) -> list[dict]:
+def process(rmd_path: Path, out_dir: Path, db: str, manual_slugs: set[str] = frozenset()) -> list[dict]:
     text = rmd_path.read_text()
     tokens = list(tokenize(text))
     sections = split_sections(tokens)
 
-    # Wipe any existing .mdx (regenerated each run)
+    # Wipe any existing .mdx (regenerated each run), except pages we maintain by
+    # hand. Those still contribute their exercises to the TOC below, but their
+    # bodies are not overwritten (see manual_slugs in main()).
     out_dir.mkdir(parents=True, exist_ok=True)
     for p in out_dir.glob("*.mdx"):
-        p.unlink()
+        if p.stem not in manual_slugs:
+            p.unlink()
 
     index: list[dict] = []
     for title, toks in sections:
@@ -355,8 +358,9 @@ def process(rmd_path: Path, out_dir: Path, db: str) -> list[dict]:
             candidate = f"{slug}-{n}"
             n += 1
         slug = candidate
-        body = render_section(title, toks, db)
-        (out_dir / f"{slug}.mdx").write_text(body)
+        if slug not in manual_slugs:
+            body = render_section(title, toks, db)
+            (out_dir / f"{slug}.mdx").write_text(body)
         exercise_ids = collect_exercise_ids(toks)
         # Only count exercises with a check-able solution as part of completion
         checkable_ids = [eid for eid in exercise_ids if _exercise_has_solution(toks, eid)]
@@ -382,12 +386,25 @@ def _exercise_has_solution(tokens, base: str) -> bool:
     return False
 
 
+# Pages whose .mdx is maintained by hand and must not be regenerated from the
+# Rmd. These embed the scroll-driven <Scrolly> diagrams (see
+# src/components/Scrolly.astro), which the legacy learnr Rmd cannot express, so
+# the site versions deliberately diverge from the Rmd's static panels:
+#   joining-techniques          - INNER / LEFT / one-to-many / anti-join
+#   sorting-and-grouping-...     - clause execution order, GROUP BY aggregation
+#   filtering-techniques        - WHERE precedence (AND/OR/parentheses)
+MANUAL_EXAMPLE_SLUGS = frozenset(
+    {"joining-techniques", "sorting-and-grouping-techniques", "filtering-techniques"}
+)
+
+
 def main() -> int:
     print(f"Site root: {SITE}")
     examples_idx = process(
         REPO / "examples.Rmd",
         PAGES / "examples",
         "pnw_database.sqlite",
+        manual_slugs=MANUAL_EXAMPLE_SLUGS,
     )
     for s in examples_idx:
         print(f"  examples/{s['slug']}.mdx — {s['title']} ({s['exerciseCount']} ex)")
