@@ -5,6 +5,8 @@ title: Selection Techniques
 import SqlExercise from "../../components/SqlExercise.astro";
 import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
+import Scrolly from "../../components/Scrolly.astro";
+import { selectColumnsAct, distinctAct, countAct } from "../../lib/scrolly-diagrams-more.mjs";
 
 # Selection Techniques
 
@@ -13,6 +15,10 @@ import SchemaReference from "../../components/SchemaReference.astro";
 ## Selecting columns/fields
 
 Imagine you work for a regional planning agency and need to pull specific information from your database. The SELECT statement lets you choose exactly which columns you need.
+
+`SELECT` decides which columns come back, and it never changes how many rows do. Scroll through one small table to see the difference, and what `AS` does to the result.
+
+<Scrolly act={selectColumnsAct} swap />
 
 ### Selection 1: Create a quick reference list of all town names
 
@@ -92,6 +98,8 @@ Aliases make your output more readable and your queries easier to write. They're
 
 DISTINCT removes duplicate values, helping you understand the unique categories in your data.
 
+<Scrolly act={distinctAct} swap />
+
 ### Unique 1: What states are represented in our towns database?
 
 *Scenario: Before running state-specific analyses, you need to know which states are in the dataset.*
@@ -118,6 +126,10 @@ DISTINCT removes duplicate values, helping you understand the unique categories 
 ## Counting
 
 COUNT helps you understand the size of your data and answer "how many" questions.
+
+`COUNT` comes in three forms, and they disagree as soon as a column has `NULL`s or repeats in it. Scroll to watch each one tally the same six rows.
+
+<Scrolly act={countAct} swap />
 
 ### Counting 1: How many towns are in our database?
 

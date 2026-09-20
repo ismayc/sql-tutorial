@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
       Everything runs in your browser via SQLite-compiled-to-WebAssembly.
     </p>
 
-    <div class="grid sm:grid-cols-3 gap-4 mt-8 not-prose">
+    <div class="grid sm:grid-cols-2 gap-4 mt-8 not-prose">
       <a href={`${base}examples/`} class="block rounded-xl border border-slate-200 dark:border-slate-800 p-5 no-underline hover:border-brand-500 transition">
         <div class="font-semibold text-lg mb-1">📘 Examples</div>
         <p class="text-sm text-slate-600 dark:text-slate-300 m-0">
@@ -22,6 +22,12 @@ const base = import.meta.env.BASE_URL;
         <div class="font-semibold text-lg mb-1">🛫 Exercises</div>
         <p class="text-sm text-slate-600 dark:text-slate-300 m-0">
           Practice problems on the flight data. Write a query, click <em>Check answer</em>, get instant feedback.
+        </p>
+      </a>
+      <a href={`${base}scrollytelling/`} class="block rounded-xl border border-slate-200 dark:border-slate-800 p-5 no-underline hover:border-brand-500 transition">
+        <div class="font-semibold text-lg mb-1">📜 Scrollytelling</div>
+        <p class="text-sm text-slate-600 dark:text-slate-300 m-0">
+          Scroll-driven diagrams that show what each command does to a table, one step at a time.
         </p>
       </a>
       <a href={`${base}scratchpad`} class="block rounded-xl border border-slate-200 dark:border-slate-800 p-5 no-underline hover:border-brand-500 transition">

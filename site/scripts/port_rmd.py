@@ -390,11 +390,24 @@ def _exercise_has_solution(tokens, base: str) -> bool:
 # Rmd. These embed the scroll-driven <Scrolly> diagrams (see
 # src/components/Scrolly.astro), which the legacy learnr Rmd cannot express, so
 # the site versions deliberately diverge from the Rmd's static panels:
-#   joining-techniques          - INNER / LEFT / one-to-many / anti-join
-#   sorting-and-grouping-...     - clause execution order, GROUP BY aggregation
-#   filtering-techniques        - WHERE precedence (AND/OR/parentheses)
+#   selection-techniques        - SELECT columns and AS, DISTINCT, the COUNT forms
+#   filtering-techniques        - BETWEEN and IN, WHERE precedence, LIKE, NULL tests
+#   aggregating-techniques      - aggregates over NULL, subquery in WHERE
+#   sorting-and-grouping-...     - clause execution order, two-key ORDER BY, GROUP BY
+#   transforming-techniques     - CASE WHEN order, integer division
+#   joining-techniques          - INNER / LEFT / one-to-many / COUNT after LEFT / anti
+# Every examples page is now hand-maintained, so a re-port refreshes only the
+# TOC for them. The full list with links is src/lib/scrolly-index.mjs, rendered
+# at /scrollytelling/.
 MANUAL_EXAMPLE_SLUGS = frozenset(
-    {"joining-techniques", "sorting-and-grouping-techniques", "filtering-techniques"}
+    {
+        "selection-techniques",
+        "filtering-techniques",
+        "aggregating-techniques",
+        "sorting-and-grouping-techniques",
+        "transforming-techniques",
+        "joining-techniques",
+    }
 )
 
 

@@ -7,6 +7,7 @@ import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
 import Scrolly from "../../components/Scrolly.astro";
 import { wherePrecedenceAct } from "../../lib/scrolly-diagrams-sql.mjs";
+import { betweenInAct, likeAct, nullAct } from "../../lib/scrolly-diagrams-more.mjs";
 
 # Filtering Techniques
 
@@ -75,6 +76,10 @@ The WHERE clause is your primary tool for finding specific records. Think of it 
   requireOrdering
 />
 
+The next example uses `BETWEEN`, and Filtering 11 uses `IN`. Both are shorthand for comparisons you already know. Scroll to see exactly which rows each one keeps, including the rows that sit on the boundary.
+
+<Scrolly act={betweenInAct} swap />
+
 ### Filtering 5: Find mid-sized towns (population between 10,000 and 50,000)
 
 *Scenario: A "Main Street" revitalization program targets mid-sized towns. BETWEEN provides a clean way to specify ranges. Show town, state, and population_2020_census.*
@@ -125,6 +130,10 @@ Before the exercise, it is worth seeing exactly what those parentheses change. `
 ## Filtering text
 
 Pattern matching with LIKE lets you search for partial text matches using wildcards: `%` matches any sequence of characters, `_` matches exactly one character.
+
+Scroll to see which letters of each name a pattern accounts for.
+
+<Scrolly act={likeAct} swap />
 
 ### Filtering 8: Find counties whose etymology mentions a president
 
@@ -178,6 +187,10 @@ Pattern matching with LIKE lets you search for partial text matches using wildca
  ORDER BY population_2022 DESC;`}
   requireOrdering
 />
+
+The last two examples filter on missing values. `NULL` does not behave like other values in a comparison, and the mistake produces an empty result instead of an error. Scroll through four tests on the same column.
+
+<Scrolly act={nullAct} swap />
 
 ### Filtering 12: Find towns that span multiple counties
 

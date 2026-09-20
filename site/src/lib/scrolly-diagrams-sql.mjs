@@ -7,32 +7,36 @@
 // reveals just that stage (previous ones hide), so row filtering, bucketing,
 // re-ordering, and trimming all fall out of swapping which layer is shown.
 
-const RH = 44;
-const HERO_W = 820;
+export const RH = 44;
+export const HERO_W = 820;
 
-const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+export const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 
 // Group / category colors (shared vocabulary with the join diagrams).
-const GC = { OR: "#EFD46A", WA: "#6FB5DF", ID: "#C0562F" };
+export const GC = { OR: "#EFD46A", WA: "#6FB5DF", ID: "#C0562F" };
 const OK = "#1f7a44";
 const NO = "#c0261a";
 
-const NULLDEFS =
+export const NULLDEFS =
   `<defs><linearGradient id="nullfill2" x1="0" y1="0" x2="0" y2="1">` +
   `<stop offset="0" stop-color="#2f2f2f"/><stop offset="0.5" stop-color="#c9c9c9"/><stop offset="1" stop-color="#3a3a3a"/>` +
   `</linearGradient></defs>`;
 
-// Render one table. cols: [{w,label}]. rows: [{cells:[{t,fill,white,cls}], el, faded}].
-// Wrapped so a caller can reveal the whole thing or per-row.
-function grid(x, y, title, cols, rows) {
+// Render one table. cols: [{w,label,dim}]. rows: [{cells:[{t,fill,white,cls,dim,hl}], el, faded}].
+// Wrapped so a caller can reveal the whole thing or per-row. `dim` fades a
+// column header or a single cell (a column SELECT leaves out); `hl` rings a
+// cell in the given color (the value an aggregate or subquery picked).
+export function grid(x, y, title, cols, rows) {
   const tw = cols.reduce((a, c) => a + c.w, 0);
   const parts = [];
   if (title) parts.push(`<text x="${x + tw / 2}" y="${y - 12}" class="d-rttl" text-anchor="middle">${esc(title)}</text>`);
   let cx = x;
   cols.forEach((c) => {
-    parts.push(`<text x="${cx + c.w / 2}" y="${y + 16}" class="d-hdr" text-anchor="middle">${esc(c.label)}</text>`);
+    const dim = c.dim ? ' opacity="0.22"' : "";
+    parts.push(`<text x="${cx + c.w / 2}" y="${y + 16}" class="d-hdr" text-anchor="middle"${dim}>${esc(c.label)}</text>`);
     cx += c.w;
   });
+  const rings = [];
   rows.forEach((row, ri) => {
     const ry = y + 26 + ri * RH;
     let cx2 = x;
@@ -52,18 +56,23 @@ function grid(x, y, title, cols, rows) {
             `<rect x="${cx2}" y="${ry}" width="${w}" height="${RH}" fill="${fill}" stroke="#111" stroke-width="2.5"/>` +
             `<text x="${cx2 + w / 2}" y="${ry + RH / 2 + 6}" class="${cls}" text-anchor="middle"${white}>${esc(cell.t)}</text>`;
         }
+        if (cell.dim) s = `<g opacity="0.16">${s}</g>`;
+        if (cell.hl) rings.push(`<rect x="${cx2}" y="${ry}" width="${w}" height="${RH}" fill="none" stroke="${cell.hl}" stroke-width="6"/>`);
         cx2 += w;
         return s;
       })
       .join("");
-    const cls = row.faded ? ' class="drop on"' : row.droppable ? ' class="drop"' : "";
+    // `gone` is a permanent fade. It must not reuse `drop on`: the driver strips
+    // `on` from every .drop each step, which left these rows at full opacity.
+    const cls = row.faded ? ' class="gone"' : row.droppable ? ' class="drop"' : "";
     const el = row.el ? ` data-el="${row.el}"` : "";
     parts.push(`<g${el}${cls}>${inner}</g>`);
   });
+  parts.push(...rings); // drawn last so a neighbor row's border cannot cover them
   return { svg: parts.join(""), width: tw, height: 26 + rows.length * RH };
 }
 
-const check = (v) => ({ t: v ? "✓" : "✗", cls: v ? "d-ok" : "d-no" });
+export const check = (v) => ({ t: v ? "✓" : "✗", cls: v ? "d-ok" : "d-no" });
 
 // ===========================================================================
 // 1. Clause execution order
@@ -148,6 +157,8 @@ const clauseSvg = [
 ].join("");
 
 export const clauseOrderAct = {
+  id: "scrolly-clause-order",
+  thumb: "st-group", // gallery still: the final LIMIT stage is a single row
   title: "The order SQL runs the clauses",
   call: "SELECT state, COUNT(*) AS n\n  FROM towns\n WHERE pop > 150000\n GROUP BY state\nHAVING COUNT(*) >= 2\n ORDER BY n DESC\n LIMIT 1;",
   viewBox: `0 0 ${HERO_W} 470`,
@@ -217,6 +228,8 @@ const groupSvg = [
 ].join("");
 
 export const groupByAct = {
+  id: "scrolly-group-by",
+  thumb: "rawcolor",
   title: "GROUP BY: many rows collapse to one per group",
   call: "SELECT state, SUM(amount)\n  FROM sales\n GROUP BY state\nHAVING SUM(amount) >= 100;",
   viewBox: `0 0 ${HERO_W} 400`,
@@ -289,6 +302,7 @@ const whereSvg = [
 ].join("");
 
 export const wherePrecedenceAct = {
+  id: "scrolly-where-precedence",
   title: "AND, OR, and what the parentheses change",
   call: "-- A: pop>100000 AND region='OR' OR coastal\n-- B: pop>100000 AND (region='OR' OR coastal)",
   viewBox: `0 0 ${HERO_W} 340`,

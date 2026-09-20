@@ -5,6 +5,8 @@ title: Aggregating Techniques
 import SqlExercise from "../../components/SqlExercise.astro";
 import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
+import Scrolly from "../../components/Scrolly.astro";
+import { aggregateAct, subqueryAct } from "../../lib/scrolly-diagrams-more.mjs";
 
 # Aggregating Techniques
 
@@ -13,6 +15,8 @@ import SchemaReference from "../../components/SchemaReference.astro";
 ## Numerical summaries
 
 Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summary statistics.
+
+<Scrolly act={aggregateAct} swap />
 
 ### Aggregating 1: What's the average town size in each state?
 
@@ -39,6 +43,10 @@ Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summ
   FROM pnw_towns
  GROUP BY state;`}
 />
+
+`MIN` returns a number, not the row it came from. The next two examples recover the row by nesting one query inside another. Scroll to see the order the two queries run in.
+
+<Scrolly act={subqueryAct} swap />
 
 ### Aggregating 3: Find the smallest incorporated town
 

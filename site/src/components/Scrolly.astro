@@ -11,6 +11,7 @@ interface Step {
   html: string;
 }
 interface Act {
+  id: string; // anchor, so the gallery at /scrollytelling/ can deep-link here
   title: string;
   call: string;
   viewBox: string;
@@ -23,7 +24,7 @@ interface Act {
 const { act, swap = false } = Astro.props as { act: Act; swap?: boolean };
 ---
 
-<section class:list={["scrolly not-prose", swap && "scrolly-swap"]} aria-label={act.title}>
+<section id={act.id} class:list={["scrolly not-prose", swap && "scrolly-swap"]} aria-label={act.title}>
   <div class="scrolly-head">
     <h4 class="scrolly-title">{act.title}</h4>
     <pre class="scrolly-call"><code>{act.call}</code></pre>

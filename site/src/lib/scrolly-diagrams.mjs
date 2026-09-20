@@ -203,6 +203,7 @@ const innerPanel = joinPanel({
 });
 
 export const innerAct = {
+  id: "scrolly-inner-join",
   title: "INNER JOIN: keep only matched rows",
   call: "SELECT * FROM left_table AS l INNER JOIN right_table AS r ON l.id = r.id;",
   viewBox: innerPanel.viewBox,
@@ -243,6 +244,7 @@ const leftPanel = joinPanel({
 });
 
 export const leftAct = {
+  id: "scrolly-left-join",
   title: "LEFT JOIN: keep every left row",
   call: "SELECT * FROM left_table AS l LEFT JOIN right_table AS r ON l.id = r.id;",
   viewBox: leftPanel.viewBox,
@@ -284,6 +286,7 @@ const multiPanel = joinPanel({
 });
 
 export const multiAct = {
+  id: "scrolly-one-to-many",
   title: "One row, many matches: the join multiplies",
   call: "-- right_dup has key 1 twice\nSELECT * FROM left_table AS l LEFT JOIN right_dup AS r ON l.id = r.id;",
   viewBox: multiPanel.viewBox,
@@ -320,6 +323,7 @@ const antiPanel = joinPanel({
 });
 
 export const antiAct = {
+  id: "scrolly-anti-join",
   title: "Anti-join: keep only the left rows with no match",
   call: "SELECT l.* FROM left_table AS l\n LEFT JOIN right_table AS r ON l.id = r.id\n WHERE r.id IS NULL;",
   viewBox: antiPanel.viewBox,

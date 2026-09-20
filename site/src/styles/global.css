@@ -467,6 +467,7 @@
    --------------------------------------------------------------------------- */
 .scrolly {
   margin: 2rem 0;
+  scroll-margin-top: 4.5rem; /* deep links from the gallery land below the sticky header */
 }
 .scrolly-head {
   margin-bottom: 0.5rem;
@@ -627,6 +628,11 @@
   font: 500 19px -apple-system, "Segoe UI", Roboto, sans-serif;
   fill: #111;
 }
+/* Text on a dark chip asks for white with a fill attribute, but any CSS rule
+   (like .d-cell above) outranks an SVG presentation attribute, so restate it. */
+.scrolly-stage text[fill="#fff"] {
+  fill: #fff;
+}
 .scrolly-stage .d-nan {
   font: 600 14px ui-monospace, Menlo, Consolas, monospace;
   fill: #f2f2f2;
@@ -638,6 +644,31 @@
 .scrolly-stage .d-no {
   font: 700 20px -apple-system, "Segoe UI", Roboto, sans-serif;
   fill: #c0261a;
+}
+.scrolly-stage .d-unk {
+  font: 700 17px -apple-system, "Segoe UI", Roboto, sans-serif;
+  fill: #5f6b76;
+}
+.scrolly-stage .d-skip {
+  font: 500 14px -apple-system, "Segoe UI", Roboto, sans-serif;
+  fill: #6b7783;
+}
+.scrolly-stage .d-note {
+  font: italic 500 16px -apple-system, "Segoe UI", Roboto, sans-serif;
+  fill: #33495b;
+}
+.scrolly-stage .d-mono {
+  font: 600 19px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  fill: #111;
+}
+.scrolly-stage .d-total {
+  font: 700 22px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  fill: #fff;
+}
+/* A row a clause has removed for good. Deliberately not `.drop`: the driver
+   clears `.on` from every .drop on each step. */
+.scrolly-stage .gone {
+  opacity: 0.18;
 }
 
 /* Reveal state machine (toggled by src/lib/scrolly.ts) */
@@ -677,6 +708,24 @@
 }
 .scrolly-stage .scan.on {
   opacity: 1;
+}
+
+/* Gallery (src/pages/scrollytelling): a still preview of each finished diagram.
+   Reuses .scrolly-stage for the SVG typography, without the sticky viewport. */
+.scrolly-stage.scrolly-thumb {
+  position: static;
+  height: 13rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+.scrolly-stage.scrolly-thumb svg {
+  max-height: 12rem;
+}
+.scrolly-thumb .lyr,
+.scrolly-thumb .drop,
+.scrolly-thumb .arrow,
+.scrolly-thumb .arrowhead {
+  transition: none !important;
 }
 
 @media (max-width: 760px) {
@@ -723,7 +772,8 @@
   .scrolly-stage .scan {
     display: none;
   }
-  .scrolly-stage .drop {
+  .scrolly-stage .drop,
+  .scrolly-stage .gone {
     opacity: 0.3 !important;
   }
   /* Swap-style acts stack layers at one spot; print only the final layer so

@@ -1,0 +1,102 @@
+---
+// Gallery of every scroll-driven diagram, with a deep link to each. The list
+// comes from src/lib/scrolly-index.mjs. Each card shows the finished diagram as
+// a still (the act's `thumb` tokens, or its last step) and links to the anchor
+// Scrolly.astro puts on the diagram's <section>.
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { SCROLLY_GROUPS, SCROLLY_COUNT } from "../../lib/scrolly-index.mjs";
+const base = import.meta.env.BASE_URL;
+const pageCount = SCROLLY_GROUPS.length;
+---
+<BaseLayout title="Scrollytelling">
+  <div class="prose-narrow">
+    <h1>Scrollytelling: SQL, one step at a time</h1>
+    <p>
+      A finished query shows the answer and hides the steps that produced it.
+      Each diagram here pins a small table in place and changes it as you
+      scroll, one step per card: rows fade when a clause removes them, groups
+      take a color, and a <code>NULL</code> shows up as a dark cell. Every one
+      is built around a question learners ask when a query returns something
+      they did not expect.
+    </p>
+    <p>
+      There are <strong>{SCROLLY_COUNT} diagrams</strong> across the {pageCount} Examples
+      sections. Each link below opens its diagram in place, next to the runnable
+      examples that use the same command. Use <strong>Copy link</strong> to
+      share one.
+    </p>
+  </div>
+
+  <nav aria-label="Diagram topics" class="not-prose flex flex-wrap gap-2 my-6">
+    {SCROLLY_GROUPS.map((g) => (
+      <a
+        href={`#${g.slug}`}
+        class="rounded-full border border-slate-200 dark:border-slate-800 px-3 py-1 text-sm no-underline text-slate-700 dark:text-slate-300 hover:border-brand-500 transition"
+      >
+        {g.title} <span class="text-slate-400">{g.items.length}</span>
+      </a>
+    ))}
+  </nav>
+
+  {SCROLLY_GROUPS.map((g) => (
+    <section id={g.slug} class="not-prose my-10 scroll-mt-20">
+      <h2 class="text-xl font-semibold mb-1">{g.title}</h2>
+      <p class="text-sm text-slate-500 mb-4">
+        From <a href={`${base}examples/${g.slug}`} class="underline">{g.title} Techniques</a>
+      </p>
+      <ul class="list-none p-0 grid gap-4 md:grid-cols-2">
+        {g.items.map(({ act, question }) => {
+          const href = `${base}examples/${g.slug}#${act.id}`;
+          const show = act.thumb ?? act.steps[act.steps.length - 1].show;
+          return (
+            <li class="list-none flex flex-col rounded-xl border border-slate-200 dark:border-slate-800 p-4 hover:border-brand-500 transition">
+              <a href={href} class="block no-underline" tabindex="-1" aria-hidden="true">
+                <div class="scrolly-stage scrolly-thumb" data-show={show}>
+                  <svg viewBox={act.viewBox} role="img" aria-label={`Finished diagram: ${act.title}`} set:html={act.svg}></svg>
+                </div>
+              </a>
+              <h3 class="font-semibold mt-3 mb-1 text-base leading-snug">
+                <a href={href} class="no-underline hover:underline">{act.title}</a>
+              </h3>
+              <p class="text-sm text-slate-600 dark:text-slate-400 m-0 flex-1">{question}</p>
+              <div class="flex items-center justify-between gap-3 mt-3 text-sm">
+                <span class="text-slate-400">{act.steps.length} steps</span>
+                <span class="flex items-center gap-3">
+                  <button
+                    type="button"
+                    data-copy-link={href}
+                    class="rounded border border-slate-200 dark:border-slate-700 px-2 py-0.5 text-slate-600 dark:text-slate-300 hover:border-brand-500 cursor-pointer"
+                  >
+                    Copy link
+                  </button>
+                  <a href={href} class="font-medium no-underline hover:underline">Open &rarr;</a>
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  ))}
+
+  <script>
+    import { applyShow } from "../../lib/scrolly";
+
+    document.querySelectorAll<HTMLElement>(".scrolly-thumb").forEach((stage) => {
+      applyShow(stage, (stage.dataset.show || "").split(",").filter(Boolean));
+    });
+
+    document.querySelectorAll<HTMLButtonElement>("[data-copy-link]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const url = new URL(btn.dataset.copyLink!, window.location.origin).href;
+        try {
+          await navigator.clipboard.writeText(url);
+          btn.textContent = "Copied";
+        } catch {
+          btn.textContent = "Copy failed";
+        }
+        window.setTimeout(() => (btn.textContent = "Copy link"), 1600);
+      });
+    });
+  </script>
+</BaseLayout>

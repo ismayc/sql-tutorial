@@ -7,6 +7,7 @@ import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
 import Scrolly from "../../components/Scrolly.astro";
 import { innerAct, leftAct, multiAct, antiAct } from "../../lib/scrolly-diagrams.mjs";
+import { countJoinAct } from "../../lib/scrolly-diagrams-more.mjs";
 
 # Joining Techniques
 
@@ -131,6 +132,10 @@ One thing to watch: if the right table has more than one row for a key, a matche
  ORDER BY is_county_seat DESC, t.population_2020_census DESC;`}
   requireOrdering
 />
+
+The next example counts with `COUNT(t.town)`, not `COUNT(*)`. After a `LEFT JOIN` those two give different answers for a county with no towns. Scroll to see why.
+
+<Scrolly act={countJoinAct} swap />
 
 ### Joining 6: Count towns per county (including counties with zero towns)
 

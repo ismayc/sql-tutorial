@@ -5,12 +5,18 @@ title: Transforming Techniques
 import SqlExercise from "../../components/SqlExercise.astro";
 import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
+import Scrolly from "../../components/Scrolly.astro";
+import { caseWhenAct, integerDivisionAct } from "../../lib/scrolly-diagrams-more.mjs";
 
 # Transforming Techniques
 
 <SchemaReference db="pnw_database.sqlite" />
 
 Transformations create new calculated columns or categorize data based on conditions.
+
+`CASE WHEN` tests run in the order you write them, and the first one that passes decides the answer. Scroll through four towns to see why that order matters.
+
+<Scrolly act={caseWhenAct} swap />
 
 ### Transforming 1: Classify towns by size category
 
@@ -32,6 +38,10 @@ Transformations create new calculated columns or categorize data based on condit
  ORDER BY population_2020_census DESC;`}
   requireOrdering
 />
+
+The next solution multiplies by `100.0` instead of `100`. Scroll to see what that decimal point changes.
+
+<Scrolly act={integerDivisionAct} />
 
 ### Transforming 2: Calculate population change from 2010 to 2020
 

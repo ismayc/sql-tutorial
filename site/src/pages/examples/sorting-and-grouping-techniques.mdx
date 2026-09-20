@@ -7,6 +7,7 @@ import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
 import Scrolly from "../../components/Scrolly.astro";
 import { clauseOrderAct, groupByAct } from "../../lib/scrolly-diagrams-sql.mjs";
+import { orderByAct } from "../../lib/scrolly-diagrams-more.mjs";
 
 # Sorting and Grouping Techniques
 
@@ -45,6 +46,10 @@ ORDER BY controls how results are displayed. This is crucial for reports and ide
  ORDER BY population_2020_census DESC;`}
   requireOrdering
 />
+
+With more than one column in `ORDER BY`, the second column only matters where the first one ties. Scroll to watch the same six rows re-sort.
+
+<Scrolly act={orderByAct} swap />
 
 ### Sorting 3: Sort by multiple columns (state, then population within state)
 
