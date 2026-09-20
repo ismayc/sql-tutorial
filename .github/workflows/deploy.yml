@@ -16,15 +16,18 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest: that label moves to Ubuntu 26.04 starting
+    # October 19, 2026, and `playwright install --with-deps` installs apt
+    # packages by distro release. Move this on purpose, after a green run there.
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: ./site
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
           cache-dependency-path: site/package-lock.json
       - name: Install dependencies
@@ -52,25 +55,25 @@ jobs:
           npm run test:ci
       - name: Upload feedback report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: feedback-report
           path: |
             site/fixtures/feedback-tests.jsonl
             site/fixtures/feedback-tests.md
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
         with:
           enablement: true
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site/dist
 
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
