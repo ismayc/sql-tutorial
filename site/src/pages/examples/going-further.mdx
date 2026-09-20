@@ -1,0 +1,113 @@
+---
+layout: ../../layouts/BaseLayout.astro
+title: Going Further
+---
+import SqlExercise from "../../components/SqlExercise.astro";
+import Hint from "../../components/Hint.astro";
+import SchemaReference from "../../components/SchemaReference.astro";
+import Scrolly from "../../components/Scrolly.astro";
+import { subqueryAct, countJoinAct } from "../../lib/scrolly-diagrams-more.mjs";
+
+# Going Further
+
+<SchemaReference db="pnw_database.sqlite" />
+
+These examples go one step past a first session. Each one needs an idea the main sections do not teach: a query nested inside another query, or a join combined with grouping. Come back to them once the six main sections feel comfortable.
+
+## Subqueries
+
+`MIN` and `MAX` return a number, not the row that number came from. To get the row, compute the number in an inner query and compare against it in the outer one. Scroll to see the order the two queries run in.
+
+<Scrolly act={subqueryAct} swap />
+
+### Going Further 1: Find the smallest incorporated town
+
+*Scenario: A journalist wants to profile the smallest town in the Pacific Northwest. Show the town with its state and population_2020_census.*
+
+<SqlExercise
+  id="example29"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);`}
+/>
+
+### Going Further 2: Find the largest city
+
+*Scenario: Identify the region's largest metropolitan center. Show the town with its state and population_2020_census.*
+
+<SqlExercise
+  id="example30"
+  db="pnw_database.sqlite"
+  solution={`SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);`}
+/>
+
+### Going Further 3: Find the actual earliest and newest counties
+
+*Scenario: Get the county names, not just the years. Show each county with its state and year_established.*
+
+<SqlExercise
+  id="example33"
+  db="pnw_database.sqlite"
+  solution={`SELECT county, state, year_established
+  FROM pnw_counties
+ WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)
+    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)
+ ORDER BY year_established;`}
+  requireOrdering
+/>
+
+## Joins combined with grouping
+
+Real-world queries often combine joins with filtering, grouping, and transformations. The first example counts with `COUNT(t.town)`, not `COUNT(*)`. After a `LEFT JOIN` those two give different answers for a county with no towns. Scroll to see why.
+
+<Scrolly act={countJoinAct} swap />
+
+### Going Further 4: Count towns per county (including counties with zero towns)
+
+*Scenario: Some small counties might have no incorporated towns in our database. LEFT JOIN preserves them. Show county, state, the county's population as county_pop, the town count as num_towns, and the summed town population as total_town_pop (0 when a county has no towns).*
+
+<SqlExercise
+  id="example45c"
+  db="pnw_database.sqlite"
+  solution={`SELECT c.county,
+       c.state,
+       c.population_2022 AS county_pop,
+       COUNT(t.town) AS num_towns,
+       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t
+    ON c.county_id = t.primary_county_id
+ GROUP BY c.county, c.state, c.population_2022
+ ORDER BY num_towns DESC;`}
+  requireOrdering
+/>
+
+### Going Further 5: Comprehensive county analysis
+
+*Scenario: Create a county dashboard showing each county and state with its year_established, an era of 'Pioneer' (established before 1860), 'Settlement' (before 1900), or 'Modern', the county's population as county_pop, the town count as num_towns, the summed town population as urban_pop, and the population of each county's largest town as largest_town_pop.*
+
+<SqlExercise
+  id="example48"
+  db="pnw_database.sqlite"
+  solution={`SELECT c.county,
+       c.state,
+       c.year_established,
+       CASE 
+           WHEN c.year_established < 1860 THEN 'Pioneer'
+           WHEN c.year_established < 1900 THEN 'Settlement'
+           ELSE 'Modern'
+       END AS era,
+       c.population_2022 AS county_pop,
+       COUNT(t.town) AS num_towns,
+       COALESCE(SUM(t.population_2020_census), 0) AS urban_pop,
+       MAX(t.population_2020_census) AS largest_town_pop
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t
+    ON c.county_id = t.primary_county_id
+ GROUP BY c.county, c.state, c.year_established, c.population_2022
+ ORDER BY c.population_2022 DESC;`}
+  requireOrdering
+/>

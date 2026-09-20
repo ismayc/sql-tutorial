@@ -120,42 +120,51 @@ export const selectColumnsAct = {
 // ===========================================================================
 // 2. DISTINCT
 // ===========================================================================
+// One table for the whole act, so the two-column step re-reads rows the learner
+// has already watched. States repeat at rows 2, 4, and 5; (state, county) pairs
+// repeat only at rows 2 and 4, so Albany's new pair survives in step 5.
 const DIS = [
-  ["Portland", "OR"],
-  ["Seattle", "WA"],
-  ["Salem", "OR"],
-  ["Boise", "ID"],
-  ["Tacoma", "WA"],
-  ["Eugene", "OR"],
+  ["Eugene", "OR", "Lane"],
+  ["Seattle", "WA", "King"],
+  ["Springfield", "OR", "Lane"],
+  ["Boise", "ID", "Ada"],
+  ["Bellevue", "WA", "King"],
+  ["Albany", "OR", "Linn"],
 ];
-const DIS_REPEAT = DIS.map(([, s], i) => DIS.findIndex(([, s2]) => s2 === s) !== i);
-const DIS_COLS = [
-  { w: 150, label: "town", dim: true },
-  { w: 110, label: "state" },
-];
+const firstAt = (key) => (row, i) => DIS.findIndex((r) => key(r) === key(row)) !== i;
+const DIS_REPEAT = DIS.map(firstAt((r) => r[1]));
+const DIS_PAIR_REPEAT = DIS.map(firstAt((r) => `${r[1]}|${r[2]}`));
+const DIS_W = [150, 100, 120];
 const DIS_Y = 70;
 const stateCell = (s, colored) => ({ t: s, fill: colored ? GC[s] : "#fff", white: colored && s === "ID" });
+const DIS_PAIR_FILL = { "OR|Lane": "#EFD46A", "WA|King": "#6FB5DF", "ID|Ada": "#C0562F", "OR|Linn": "#A5E07E" };
 
+// county is dimmed while only `state` is selected, and lit for the pair step.
 function disStage(el, ttl, colored, fadeRepeats) {
-  const rows = DIS.map(([t, s], i) => ({
+  const cols = [
+    { w: DIS_W[0], label: "town", dim: true },
+    { w: DIS_W[1], label: "state" },
+    { w: DIS_W[2], label: "county", dim: true },
+  ];
+  const rows = DIS.map(([t, s, c], i) => ({
     faded: fadeRepeats && DIS_REPEAT[i],
-    cells: [{ t, dim: true }, stateCell(s, colored)],
+    cells: [{ t, dim: true }, stateCell(s, colored), { t: c, dim: true }],
   }));
-  return lyr(el, grid(cx0(tw(DIS_COLS)), DIS_Y, ttl, DIS_COLS, rows).svg);
+  return lyr(el, grid(cx0(tw(cols)), DIS_Y, ttl, cols, rows).svg);
 }
-
-const DIS_PAIR_COLORS = { "OR|Lane": "#EFD46A", "OR|Linn": "#A5E07E", "WA|King": "#6FB5DF" };
-const DIS_PAIRS = [
-  ["OR", "Lane", false],
-  ["WA", "King", false],
-  ["OR", "Lane", true],
-  ["OR", "Linn", false],
-  ["WA", "King", true],
-];
-const DIS_PAIR_COLS = [
-  { w: 110, label: "state" },
-  { w: 130, label: "county" },
-];
+function disPairStage(el, ttl) {
+  const cols = [
+    { w: DIS_W[0], label: "town", dim: true },
+    { w: DIS_W[1], label: "state" },
+    { w: DIS_W[2], label: "county" },
+  ];
+  const rows = DIS.map(([t, s, c], i) => {
+    const fill = DIS_PAIR_FILL[`${s}|${c}`];
+    const white = s === "ID";
+    return { faded: DIS_PAIR_REPEAT[i], cells: [{ t, dim: true }, { t: s, fill, white }, { t: c, fill, white }] };
+  });
+  return lyr(el, grid(cx0(tw(cols)), DIS_Y, ttl, cols, rows).svg);
+}
 
 export const distinctAct = {
   id: "scrolly-distinct",
@@ -175,26 +184,14 @@ export const distinctAct = {
         { cells: [stateCell("ID", true)] },
       ]).svg
     ),
-    lyr(
-      "dis-pair",
-      grid(
-        cx0(tw(DIS_PAIR_COLS)),
-        DIS_Y,
-        "SELECT DISTINCT state, county",
-        DIS_PAIR_COLS,
-        DIS_PAIRS.map(([s, c, rep]) => {
-          const fill = DIS_PAIR_COLORS[`${s}|${c}`];
-          return { faded: rep, cells: [{ t: s, fill }, { t: c, fill }] };
-        })
-      ).svg
-    ),
+    disPairStage("dis-pair", "SELECT DISTINCT state, county"),
   ].join(""),
   steps: [
-    { beat: "Step 1 · without DISTINCT", show: "dis-all", html: "<code>SELECT state</code> returns one value <b>per row</b>: six towns, six states, with <code>OR</code> three times and <code>WA</code> twice." },
+    { beat: "Step 1 · without DISTINCT", show: "dis-all", html: "<code>SELECT state</code> returns one value <b>per row</b>: six towns, six states, with <code>OR</code> three times and <code>WA</code> twice. The faint columns are in the table but not in this <code>SELECT</code>." },
     { beat: "Step 2 · spot the repeats", show: "dis-color", html: "Give each different value its own color. There are only <b>three</b> colors on the table: <b>OR</b>, <b>WA</b>, and <b>ID</b>." },
     { beat: "Step 3 · DISTINCT removes repeats", show: "dis-mark", html: "<code>DISTINCT</code> keeps one row for each different value and discards the rest. The faded rows are the repeats." },
     { beat: "Step 4 · the result", show: "dis-res", html: "Six rows in, <b>three rows out</b>: the list of states that appear at all. Use it to learn what categories a column holds before you filter or group on it." },
-    { beat: "Step 5 · with two columns", show: "dis-pair", html: "<code>DISTINCT</code> applies to the <b>whole row</b>, not the first column. <code>OR, Lane</code> and <code>OR, Linn</code> both survive because the pair differs. Only exact duplicate pairs are removed." },
+    { beat: "Step 5 · with two columns", show: "dis-pair", html: "Same six rows, now selecting <code>state, county</code>. <code>DISTINCT</code> compares the <b>whole row</b>, not the first column. Springfield repeats Eugene's <code>OR, Lane</code> and is removed, but Albany's <code>OR, Linn</code> is a new pair, so it <b>stays</b>. Four rows out this time, not three." },
   ],
 };
 
@@ -554,12 +551,14 @@ export const aggregateAct = {
 // ===========================================================================
 // 9. A subquery in WHERE
 // ===========================================================================
+// Granite and Greenhorn tie for the minimum on purpose: `= (subquery)` returns
+// every tied row, which `ORDER BY pop LIMIT 1` would not.
 const SQ = [
   ["Portland", "OR", 650000],
   ["Seattle", "WA", 740000],
-  ["Astoria", "OR", 10000],
   ["Granite", "OR", 30],
-  ["Spokane", "WA", 230000],
+  ["Astoria", "OR", 10000],
+  ["Greenhorn", "OR", 30],
 ];
 const SQ_COLS = [
   { w: 140, label: "town" },
@@ -570,7 +569,8 @@ const SQ_Y = 64;
 const SQ_X0 = 90;
 const SQ_SX = SQ_X0 + tw(SQ_COLS) + 24;
 const SQ_POP_X = SQ_X0 + SQ_COLS[0].w + SQ_COLS[1].w;
-const SQ_MIN_ROW = 3;
+const SQ_MIN = Math.min(...SQ.map((r) => r[2]));
+const SQ_MIN_ROWS = SQ.map((r, i) => (r[2] === SQ_MIN ? i : -1)).filter((i) => i >= 0);
 const SQ_RES_Y = rowY(SQ_Y, SQ.length) + 56;
 
 const sqInnerBox = grid(SQ_SX + 20, SQ_Y + 60, "inner query result", [{ w: 180, label: "MIN(pop)" }], [{ cells: [{ t: "30" }] }]).svg;
@@ -579,10 +579,10 @@ export const subqueryAct = {
   id: "scrolly-subquery",
   title: "A subquery runs first, then the outer query uses its answer",
   call: "SELECT town, state, pop\n  FROM towns\n WHERE pop = (SELECT MIN(pop) FROM towns);",
-  viewBox: `0 0 ${HERO_W} ${SQ_RES_Y + 26 + RH + 24}`,
+  viewBox: `0 0 ${HERO_W} ${SQ_RES_Y + 26 + SQ_MIN_ROWS.length * RH + 24}`,
   svg: [
     `<g data-el="sq-base">${grid(SQ_X0, SQ_Y, "", SQ_COLS, SQ.map(([t, s, p]) => ({ cells: [{ t }, { t: s }, { t: String(p) }] }))).svg}</g>`,
-    lyr("sq-inner", title("first: SELECT MIN(pop) FROM towns") + sqInnerBox + ring(SQ_POP_X, rowY(SQ_Y, SQ_MIN_ROW), SQ_COLS[2].w)),
+    lyr("sq-inner", title("first: SELECT MIN(pop) FROM towns") + sqInnerBox + SQ_MIN_ROWS.map((i) => ring(SQ_POP_X, rowY(SQ_Y, i), SQ_COLS[2].w)).join("")),
     lyr(
       "sq-sub",
       title("the parentheses are replaced by 30") +
@@ -590,18 +590,18 @@ export const subqueryAct = {
         note(SQ_SX + 110, SQ_Y + 60 + 26 + RH + 36, "so the outer query reads") +
         `<text x="${SQ_SX + 110}" y="${SQ_Y + 60 + 26 + RH + 68}" class="d-rttl" text-anchor="middle">WHERE pop = 30</text>`
     ),
-    lyr("sq-outer", title("then: WHERE pop = 30, row by row") + sideCol(SQ_SX, SQ_Y, 150, "pop = 30 ?", SQ.map(([, , p]) => keepDrop(p === 30)))),
+    lyr("sq-outer", title("then: WHERE pop = 30, row by row") + sideCol(SQ_SX, SQ_Y, 150, "pop = 30 ?", SQ.map(([, , p]) => keepDrop(p === SQ_MIN)))),
     lyr(
       "sq-res",
-      grid(SQ_X0, SQ_RES_Y, "result", SQ_COLS, [{ cells: [{ t: "Granite" }, { t: "OR" }, { t: "30" }] }]).svg
+      grid(SQ_X0, SQ_RES_Y, "result", SQ_COLS, SQ_MIN_ROWS.map((i) => ({ cells: SQ[i].map((v) => ({ t: String(v) })) }))).svg
     ),
   ].join(""),
   steps: [
     { beat: "Step 1 · two questions in one", show: "", html: "\"Which town is the smallest?\" hides two questions: what <b>is</b> the smallest population, and <b>which row</b> has it. <code>MIN(pop)</code> alone answers the first and loses the town's name." },
-    { beat: "Step 2 · the inner query runs first", show: "sq-inner", html: "The <code>SELECT</code> inside the parentheses runs <b>on its own, first</b>. It scans every <code>pop</code> and returns a single value: <b>30</b>." },
+    { beat: "Step 2 · the inner query runs first", show: "sq-inner", html: "The <code>SELECT</code> inside the parentheses runs <b>on its own, first</b>. It scans every <code>pop</code> and returns a single value: <b>30</b>. Two towns hold that value (ringed in blue), but <code>MIN</code> still returns just the one number." },
     { beat: "Step 3 · its answer is dropped in", show: "sq-sub", html: "That value takes the place of the parentheses. From here on, the outer query behaves exactly as if you had typed <code>WHERE pop = 30</code>, except that you never had to know the number." },
-    { beat: "Step 4 · the outer query filters", show: "sq-outer", html: "Now an ordinary <code>WHERE</code> checks each row against 30. Only <b>Granite</b> passes." },
-    { beat: "Step 5 · the whole row comes back", show: "sq-outer,sq-res", html: "The result has the <b>town, state, and population</b>, not only the number. Writing <code>WHERE pop = MIN(pop)</code> is an error: <code>WHERE</code> tests one row at a time, before any aggregate exists. The subquery computes the aggregate separately and hands back a plain value." },
+    { beat: "Step 4 · the outer query filters", show: "sq-outer", html: "Now an ordinary <code>WHERE</code> checks each row against 30. <b>Granite</b> and <b>Greenhorn</b> both pass." },
+    { beat: "Step 5 · the whole row comes back", show: "sq-outer,sq-res", html: "The result has the <b>town, state, and population</b>, not only the number, and it has <b>both</b> tied towns. <code>ORDER BY pop LIMIT 1</code> would have returned only one of them. Writing <code>WHERE pop = MIN(pop)</code> is an error: <code>WHERE</code> tests one row at a time, before any aggregate exists. The subquery computes the aggregate separately and hands back a plain value." },
   ],
 };
 
@@ -691,27 +691,31 @@ export const caseWhenAct = {
 // ===========================================================================
 // 11. Computed columns and integer division
 // ===========================================================================
+// Ridgefield more than doubles, so integer division gives 1 (not 1.5). Without
+// it every row is 0, and "division returns zero" is the wrong lesson: the rule
+// is that the fraction is discarded.
 const ID_ROWS = [
   ["Sisters", 1000, 1150],
   ["Joseph", 1000, 1234],
   ["Fossil", 1000, 950],
+  ["Ridgefield", 1000, 2500],
 ];
 const ID_COLS = [
-  { w: 110, label: "town" },
+  { w: 120, label: "town" },
   { w: 100, label: "pop_2010" },
   { w: 100, label: "pop_2020" },
 ];
 const ID_Y = 70;
-const ID_X0 = 14;
+const ID_X0 = 12;
 const ID_CX = ID_X0 + tw(ID_COLS) + 12;
-const ID_W = [110, 160, 205];
+const ID_W = [110, 160, 195];
 const pct = (a, b) => (((b - a) * 100) / a).toFixed(1);
 
 export const integerDivisionAct = {
   id: "scrolly-integer-division",
   title: "A computed column, and why the query says 100.0",
   call: "SELECT town,\n       pop_2020 - pop_2010 AS change,\n       ROUND((pop_2020 - pop_2010) * 100.0 / pop_2010, 1) AS pct_change\n  FROM towns;",
-  viewBox: `0 0 ${HERO_W} 260`,
+  viewBox: `0 0 ${HERO_W} 305`,
   svg: [
     `<g data-el="id-base">${grid(ID_X0, ID_Y, "towns", ID_COLS, ID_ROWS.map(([t, a, b]) => ({ cells: [{ t }, { t: String(a) }, { t: String(b) }] }))).svg}</g>`,
     lyr("id-change", sideCol(ID_CX, ID_Y, ID_W[0], "change", ID_ROWS.map(([, a, b]) => ({ t: String(b - a) })))),
@@ -721,8 +725,8 @@ export const integerDivisionAct = {
   steps: [
     { beat: "Step 1 · two census columns", show: "", html: "Each town has a 2010 and a 2020 population. The table stores no growth figure, so the query has to compute one." },
     { beat: "Step 2 · arithmetic runs per row", show: "id-change", html: "<code>pop_2020 - pop_2010</code> is worked out <b>once for every row</b>. The new <code>change</code> column exists only in the result, and the table is not modified." },
-    { beat: "Step 3 · the division trap", show: "id-change,id-int", html: "Dividing one whole number by another gives a <b>whole number</b> in SQLite and several other databases: the fraction is thrown away. 150 / 1000 becomes <b>0</b>, and so does every other row. There is no error, only a column of zeros." },
-    { beat: "Step 4 · 100.0 fixes it", show: "id-change,id-int,id-real", html: "Multiply by <code>100.0</code> <b>before</b> dividing. The decimal point makes the whole calculation use real numbers, giving <b>15.0</b>, <b>23.4</b>, and <b>-5.0</b>. <code>ROUND(..., 1)</code> then trims it for display." },
+    { beat: "Step 3 · the division trap", show: "id-change,id-int", html: "Dividing one whole number by another gives a <b>whole number</b> in SQLite and several other databases: the fraction is thrown away. 150 / 1000 becomes <b>0</b>, and Ridgefield's 1500 / 1000 becomes <b>1</b>, not 1.5. There is no error message, only wrong numbers." },
+    { beat: "Step 4 · 100.0 fixes it", show: "id-change,id-int,id-real", html: "Multiply by <code>100.0</code> <b>before</b> dividing. The decimal point makes the whole calculation use real numbers, giving <b>15.0</b>, <b>23.4</b>, <b>-5.0</b>, and <b>150.0</b>. <code>ROUND(..., 1)</code> then trims it for display." },
   ],
 };
 

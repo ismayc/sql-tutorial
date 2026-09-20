@@ -4,6 +4,7 @@
 // on its <section>). Add a new act here when you add it to a page.
 //
 // `question` is the learner's confusion the diagram answers, shown on the card.
+// `pageTitle` names the page when it is not "<title> Techniques".
 
 import { innerAct, leftAct, multiAct, antiAct } from "./scrolly-diagrams.mjs";
 import { clauseOrderAct, groupByAct, wherePrecedenceAct } from "./scrolly-diagrams-sql.mjs";
@@ -47,7 +48,6 @@ export const SCROLLY_GROUPS = [
     title: "Aggregating",
     items: [
       { act: aggregateAct, question: "What do SUM, AVG, MIN, and MAX do with a NULL?" },
-      { act: subqueryAct, question: "How do I get the row that holds the minimum, not only the number?" },
     ],
   },
   {
@@ -74,8 +74,17 @@ export const SCROLLY_GROUPS = [
       { act: innerAct, question: "Which rows survive an INNER JOIN?" },
       { act: leftAct, question: "Where do the NULLs in a LEFT JOIN come from?" },
       { act: multiAct, question: "Why did my row count go up after a join?" },
-      { act: countJoinAct, question: "Why does a county with no towns show a count of 1?" },
       { act: antiAct, question: "How do I find the rows with no match?" },
+    ],
+  },
+  {
+    // Beyond a first session: not presented live, kept for learners who want more.
+    slug: "going-further",
+    title: "Going Further",
+    pageTitle: "Going Further",
+    items: [
+      { act: subqueryAct, question: "How do I get the row that holds the minimum, not only the number?" },
+      { act: countJoinAct, question: "Why does a county with no towns show a count of 1?" },
     ],
   },
 ];

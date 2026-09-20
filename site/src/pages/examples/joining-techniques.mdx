@@ -7,7 +7,6 @@ import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
 import Scrolly from "../../components/Scrolly.astro";
 import { innerAct, leftAct, multiAct, antiAct } from "../../lib/scrolly-diagrams.mjs";
-import { countJoinAct } from "../../lib/scrolly-diagrams-more.mjs";
 
 # Joining Techniques
 
@@ -133,37 +132,13 @@ One thing to watch: if the right table has more than one row for a key, a matche
   requireOrdering
 />
 
-The next example counts with `COUNT(t.town)`, not `COUNT(*)`. After a `LEFT JOIN` those two give different answers for a county with no towns. Scroll to see why.
-
-<Scrolly act={countJoinAct} swap />
-
-### Joining 6: Count towns per county (including counties with zero towns)
-
-*Scenario: Some small counties might have no incorporated towns in our database. LEFT JOIN preserves them. Show county, state, the county's population as county_pop, the town count as num_towns, and the summed town population as total_town_pop (0 when a county has no towns).*
-
-<SqlExercise
-  id="example45c"
-  db="pnw_database.sqlite"
-  solution={`SELECT c.county,
-       c.state,
-       c.population_2022 AS county_pop,
-       COUNT(t.town) AS num_towns,
-       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop
-  FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t
-    ON c.county_id = t.primary_county_id
- GROUP BY c.county, c.state, c.population_2022
- ORDER BY num_towns DESC;`}
-  requireOrdering
-/>
-
 ## Anti-Join
 
 An anti-join finds rows in one table that have NO match in another table. It's implemented as a LEFT JOIN with a WHERE clause checking for NULLs.
 
 <Scrolly act={antiAct} />
 
-### Joining 7: Find county seats not in our towns database
+### Joining 6: Find county seats not in our towns database
 
 *Scenario: Data quality check - which county seats are missing from our towns table? List each affected county with its state and county_seat.*
 
@@ -181,7 +156,7 @@ An anti-join finds rows in one table that have NO match in another table. It's i
   requireOrdering
 />
 
-### Joining 8: Find large towns that are NOT county seats
+### Joining 7: Find large towns that are NOT county seats
 
 *Scenario: Identify major population centers that lack county seat status. Show town, state, population_2020_census, and primary_county.*
 
@@ -201,7 +176,7 @@ An anti-join finds rows in one table that have NO match in another table. It's i
   requireOrdering
 />
 
-### Joining 9: Find counties with no towns in our database
+### Joining 8: Find counties with no towns in our database
 
 *Scenario: Which counties have zero incorporated towns listed? This might indicate missing data. Show each such county with its state, population_2022, and county_seat.*
 
@@ -220,33 +195,6 @@ An anti-join finds rows in one table that have NO match in another table. It's i
   requireOrdering
 />
 
-## Combining Multiple Techniques
+## Going further
 
-Real-world queries often combine joins with filtering, grouping, and transformations.
-
-### Joining 10: Comprehensive county analysis
-
-*Scenario: Create a county dashboard showing each county and state with its year_established, an era of 'Pioneer' (established before 1860), 'Settlement' (before 1900), or 'Modern', the county's population as county_pop, the town count as num_towns, the summed town population as urban_pop, and the population of each county's largest town as largest_town_pop.*
-
-<SqlExercise
-  id="example48"
-  db="pnw_database.sqlite"
-  solution={`SELECT c.county,
-       c.state,
-       c.year_established,
-       CASE 
-           WHEN c.year_established < 1860 THEN 'Pioneer'
-           WHEN c.year_established < 1900 THEN 'Settlement'
-           ELSE 'Modern'
-       END AS era,
-       c.population_2022 AS county_pop,
-       COUNT(t.town) AS num_towns,
-       COALESCE(SUM(t.population_2020_census), 0) AS urban_pop,
-       MAX(t.population_2020_census) AS largest_town_pop
-  FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t
-    ON c.county_id = t.primary_county_id
- GROUP BY c.county, c.state, c.year_established, c.population_2022
- ORDER BY c.population_2022 DESC;`}
-  requireOrdering
-/>
+Two more join examples combine a join with `GROUP BY`: counting towns per county (including the counties with none) and a full county dashboard. They are in <a href={`${import.meta.env.BASE_URL}examples/going-further#scrolly-count-after-left-join`}>Going Further</a>.

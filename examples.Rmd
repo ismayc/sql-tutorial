@@ -579,35 +579,7 @@ SELECT state,
  GROUP BY state;
 ```
 
-### Aggregating 3: Find the smallest incorporated town
-
-*Scenario: A journalist wants to profile the smallest town in the Pacific Northwest. Show the town with its state and population_2020_census.*
-
-```{sql example29, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here
-```
-
-```{sql example29-solution}
-SELECT town, state, population_2020_census
-  FROM pnw_towns
- WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);
-```
-
-### Aggregating 4: Find the largest city
-
-*Scenario: Identify the region's largest metropolitan center. Show the town with its state and population_2020_census.*
-
-```{sql example30, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here
-```
-
-```{sql example30-solution}
-SELECT town, state, population_2020_census
-  FROM pnw_towns
- WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);
-```
-
-### Aggregating 5: Summary statistics for county land areas
+### Aggregating 3: Summary statistics for county land areas
 
 *Scenario: Get a complete statistical overview of county sizes: the count of counties as num_counties, the smallest and largest land areas as smallest_area and largest_area, the average rounded to a whole number as avg_size, and the sum as total_area.*
 
@@ -628,7 +600,7 @@ SELECT COUNT(*) AS num_counties,
 
 MIN and MAX aren't just for measurements — they also pick out the extremes of columns like `year_established` (and they even work on text, returning alphabetically first/last values).
 
-### Aggregating 6: When were the earliest and most recent counties established?
+### Aggregating 4: When were the earliest and most recent counties established?
 
 *Scenario: Historical research on regional development. Report the earliest establishment year as earliest_year and the most recent as newest_year.*
 
@@ -642,27 +614,11 @@ SELECT MIN(year_established) AS earliest_year,
   FROM pnw_counties;
 ```
 
-### Aggregating 7: Find the actual earliest and newest counties
-
-*Scenario: Get the county names, not just the years. Show each county with its state and year_established.*
-
-```{sql example33, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here
-```
-
-```{sql example33-solution}
-SELECT county, state, year_established
-  FROM pnw_counties
- WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)
-    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)
- ORDER BY year_established;
-```
-
 ## Rounding summaries
 
 ROUND helps create cleaner, more readable output for reports and presentations.
 
-### Aggregating 8: Calculate and round population density
+### Aggregating 5: Calculate and round population density
 
 *Scenario: Create a readable density report (people per square mile). Show each town with its state, population_2020_census, land_area_sq_mi, and the density rounded to 1 decimal as people_per_sq_mile.*
 
@@ -681,7 +637,7 @@ SELECT town,
  ORDER BY people_per_sq_mile DESC;
 ```
 
-### Aggregating 9: Round to whole numbers for simpler reporting
+### Aggregating 6: Round to whole numbers for simpler reporting
 
 *Scenario: Executive summaries often need whole numbers. For each state, report the average town population as avg_town_pop and the average town land area as avg_town_area, both rounded to whole numbers.*
 
@@ -1132,27 +1088,6 @@ SELECT t.town,
  ORDER BY is_county_seat DESC, t.population_2020_census DESC;
 ```
 
-### Joining 6: Count towns per county (including counties with zero towns)
-
-*Scenario: Some small counties might have no incorporated towns in our database. LEFT JOIN preserves them. Show county, state, the county's population as county_pop, the town count as num_towns, and the summed town population as total_town_pop (0 when a county has no towns).*
-
-```{sql example45c, exercise=TRUE, exercise.eval=FALSE}
--- Write your SQL query here
-```
-
-```{sql example45c-solution}
-SELECT c.county,
-       c.state,
-       c.population_2022 AS county_pop,
-       COUNT(t.town) AS num_towns,
-       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop
-  FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t
-    ON c.county_id = t.primary_county_id
- GROUP BY c.county, c.state, c.population_2022
- ORDER BY num_towns DESC;
-```
-
 ## Anti-Join
 
 An anti-join finds rows in one table that have NO match in another table. It's implemented as a LEFT JOIN with a WHERE clause checking for NULLs.
@@ -1161,7 +1096,7 @@ An anti-join finds rows in one table that have NO match in another table. It's i
 
 ![](images/12-Anti join.png){ width=60% }
 
-### Joining 7: Find county seats not in our towns database
+### Joining 6: Find county seats not in our towns database
 
 *Scenario: Data quality check - which county seats are missing from our towns table? List each affected county with its state and county_seat.*
 
@@ -1180,7 +1115,7 @@ SELECT c.county,
  ORDER BY c.state, c.county;
 ```
 
-### Joining 8: Find large towns that are NOT county seats
+### Joining 7: Find large towns that are NOT county seats
 
 *Scenario: Identify major population centers that lack county seat status. Show town, state, population_2020_census, and primary_county.*
 
@@ -1201,7 +1136,7 @@ SELECT t.town,
  ORDER BY t.population_2020_census DESC;
 ```
 
-### Joining 9: Find counties with no towns in our database
+### Joining 8: Find counties with no towns in our database
 
 *Scenario: Which counties have zero incorporated towns listed? This might indicate missing data. Show each such county with its state, population_2022, and county_seat.*
 
@@ -1221,11 +1156,84 @@ SELECT c.county,
  ORDER BY c.population_2022 DESC;
 ```
 
-## Combining Multiple Techniques
+# Going Further
+
+These examples go one step past a first session. Each one needs an idea the main sections do not teach: a query nested inside another query, or a join combined with grouping. Come back to them once the six main sections feel comfortable.
+
+## Subqueries
+
+`MIN` and `MAX` return a number, not the row that number came from. To get the row, compute the number in an inner query and compare against it in the outer one.
+
+### Going Further 1: Find the smallest incorporated town
+
+*Scenario: A journalist wants to profile the smallest town in the Pacific Northwest. Show the town with its state and population_2020_census.*
+
+```{sql example29, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example29-solution}
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);
+```
+
+### Going Further 2: Find the largest city
+
+*Scenario: Identify the region's largest metropolitan center. Show the town with its state and population_2020_census.*
+
+```{sql example30, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example30-solution}
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);
+```
+
+### Going Further 3: Find the actual earliest and newest counties
+
+*Scenario: Get the county names, not just the years. Show each county with its state and year_established.*
+
+```{sql example33, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example33-solution}
+SELECT county, state, year_established
+  FROM pnw_counties
+ WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)
+    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)
+ ORDER BY year_established;
+```
+
+## Joins combined with grouping
 
 Real-world queries often combine joins with filtering, grouping, and transformations.
 
-### Joining 10: Comprehensive county analysis
+### Going Further 4: Count towns per county (including counties with zero towns)
+
+*Scenario: Some small counties might have no incorporated towns in our database. LEFT JOIN preserves them. Show county, state, the county's population as county_pop, the town count as num_towns, and the summed town population as total_town_pop (0 when a county has no towns).*
+
+```{sql example45c, exercise=TRUE, exercise.eval=FALSE}
+-- Write your SQL query here
+```
+
+```{sql example45c-solution}
+SELECT c.county,
+       c.state,
+       c.population_2022 AS county_pop,
+       COUNT(t.town) AS num_towns,
+       COALESCE(SUM(t.population_2020_census), 0) AS total_town_pop
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t
+    ON c.county_id = t.primary_county_id
+ GROUP BY c.county, c.state, c.population_2022
+ ORDER BY num_towns DESC;
+```
+
+### Going Further 5: Comprehensive county analysis
 
 *Scenario: Create a county dashboard showing each county and state with its year_established, an era of 'Pioneer' (established before 1860), 'Settlement' (before 1900), or 'Modern', the county's population as county_pop, the town count as num_towns, the summed town population as urban_pop, and the population of each county's largest town as largest_town_pop.*
 

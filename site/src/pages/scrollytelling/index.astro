@@ -21,7 +21,7 @@ const pageCount = SCROLLY_GROUPS.length;
     </p>
     <p>
       There are <strong>{SCROLLY_COUNT} diagrams</strong> across the {pageCount} Examples
-      sections. Each link below opens its diagram in place, next to the runnable
+      pages. Each link below opens its diagram in place, next to the runnable
       examples that use the same command. Use <strong>Copy link</strong> to
       share one.
     </p>
@@ -42,7 +42,7 @@ const pageCount = SCROLLY_GROUPS.length;
     <section id={g.slug} class="not-prose my-10 scroll-mt-20">
       <h2 class="text-xl font-semibold mb-1">{g.title}</h2>
       <p class="text-sm text-slate-500 mb-4">
-        From <a href={`${base}examples/${g.slug}`} class="underline">{g.title} Techniques</a>
+        From <a href={`${base}examples/${g.slug}`} class="underline">{g.pageTitle ?? `${g.title} Techniques`}</a>
       </p>
       <ul class="list-none p-0 grid gap-4 md:grid-cols-2">
         {g.items.map(({ act, question }) => {

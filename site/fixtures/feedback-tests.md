@@ -1,8 +1,8 @@
 # Feedback regression report
 
-Generated: 2026-07-16T20:53:40.105Z
+Generated: 2026-09-20T22:27:59.163Z
 Base URL: `http://localhost:4321/sql-tutorial`
-Total cases: **686** · matching expectation: **686** (100.0%) · runtime: 106.8s
+Total cases: **686** · matching expectation: **686** (100.0%) · runtime: 109.3s
 
 ### Reading this report
 
@@ -545,47 +545,7 @@ SELECT state,
 | **swapped-columns**<br>`SELECT SUM(population_2020_census) AS total_town_population,` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "state", "total_town_population"; you returned: "total_town_population", "state". |
 | **alias-dropped**<br>`SELECT state, SUM(population_2020_census) FROM pnw_towns GRO` | fail | warn | ✓ | Right number of columns, but the names don't match. Expected "state", "total_town_population"; you returned "state", "SUM(population_2020_census)". Your column SUM(population_2020_census) needs a name — alias it with AS total_town_populatio |
 
-#### `example29` — Aggregating 3: Find the smallest incorporated town
-
-**Solution:**
-```sql
-SELECT town, state, population_2020_census
-  FROM pnw_towns
- WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-lowercase**<br>`select town, state, population_2020_census from pnw_towns wh` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-whitespace**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
-| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean pnw_towns? Available tables: fips, pnw_counties, pnw_towns. |
-| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean town? |
-| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | You returned exactly 453× the expected number of rows (453 vs 1). That multiple is the classic sign of a JOIN without the right ON condition — every row is pairing with every row of the other table. Check your ON clause. |
-| **swapped-columns**<br>`SELECT state, town, population_2020_census FROM pnw_towns WH` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "town", "state", "population_2020_census"; you returned: "state", "town", "population_2020_census". |
-
-#### `example30` — Aggregating 4: Find the largest city
-
-**Solution:**
-```sql
-SELECT town, state, population_2020_census
-  FROM pnw_towns
- WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-lowercase**<br>`select town, state, population_2020_census from pnw_towns wh` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-whitespace**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
-| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean pnw_towns? Available tables: fips, pnw_counties, pnw_towns. |
-| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean town? |
-| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | You returned exactly 453× the expected number of rows (453 vs 1). That multiple is the classic sign of a JOIN without the right ON condition — every row is pairing with every row of the other table. Check your ON clause. |
-| **swapped-columns**<br>`SELECT state, town, population_2020_census FROM pnw_towns WH` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "town", "state", "population_2020_census"; you returned: "state", "town", "population_2020_census". |
-
-#### `example31` — Aggregating 5: Summary statistics for county land areas
+#### `example31` — Aggregating 3: Summary statistics for county land areas
 
 **Solution:**
 ```sql
@@ -605,7 +565,7 @@ SELECT COUNT(*) AS num_counties,
 | **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
 | **typo-table**<br>`SELECT COUNT(*) AS num_counties, MIN(land_area_sq_mi) AS sma` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean pnw_counties? Available tables: fips, pnw_counties, pnw_towns. |
 
-#### `example32` — Aggregating 6: When were the earliest and most recent counties established?
+#### `example32` — Aggregating 4: When were the earliest and most recent counties established?
 
 **Solution:**
 ```sql
@@ -624,30 +584,7 @@ SELECT MIN(year_established) AS earliest_year,
 | **swapped-columns**<br>`SELECT MAX(year_established) AS newest_year, MIN(year_establ` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "earliest_year", "newest_year"; you returned: "newest_year", "earliest_year". |
 | **alias-dropped**<br>`SELECT MIN(year_established), MAX(year_established) AS newes` | fail | warn | ✓ | Right number of columns, but the names don't match. Expected "earliest_year", "newest_year"; you returned "MIN(year_established)", "newest_year". Your column MIN(year_established) needs a name — alias it with AS earliest_year. |
 
-#### `example33` — Aggregating 7: Find the actual earliest and newest counties
-
-**Solution:**
-```sql
-SELECT county, state, year_established
-  FROM pnw_counties
- WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)
-    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)
- ORDER BY year_established;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT county, state, year_established FROM pnw_counties WHE` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-lowercase**<br>`select county, state, year_established from pnw_counties whe` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-whitespace**<br>`SELECT county, state, year_established FROM pnw_counties WHE` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
-| **typo-table**<br>`SELECT county, state, year_established FROM pnw_countiesx WH` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean pnw_counties? Available tables: fips, pnw_counties, pnw_towns. |
-| **typo-column**<br>`SELECT countyx, state, year_established FROM pnw_counties WH` | error | error | ✓ | There's no column named "countyx". Did you mean county? |
-| **missing-where**<br>`SELECT county, state, year_established FROM pnw_counties ORD` | fail | warn | ✓ | You returned exactly 15× the expected number of rows (75 vs 5). That multiple is the classic sign of a JOIN without the right ON condition — every row is pairing with every row of the other table. Check your ON clause. |
-| **missing-orderby**<br>`SELECT county, state, year_established FROM pnw_counties WHE` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
-| **swapped-columns**<br>`SELECT state, county, year_established FROM pnw_counties WHE` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "county", "state", "year_established"; you returned: "state", "county", "year_established". |
-
-#### `example34a` — Aggregating 8: Calculate and round population density
+#### `example34a` — Aggregating 5: Calculate and round population density
 
 **Solution:**
 ```sql
@@ -674,7 +611,7 @@ SELECT town,
 | **swapped-columns**<br>`SELECT state, town, population_2020_census, land_area_sq_mi,` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "town", "state", "population_2020_census", "land_area_sq_mi", "people_per_sq_mile"; you returned: "state", "town", "population_2020_census", "land_area_sq_mi", "people_per_sq_mile". |
 | **alias-dropped**<br>`SELECT town, state, population_2020_census, land_area_sq_mi,` | fail | error | ✓ | There's no column named "people_per_sq_mile". |
 
-#### `example34b` — Aggregating 9: Round to whole numbers for simpler reporting
+#### `example34b` — Aggregating 6: Round to whole numbers for simpler reporting
 
 **Solution:**
 ```sql
@@ -1192,7 +1129,156 @@ SELECT t.town,
 | **swapped-columns**<br>`SELECT t.state, t.town, t.population_2020_census, CASE WHEN ` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "town", "state", "population_2020_census", "is_county_seat", "seat_of_county"; you returned: "state", "town", "population_2020_census", "is_county_seat", "seat_of_county". |
 | **alias-dropped**<br>`SELECT t.town, t.state, t.population_2020_census, CASE WHEN ` | fail | error | ✓ | There's no column named "is_county_seat". Did you mean county_seat? |
 
-#### `example45c` — Joining 6: Count towns per county (including counties with zero towns)
+#### `example47` — Joining 6: Find county seats not in our towns database
+
+**Solution:**
+```sql
+SELECT c.county,
+       c.state,
+       c.county_seat
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t
+    ON c.county_seat_town_id = t.town_id
+ WHERE t.town_id IS NULL
+ ORDER BY c.state, c.county;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-lowercase**<br>`select c.county, c.state, c.county_seat from pnw_counties as` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-whitespace**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
+| **typo-table**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_countiesx A` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean pnw_counties? Available tables: fips, pnw_counties, pnw_towns. |
+| **typo-column**<br>`SELECT c.countyx, c.state, c.county_seat FROM pnw_counties A` | error | error | ✓ | There's no column named "countyx" in table c. Did you mean county? |
+| **missing-where**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | fail | warn | ✓ | You returned exactly 15× the expected number of rows (75 vs 5). That multiple is the classic sign of a JOIN without the right ON condition — every row is pairing with every row of the other table. Check your ON clause. |
+| **missing-orderby**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | fail | ok | ✓ | ✓ Your query matches the expected result. |
+| **join-no-on**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | fail | warn | ✓ | Your query returned 0 rows but the expected answer has 5. Your WHERE filter may be too strict, or your FROM table may be wrong. Try running without the WHERE clause to see what's in the table. |
+| **swapped-columns**<br>`SELECT c.state, c.county, c.county_seat FROM pnw_counties AS` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "county", "state", "county_seat"; you returned: "state", "county", "county_seat". |
+
+#### `example47b` — Joining 7: Find large towns that are NOT county seats
+
+**Solution:**
+```sql
+SELECT t.town,
+       t.state,
+       t.population_2020_census,
+       t.primary_county
+  FROM pnw_towns AS t
+  LEFT JOIN pnw_counties AS c
+    ON t.town_id = c.county_seat_town_id
+ WHERE c.county_id IS NULL
+   AND t.population_2020_census > 25000
+ ORDER BY t.population_2020_census DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-lowercase**<br>`select t.town, t.state, t.population_2020_census, t.primary_` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-whitespace**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
+| **typo-table**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean pnw_towns? Available tables: fips, pnw_counties, pnw_towns. |
+| **typo-column**<br>`SELECT t.townx, t.state, t.population_2020_census, t.primary` | error | error | ✓ | There's no column named "townx" in table t. Did you mean town? |
+| **missing-where**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | fail | warn | ✓ | All 46 expected rows are in your result — you just have 407 extra. Tighten your filter. Example row to exclude: ["Seattle", "Washington", 737015, "King"]. |
+| **missing-orderby**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+| **join-no-on**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | fail | warn | ✓ | Your query returned 0 rows but the expected answer has 46. Your WHERE filter may be too strict, or your FROM table may be wrong. Try running without the WHERE clause to see what's in the table. |
+| **swapped-columns**<br>`SELECT t.state, t.town, t.population_2020_census, t.primary_` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "town", "state", "population_2020_census", "primary_county"; you returned: "state", "town", "population_2020_census", "primary_county". |
+
+#### `example47c` — Joining 8: Find counties with no towns in our database
+
+**Solution:**
+```sql
+SELECT c.county,
+       c.state,
+       c.population_2022,
+       c.county_seat
+  FROM pnw_counties AS c
+  LEFT JOIN pnw_towns AS t
+    ON c.county_id = t.primary_county_id
+ WHERE t.town_id IS NULL
+ ORDER BY c.population_2022 DESC;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-lowercase**<br>`select c.county, c.state, c.population_2022, c.county_seat f` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-whitespace**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
+| **typo-table**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean pnw_counties? Available tables: fips, pnw_counties, pnw_towns. |
+| **typo-column**<br>`SELECT c.countyx, c.state, c.population_2022, c.county_seat ` | error | error | ✓ | There's no column named "countyx" in table c. Did you mean county? |
+| **missing-where**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | fail | warn | ✓ | All 2 expected rows are in your result — you just have 453 extra. Tighten your filter. Example row to exclude: ["King", "Washington", 2266789, "Seattle"]. |
+| **missing-orderby**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | fail | ok | ✓ | ✓ Your query matches the expected result. |
+| **join-no-on**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | fail | warn | ✓ | Your query returned 0 rows but the expected answer has 2. Your WHERE filter may be too strict, or your FROM table may be wrong. Try running without the WHERE clause to see what's in the table. |
+| **swapped-columns**<br>`SELECT c.state, c.county, c.population_2022, c.county_seat F` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "county", "state", "population_2022", "county_seat"; you returned: "state", "county", "population_2022", "county_seat". |
+
+### Going Further  `/examples/going-further`
+
+#### `example29` — Going Further 1: Find the smallest incorporated town
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-lowercase**<br>`select town, state, population_2020_census from pnw_towns wh` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-whitespace**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean pnw_towns? Available tables: fips, pnw_counties, pnw_towns. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean town? |
+| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | You returned exactly 453× the expected number of rows (453 vs 1). That multiple is the classic sign of a JOIN without the right ON condition — every row is pairing with every row of the other table. Check your ON clause. |
+| **swapped-columns**<br>`SELECT state, town, population_2020_census FROM pnw_towns WH` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "town", "state", "population_2020_census"; you returned: "state", "town", "population_2020_census". |
+
+#### `example30` — Going Further 2: Find the largest city
+
+**Solution:**
+```sql
+SELECT town, state, population_2020_census
+  FROM pnw_towns
+ WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-lowercase**<br>`select town, state, population_2020_census from pnw_towns wh` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-whitespace**<br>`SELECT town, state, population_2020_census FROM pnw_towns WH` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
+| **typo-table**<br>`SELECT town, state, population_2020_census FROM pnw_townsx W` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean pnw_towns? Available tables: fips, pnw_counties, pnw_towns. |
+| **typo-column**<br>`SELECT townx, state, population_2020_census FROM pnw_towns W` | error | error | ✓ | There's no column named "townx". Did you mean town? |
+| **missing-where**<br>`SELECT town, state, population_2020_census FROM pnw_towns;` | fail | warn | ✓ | You returned exactly 453× the expected number of rows (453 vs 1). That multiple is the classic sign of a JOIN without the right ON condition — every row is pairing with every row of the other table. Check your ON clause. |
+| **swapped-columns**<br>`SELECT state, town, population_2020_census FROM pnw_towns WH` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "town", "state", "population_2020_census"; you returned: "state", "town", "population_2020_census". |
+
+#### `example33` — Going Further 3: Find the actual earliest and newest counties
+
+**Solution:**
+```sql
+SELECT county, state, year_established
+  FROM pnw_counties
+ WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)
+    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)
+ ORDER BY year_established;
+```
+
+| Pattern | Expected | Actual | Match | Message |
+|---|---|---|---|---|
+| **correct**<br>`SELECT county, state, year_established FROM pnw_counties WHE` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-lowercase**<br>`select county, state, year_established from pnw_counties whe` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **correct-whitespace**<br>`SELECT county, state, year_established FROM pnw_counties WHE` | ok | ok | ✓ | ✓ Your query matches the expected result. |
+| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
+| **typo-table**<br>`SELECT county, state, year_established FROM pnw_countiesx WH` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean pnw_counties? Available tables: fips, pnw_counties, pnw_towns. |
+| **typo-column**<br>`SELECT countyx, state, year_established FROM pnw_counties WH` | error | error | ✓ | There's no column named "countyx". Did you mean county? |
+| **missing-where**<br>`SELECT county, state, year_established FROM pnw_counties ORD` | fail | warn | ✓ | You returned exactly 15× the expected number of rows (75 vs 5). That multiple is the classic sign of a JOIN without the right ON condition — every row is pairing with every row of the other table. Check your ON clause. |
+| **missing-orderby**<br>`SELECT county, state, year_established FROM pnw_counties WHE` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
+| **swapped-columns**<br>`SELECT state, county, year_established FROM pnw_counties WHE` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "county", "state", "year_established"; you returned: "state", "county", "year_established". |
+
+#### `example45c` — Going Further 4: Count towns per county (including counties with zero towns)
 
 **Solution:**
 ```sql
@@ -1222,91 +1308,7 @@ SELECT c.county,
 | **swapped-columns**<br>`SELECT c.state, c.county, c.population_2022 AS county_pop, C` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "county", "state", "county_pop", "num_towns", "total_town_pop"; you returned: "state", "county", "county_pop", "num_towns", "total_town_pop". |
 | **alias-dropped**<br>`SELECT c.county, c.state, c.population_2022, COUNT(t.town) A` | fail | warn | ✓ | Right number of columns, but the names don't match. Expected "county", "state", "county_pop", "num_towns", "total_town_pop"; you returned "county", "state", "population_2022", "num_towns", "total_town_pop". Use AS to rename each column to t |
 
-#### `example47` — Joining 7: Find county seats not in our towns database
-
-**Solution:**
-```sql
-SELECT c.county,
-       c.state,
-       c.county_seat
-  FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t
-    ON c.county_seat_town_id = t.town_id
- WHERE t.town_id IS NULL
- ORDER BY c.state, c.county;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-lowercase**<br>`select c.county, c.state, c.county_seat from pnw_counties as` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-whitespace**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
-| **typo-table**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_countiesx A` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean pnw_counties? Available tables: fips, pnw_counties, pnw_towns. |
-| **typo-column**<br>`SELECT c.countyx, c.state, c.county_seat FROM pnw_counties A` | error | error | ✓ | There's no column named "countyx" in table c. Did you mean county? |
-| **missing-where**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | fail | warn | ✓ | You returned exactly 15× the expected number of rows (75 vs 5). That multiple is the classic sign of a JOIN without the right ON condition — every row is pairing with every row of the other table. Check your ON clause. |
-| **missing-orderby**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | fail | ok | ✓ | ✓ Your query matches the expected result. |
-| **join-no-on**<br>`SELECT c.county, c.state, c.county_seat FROM pnw_counties AS` | fail | warn | ✓ | Your query returned 0 rows but the expected answer has 5. Your WHERE filter may be too strict, or your FROM table may be wrong. Try running without the WHERE clause to see what's in the table. |
-| **swapped-columns**<br>`SELECT c.state, c.county, c.county_seat FROM pnw_counties AS` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "county", "state", "county_seat"; you returned: "state", "county", "county_seat". |
-
-#### `example47b` — Joining 8: Find large towns that are NOT county seats
-
-**Solution:**
-```sql
-SELECT t.town,
-       t.state,
-       t.population_2020_census,
-       t.primary_county
-  FROM pnw_towns AS t
-  LEFT JOIN pnw_counties AS c
-    ON t.town_id = c.county_seat_town_id
- WHERE c.county_id IS NULL
-   AND t.population_2020_census > 25000
- ORDER BY t.population_2020_census DESC;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-lowercase**<br>`select t.town, t.state, t.population_2020_census, t.primary_` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-whitespace**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
-| **typo-table**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | error | error | ✓ | There's no table named "pnw_townsx". Did you mean pnw_towns? Available tables: fips, pnw_counties, pnw_towns. |
-| **typo-column**<br>`SELECT t.townx, t.state, t.population_2020_census, t.primary` | error | error | ✓ | There's no column named "townx" in table t. Did you mean town? |
-| **missing-where**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | fail | warn | ✓ | All 46 expected rows are in your result — you just have 407 extra. Tighten your filter. Example row to exclude: ["Seattle", "Washington", 737015, "King"]. |
-| **missing-orderby**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | fail | warn | ✓ | Values are right, but the rows are in the wrong order. Add or adjust your ORDER BY clause to match the expected ordering. |
-| **join-no-on**<br>`SELECT t.town, t.state, t.population_2020_census, t.primary_` | fail | warn | ✓ | Your query returned 0 rows but the expected answer has 46. Your WHERE filter may be too strict, or your FROM table may be wrong. Try running without the WHERE clause to see what's in the table. |
-| **swapped-columns**<br>`SELECT t.state, t.town, t.population_2020_census, t.primary_` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "town", "state", "population_2020_census", "primary_county"; you returned: "state", "town", "population_2020_census", "primary_county". |
-
-#### `example47c` — Joining 9: Find counties with no towns in our database
-
-**Solution:**
-```sql
-SELECT c.county,
-       c.state,
-       c.population_2022,
-       c.county_seat
-  FROM pnw_counties AS c
-  LEFT JOIN pnw_towns AS t
-    ON c.county_id = t.primary_county_id
- WHERE t.town_id IS NULL
- ORDER BY c.population_2022 DESC;
-```
-
-| Pattern | Expected | Actual | Match | Message |
-|---|---|---|---|---|
-| **correct**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-lowercase**<br>`select c.county, c.state, c.population_2022, c.county_seat f` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **correct-whitespace**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | ok | ok | ✓ | ✓ Your query matches the expected result. |
-| **empty**<br>`(empty)` | fail | warn | ✓ | Your query didn't return anything — the editor may be empty, or the statement isn't a SELECT. Start with SELECT ... FROM ... and Run it to see rows before checking. |
-| **typo-table**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | error | error | ✓ | There's no table named "pnw_countiesx". Did you mean pnw_counties? Available tables: fips, pnw_counties, pnw_towns. |
-| **typo-column**<br>`SELECT c.countyx, c.state, c.population_2022, c.county_seat ` | error | error | ✓ | There's no column named "countyx" in table c. Did you mean county? |
-| **missing-where**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | fail | warn | ✓ | All 2 expected rows are in your result — you just have 453 extra. Tighten your filter. Example row to exclude: ["King", "Washington", 2266789, "Seattle"]. |
-| **missing-orderby**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | fail | ok | ✓ | ✓ Your query matches the expected result. |
-| **join-no-on**<br>`SELECT c.county, c.state, c.population_2022, c.county_seat F` | fail | warn | ✓ | Your query returned 0 rows but the expected answer has 2. Your WHERE filter may be too strict, or your FROM table may be wrong. Try running without the WHERE clause to see what's in the table. |
-| **swapped-columns**<br>`SELECT c.state, c.county, c.population_2022, c.county_seat F` | fail | warn | ✓ | Right columns, but in the wrong order. Expected order: "county", "state", "population_2022", "county_seat"; you returned: "state", "county", "population_2022", "county_seat". |
-
-#### `example48` — Joining 10: Comprehensive county analysis
+#### `example48` — Going Further 5: Comprehensive county analysis
 
 **Solution:**
 ```sql

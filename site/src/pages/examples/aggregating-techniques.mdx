@@ -6,7 +6,7 @@ import SqlExercise from "../../components/SqlExercise.astro";
 import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
 import Scrolly from "../../components/Scrolly.astro";
-import { aggregateAct, subqueryAct } from "../../lib/scrolly-diagrams-more.mjs";
+import { aggregateAct } from "../../lib/scrolly-diagrams-more.mjs";
 
 # Aggregating Techniques
 
@@ -44,35 +44,7 @@ Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summ
  GROUP BY state;`}
 />
 
-`MIN` returns a number, not the row it came from. The next two examples recover the row by nesting one query inside another. Scroll to see the order the two queries run in.
-
-<Scrolly act={subqueryAct} swap />
-
-### Aggregating 3: Find the smallest incorporated town
-
-*Scenario: A journalist wants to profile the smallest town in the Pacific Northwest. Show the town with its state and population_2020_census.*
-
-<SqlExercise
-  id="example29"
-  db="pnw_database.sqlite"
-  solution={`SELECT town, state, population_2020_census
-  FROM pnw_towns
- WHERE population_2020_census = (SELECT MIN(population_2020_census) FROM pnw_towns);`}
-/>
-
-### Aggregating 4: Find the largest city
-
-*Scenario: Identify the region's largest metropolitan center. Show the town with its state and population_2020_census.*
-
-<SqlExercise
-  id="example30"
-  db="pnw_database.sqlite"
-  solution={`SELECT town, state, population_2020_census
-  FROM pnw_towns
- WHERE population_2020_census = (SELECT MAX(population_2020_census) FROM pnw_towns);`}
-/>
-
-### Aggregating 5: Summary statistics for county land areas
+### Aggregating 3: Summary statistics for county land areas
 
 *Scenario: Get a complete statistical overview of county sizes: the count of counties as num_counties, the smallest and largest land areas as smallest_area and largest_area, the average rounded to a whole number as avg_size, and the sum as total_area.*
 
@@ -91,7 +63,7 @@ Aggregate functions (AVG, SUM, MIN, MAX, COUNT) collapse multiple rows into summ
 
 MIN and MAX aren't just for measurements — they also pick out the extremes of columns like `year_established` (and they even work on text, returning alphabetically first/last values).
 
-### Aggregating 6: When were the earliest and most recent counties established?
+### Aggregating 4: When were the earliest and most recent counties established?
 
 *Scenario: Historical research on regional development. Report the earliest establishment year as earliest_year and the most recent as newest_year.*
 
@@ -103,26 +75,13 @@ MIN and MAX aren't just for measurements — they also pick out the extremes of 
   FROM pnw_counties;`}
 />
 
-### Aggregating 7: Find the actual earliest and newest counties
-
-*Scenario: Get the county names, not just the years. Show each county with its state and year_established.*
-
-<SqlExercise
-  id="example33"
-  db="pnw_database.sqlite"
-  solution={`SELECT county, state, year_established
-  FROM pnw_counties
- WHERE year_established = (SELECT MIN(year_established) FROM pnw_counties)
-    OR year_established = (SELECT MAX(year_established) FROM pnw_counties)
- ORDER BY year_established;`}
-  requireOrdering
-/>
+To find the *row* behind a minimum or maximum (which town is smallest, which county is oldest), see the subquery examples in <a href={`${import.meta.env.BASE_URL}examples/going-further#scrolly-subquery`}>Going Further</a>.
 
 ## Rounding summaries
 
 ROUND helps create cleaner, more readable output for reports and presentations.
 
-### Aggregating 8: Calculate and round population density
+### Aggregating 5: Calculate and round population density
 
 *Scenario: Create a readable density report (people per square mile). Show each town with its state, population_2020_census, land_area_sq_mi, and the density rounded to 1 decimal as people_per_sq_mile.*
 
@@ -140,7 +99,7 @@ ROUND helps create cleaner, more readable output for reports and presentations.
   requireOrdering
 />
 
-### Aggregating 9: Round to whole numbers for simpler reporting
+### Aggregating 6: Round to whole numbers for simpler reporting
 
 *Scenario: Executive summaries often need whole numbers. For each state, report the average town population as avg_town_pop and the average town land area as avg_town_area, both rounded to whole numbers.*
 

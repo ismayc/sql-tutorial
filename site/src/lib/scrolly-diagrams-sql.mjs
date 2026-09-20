@@ -248,11 +248,15 @@ export const groupByAct = {
 // pop>100k AND region='OR' OR coastal   vs   pop>100k AND (region='OR' OR coastal)
 const WROWS = [
   // town, pop>100k, isOR, coastal
+  // Six rows, six different stories. Astoria and Ilwaco are the two that flip,
+  // for different reasons (Ilwaco is not even in Oregon: it passes on coastal
+  // alone). Twisp fails everything, so both readings drop it.
   ["Portland", true, true, false],
   ["Astoria", false, true, true],
   ["Seattle", true, false, false],
-  ["Newport", false, true, true],
+  ["Ilwaco", false, false, true],
   ["Tacoma", true, false, true],
+  ["Twisp", false, false, false],
 ];
 const evalA = (r) => (r[1] && r[2]) || r[3]; // AND binds tighter
 const evalB = (r) => r[1] && (r[2] || r[3]); // parens force OR first
@@ -266,7 +270,7 @@ const W_COLS = [
   { w: 110, label: "coastal" },
 ];
 
-// rows that A keeps but B drops (the ones parentheses change): Astoria, Newport
+// rows that A keeps but B drops (the ones parentheses change): Astoria, Ilwaco
 const isFlip = (r) => evalA(r) && !evalB(r);
 
 // base condition table (revealed once). Flip rows are droppable so step 3 can
@@ -305,12 +309,12 @@ export const wherePrecedenceAct = {
   id: "scrolly-where-precedence",
   title: "AND, OR, and what the parentheses change",
   call: "-- A: pop>100000 AND region='OR' OR coastal\n-- B: pop>100000 AND (region='OR' OR coastal)",
-  viewBox: `0 0 ${HERO_W} 340`,
+  viewBox: `0 0 ${HERO_W} 385`,
   svg: whereSvg,
   steps: [
-    { beat: "Step 1 · the conditions", show: "wbase", html: "Three conditions per town: is it big (<code>pop&gt;100k</code>), is it in Oregon, and is it coastal. Every town is a different mix of <b>✓</b> and <b>✗</b>." },
-    { beat: "Step 2 · AND binds tighter than OR", show: "wbase,keepA", html: "Without parentheses, SQL reads <code>A AND B OR C</code> as <code>(A AND B) OR C</code>: <code>AND</code> groups first. Any coastal town passes on <code>C</code> alone, so small coastal <b>Astoria</b> and <b>Newport</b> are kept." },
-    { beat: "Step 3 · parentheses re-group it", show: "wbase,keepB," + flipEls.join(","), html: "Add parentheses: <code>A AND (B OR C)</code>. Now every kept row must be big. <b>Astoria</b> and <b>Newport</b> fail <code>pop&gt;100k</code>, so they flip to <b>drop</b>. Same three conditions, different answer." },
+    { beat: "Step 1 · the conditions", show: "wbase", html: "Three conditions per town: is it big (<code>pop&gt;100k</code>), is it in Oregon, and is it coastal. Every town is a different mix of <b>✓</b> and <b>✗</b>, from <b>Portland</b> (big and in Oregon) down to <b>Twisp</b>, which fails all three." },
+    { beat: "Step 2 · AND binds tighter than OR", show: "wbase,keepA", html: "Without parentheses, SQL reads <code>A AND B OR C</code> as <code>(A AND B) OR C</code>: <code>AND</code> groups first. Any coastal town passes on <code>C</code> alone, so small coastal <b>Astoria</b> and <b>Ilwaco</b> are kept. Ilwaco is not even in Oregon: <code>coastal</code> was enough." },
+    { beat: "Step 3 · parentheses re-group it", show: "wbase,keepB," + flipEls.join(","), html: "Add parentheses: <code>A AND (B OR C)</code>. Now every kept row must be big. <b>Astoria</b> and <b>Ilwaco</b> fail <code>pop&gt;100k</code>, so they flip to <b>drop</b>. <b>Tacoma</b> is coastal too, but it is big, so it stays. Same three conditions, different answer." },
     { beat: "Step 4 · the lesson", show: "wbase,keepB", html: "Mixed <code>AND</code>/<code>OR</code> without parentheses almost never means what it looks like. When both appear in one <code>WHERE</code>, parenthesize the intent so the reader (and SQL) agree." },
   ],
 };

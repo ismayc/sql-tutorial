@@ -392,11 +392,13 @@ def _exercise_has_solution(tokens, base: str) -> bool:
 # the site versions deliberately diverge from the Rmd's static panels:
 #   selection-techniques        - SELECT columns and AS, DISTINCT, the COUNT forms
 #   filtering-techniques        - BETWEEN and IN, WHERE precedence, LIKE, NULL tests
-#   aggregating-techniques      - aggregates over NULL, subquery in WHERE
+#   aggregating-techniques      - aggregates over NULL
 #   sorting-and-grouping-...     - clause execution order, two-key ORDER BY, GROUP BY
 #   transforming-techniques     - CASE WHEN order, integer division
-#   joining-techniques          - INNER / LEFT / one-to-many / COUNT after LEFT / anti
-# Every examples page is now hand-maintained, so a re-port refreshes only the
+#   joining-techniques          - INNER / LEFT / one-to-many / anti-join
+#   going-further               - subquery in WHERE, COUNT after a LEFT JOIN (the
+#                                 examples moved out of the first-session path)
+# Every examples page is hand-maintained, so a re-port refreshes only the
 # TOC for them. The full list with links is src/lib/scrolly-index.mjs, rendered
 # at /scrollytelling/.
 MANUAL_EXAMPLE_SLUGS = frozenset(
@@ -407,6 +409,7 @@ MANUAL_EXAMPLE_SLUGS = frozenset(
         "sorting-and-grouping-techniques",
         "transforming-techniques",
         "joining-techniques",
+        "going-further",
     }
 )
 
