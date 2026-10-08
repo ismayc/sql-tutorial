@@ -1,20 +1,13 @@
 ---
 import toc from "../generated-toc.json";
+// Keep imports at the top: one placed after isActive() broke the build with
+// "Unterminated string literal" (October 8, 2026).
+import { pageItems, type TocExercise } from "../lib/page-items";
 const base = import.meta.env.BASE_URL;
 const path = Astro.url.pathname.replace(/\/$/, "");
 
 function isActive(href: string): boolean {
   return path === href.replace(/\/$/, "");
-}
-
-// "Selection 1: Create a quick reference..." -> "Selection 1". Editors without a
-// numbered title (a follow-up editor such as example40b) are left out.
-type TocExercise = { id: string; title: string };
-function numberedExamples(exercises: TocExercise[] = []): Array<{ id: string; label: string }> {
-  return exercises.flatMap((e) => {
-    const m = /^([A-Za-z][A-Za-z ]* \d+[a-z]?):/.exec(e.title);
-    return m ? [{ id: e.id, label: m[1] }] : [];
-  });
 }
 
 const groups = [
@@ -77,7 +70,7 @@ if (expandedGroups.size === 0) {
             </li>
             {g.sections.map((s) => {
               const href = `${base}${g.key}/${s.slug}`;
-              const subs = g.listExamples && isActive(href) ? numberedExamples(s.exercises) : [];
+              const subs = g.listExamples && isActive(href) ? pageItems(s.slug, s.exercises) : [];
               return (
                 <li>
                   <a
@@ -93,15 +86,23 @@ if (expandedGroups.size === 0) {
                     </span>
                   </a>
                   {subs.length > 0 && (
-                    <ul class="sqlt-toc-sublist" aria-label={`${s.title} examples`}>
-                      {subs.map((x) => (
-                        <li>
-                          <a href={`#${x.id}`} class="sqlt-toc-subitem" data-sub-id={x.id}>
-                            <span>{x.label}</span>
-                            <span class="sqlt-toc-check" data-sub-complete aria-label="completed" hidden>✓</span>
-                          </a>
-                        </li>
-                      ))}
+                    <ul class="sqlt-toc-sublist" aria-label={`${s.title}: examples and diagrams`}>
+                      {subs.map((x) =>
+                        x.kind === "example" ? (
+                          <li>
+                            <a href={`#${x.id}`} class="sqlt-toc-subitem" data-sub-id={x.id}>
+                              <span>{x.label}</span>
+                              <span class="sqlt-toc-check" data-sub-complete aria-label="completed" hidden>✓</span>
+                            </a>
+                          </li>
+                        ) : (
+                          <li>
+                            <a href={`#${x.id}`} class="sqlt-toc-subitem sqlt-toc-diagram" title={`Diagram: ${x.label}`}>
+                              <span><span aria-hidden="true">📊 </span><span class="sr-only">Diagram: </span>{x.label}</span>
+                            </a>
+                          </li>
+                        )
+                      )}
                     </ul>
                   )}
                 </li>

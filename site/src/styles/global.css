@@ -368,6 +368,13 @@ main h3[id] {
   background: var(--color-slate-800);
   color: var(--color-slate-100) !important;
 }
+/* Diagram entries: one line, cut with an ellipsis (the full title is the tooltip) */
+.sqlt-toc-diagram > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-style: italic;
+}
 .sqlt-toc-overview {
   font-style: italic;
   color: var(--color-slate-500) !important;
