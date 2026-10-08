@@ -28,6 +28,12 @@ export function refreshSidebarProgress(): void {
     }
   });
 
+  // Per-example links under the current page
+  sidebar.querySelectorAll<HTMLAnchorElement>("[data-sub-id]").forEach((a) => {
+    const check = a.querySelector<HTMLElement>("[data-sub-complete]");
+    if (check) check.hidden = getProgress(a.dataset.subId ?? "")?.completed !== true;
+  });
+
   groupCounts.forEach((agg, group) => {
     const el = sidebar.querySelector<HTMLElement>(`[data-group-progress="${group}"]`);
     if (el) el.textContent = `${agg.done}/${agg.total}`;

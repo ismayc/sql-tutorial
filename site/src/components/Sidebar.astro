@@ -7,20 +7,32 @@ function isActive(href: string): boolean {
   return path === href.replace(/\/$/, "");
 }
 
+// "Selection 1: Create a quick reference..." -> "Selection 1". Editors without a
+// numbered title (a follow-up editor such as example40b) are left out.
+type TocExercise = { id: string; title: string };
+function numberedExamples(exercises: TocExercise[] = []): Array<{ id: string; label: string }> {
+  return exercises.flatMap((e) => {
+    const m = /^([A-Za-z][A-Za-z ]* \d+[a-z]?):/.exec(e.title);
+    return m ? [{ id: e.id, label: m[1] }] : [];
+  });
+}
+
 const groups = [
   {
     key: "examples",
     label: "Examples",
     subtitle: "towns & counties",
     indexHref: `${base}examples/`,
-    sections: toc.examples as Array<{ slug: string; title: string; checkableIds: string[] }>,
+    sections: toc.examples as Array<{ slug: string; title: string; checkableIds: string[]; exercises?: TocExercise[] }>,
+    listExamples: true,
   },
   {
     key: "exercises",
     label: "Exercises",
     subtitle: "PNW flights",
     indexHref: `${base}exercises/`,
-    sections: toc.exercises as Array<{ slug: string; title: string; checkableIds: string[] }>,
+    sections: toc.exercises as Array<{ slug: string; title: string; checkableIds: string[]; exercises?: TocExercise[] }>,
+    listExamples: false,
   },
 ];
 
@@ -65,6 +77,7 @@ if (expandedGroups.size === 0) {
             </li>
             {g.sections.map((s) => {
               const href = `${base}${g.key}/${s.slug}`;
+              const subs = g.listExamples && isActive(href) ? numberedExamples(s.exercises) : [];
               return (
                 <li>
                   <a
@@ -79,6 +92,18 @@ if (expandedGroups.size === 0) {
                       <span class="sqlt-toc-check" data-section-complete aria-label="completed" hidden>✓</span>
                     </span>
                   </a>
+                  {subs.length > 0 && (
+                    <ul class="sqlt-toc-sublist" aria-label={`${s.title} examples`}>
+                      {subs.map((x) => (
+                        <li>
+                          <a href={`#${x.id}`} class="sqlt-toc-subitem" data-sub-id={x.id}>
+                            <span>{x.label}</span>
+                            <span class="sqlt-toc-check" data-sub-complete aria-label="completed" hidden>✓</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               );
             })}
@@ -94,4 +119,19 @@ if (expandedGroups.size === 0) {
   refreshSidebarProgress();
   window.addEventListener("focus", refreshSidebarProgress);
   window.addEventListener("sqlt:progress-changed", refreshSidebarProgress);
+
+  // An example link targets its editor (#example1); land on the heading above
+  // it instead, so the title and scenario show. Without JS the editor anchor works.
+  document.addEventListener("click", (ev) => {
+    const a = (ev.target as Element | null)?.closest<HTMLAnchorElement>("a[data-sub-id]");
+    if (!a) return;
+    const editor = document.getElementById(a.dataset.subId ?? "");
+    if (!editor) return;
+    let heading: Element | null = editor.previousElementSibling;
+    while (heading && !/^H[1-4]$/.test(heading.tagName)) heading = heading.previousElementSibling;
+    const target = heading && heading.id ? heading : editor;
+    ev.preventDefault();
+    target.scrollIntoView({ block: "start" });
+    history.replaceState(null, "", `#${target.id}`);
+  });
 </script>
