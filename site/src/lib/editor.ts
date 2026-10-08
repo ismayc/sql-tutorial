@@ -79,11 +79,8 @@ export function createEditor({ parent, initialValue = "", dbFile, onChange, onSu
         EditorView.lineWrapping,
         themeComp.of(dark ? [oneDark] : []),
         keymap.of([
-          ...closeBracketsKeymap,
-          ...completionKeymap,
-          ...defaultKeymap,
-          ...historyKeymap,
-          indentWithTab,
+          // First: the first binding that matches a key wins, and CodeMirror's
+          // defaultKeymap binds Mod-Enter to insertBlankLine.
           {
             key: "Mod-Enter",
             run: () => {
@@ -91,6 +88,11 @@ export function createEditor({ parent, initialValue = "", dbFile, onChange, onSu
               return true;
             },
           },
+          ...closeBracketsKeymap,
+          ...completionKeymap,
+          ...defaultKeymap,
+          ...historyKeymap,
+          indentWithTab,
         ]),
         EditorView.updateListener.of((u) => {
           if (u.docChanged && onChange) onChange(u.state.doc.toString());
