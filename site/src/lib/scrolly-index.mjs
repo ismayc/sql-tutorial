@@ -7,6 +7,7 @@
 // `pageTitle` names the page when it is not "<title> Techniques".
 
 import { innerAct, leftAct, multiAct, antiAct } from "./scrolly-diagrams.mjs";
+import { oneToManyAct, zeroOrOneAct, manyToManyAct } from "./scrolly-diagrams-cardinality.mjs";
 import { clauseOrderAct, groupByAct, wherePrecedenceAct } from "./scrolly-diagrams-sql.mjs";
 import {
   selectColumnsAct,
@@ -71,6 +72,9 @@ export const SCROLLY_GROUPS = [
     slug: "joining-techniques",
     title: "Joining",
     items: [
+      { act: oneToManyAct, question: "What do the bars, circle, and crow's foot on an ERD line mean?" },
+      { act: zeroOrOneAct, question: "What does a circle at both ends of a line tell me?" },
+      { act: manyToManyAct, question: "How does a database store a many-to-many relationship?" },
       { act: innerAct, question: "Which rows survive an INNER JOIN?" },
       { act: leftAct, question: "Where do the NULLs in a LEFT JOIN come from?" },
       { act: multiAct, question: "Why did my row count go up after a join?" },

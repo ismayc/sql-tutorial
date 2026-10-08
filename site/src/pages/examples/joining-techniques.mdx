@@ -7,6 +7,7 @@ import Hint from "../../components/Hint.astro";
 import SchemaReference from "../../components/SchemaReference.astro";
 import Scrolly from "../../components/Scrolly.astro";
 import { innerAct, leftAct, multiAct, antiAct } from "../../lib/scrolly-diagrams.mjs";
+import { oneToManyAct, zeroOrOneAct, manyToManyAct } from "../../lib/scrolly-diagrams-cardinality.mjs";
 
 # Joining Techniques
 
@@ -15,6 +16,18 @@ import { innerAct, leftAct, multiAct, antiAct } from "../../lib/scrolly-diagrams
 Joins combine data from multiple tables. This is essential because real databases store related information in separate tables to avoid redundancy.
 
 ![](/sql-tutorial/images/00-setup.png)
+
+## Reading the ERD: cardinality
+
+Before joining two tables, read how their rows relate. On an entity relationship diagram (ERD), each end of a line says how many rows of *that* table one row of the other table can have. Two bars mean exactly one, a circle means zero is allowed, and the fan (a crow's foot) means many. Scroll through three real relationships in this database.
+
+One caution about this data: the Washington rows of `pnw_towns` are incomplete, so a few Washington counties show no towns or no county seat because rows are missing, not because the county has none. The diagrams point these out where they appear.
+
+<Scrolly act={oneToManyAct} />
+
+<Scrolly act={zeroOrOneAct} />
+
+<Scrolly act={manyToManyAct} />
 
 ## INNER JOIN
 
