@@ -5,10 +5,11 @@ Two ways to learn SQL on the Pacific Northwest towns / counties / flights datase
 - **Static site** (current, deployable to GitHub Pages free tier) — Astro + sql.js, runs
   entirely in the browser, no server. Lives in [`site/`](site/).
 - **Legacy learnr tutorials** (still works locally; previously hosted on shinyapps.io) —
-  the original `*.Rmd` + `*.qmd` files at the repo root.
+  the original `*.Rmd` + `*.qmd` files, now in [`r-archive/`](r-archive/).
 
-The static site is the active version. The legacy R sources are kept in place so the
+The static site is the active version. The legacy R sources are archived in `r-archive/` so the
 content can be re-generated from them via [`site/scripts/port_rmd.py`](site/scripts/port_rmd.py).
+To work with them in R, open `r-archive/sql-tutorial.Rproj` (its `.Rprofile` activates `renv`).
 
 ## Repository layout
 
@@ -49,12 +50,16 @@ content can be re-generated from them via [`site/scripts/port_rmd.py`](site/scri
 │   │   └── README.md                  ← format spec + jq query examples
 │   └── .env.example                   ← analytics config template (Plausible / GoatCounter / Umami) — disabled by default
 │
-├── examples.Rmd, exercises/, *.qmd    ← LEGACY: original learnr/quarto tutorials, source of truth for content
-├── pnw_database.sqlite                ← LEGACY: copied into site/public/data/ by hand (re-copy if updated)
-├── pnw_flights_database.sqlite        ← LEGACY: same
-├── images/                            ← LEGACY: copied into site/public/images/ (with spaces → hyphens)
-├── 01-…/02-…/03-…/04-….R              ← LEGACY: data prep + deploy scripts for the Shiny workflow
-└── renv.lock, *.Rproj, rsconnect/     ← LEGACY: R env + shinyapps.io deploy metadata
+├── sql-clause-order.md / .html        ← SQL clause-order cheatsheet
+│
+└── r-archive/                         ← LEGACY: the original R / learnr / Quarto materials
+    ├── examples.Rmd, exercises/, *.qmd    ← original learnr/quarto tutorials, read by port_rmd.py
+    ├── pnw_database.sqlite                ← copied into site/public/data/ by hand (re-copy if updated)
+    ├── pnw_flights_database.sqlite        ← same
+    ├── images/                            ← copied into site/public/images/ (with spaces → hyphens)
+    ├── data/                              ← .rds files written by 01-get_data.R, read by 02-…R
+    ├── 01-…/02-…/03-…/04-….R              ← data prep + deploy scripts for the Shiny workflow
+    └── renv.lock, renv/, *.Rproj, rsconnect/  ← R env + shinyapps.io deploy metadata
 ```
 
 ## Local development

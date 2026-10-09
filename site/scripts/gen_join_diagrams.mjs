@@ -6,7 +6,7 @@
  * faded rows for anything a join drops, dark-gradient cells for NULL.
  *
  * Writes both copies of each panel:
- *   ../../images/<name with spaces>.png      (referenced by examples.Rmd)
+ *   ../../r-archive/images/<name with spaces>.png  (referenced by examples.Rmd)
  *   ../public/images/<name-with-dashes>.png  (referenced by the MDX pages)
  *
  * Usage:  node site/scripts/gen_join_diagrams.mjs
@@ -19,7 +19,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const SITE = resolve(__dirname, "..");
 const REPO = resolve(SITE, "..");
-const OUT_RMD = resolve(REPO, "images");
+const OUT_RMD = resolve(REPO, "r-archive", "images");
 const OUT_SITE = resolve(SITE, "public", "images");
 
 // Key colors, one per id value — identical to the originals.

@@ -2,8 +2,8 @@
 """Convert R Markdown learnr tutorials into MDX pages using SqlExercise + Hint.
 
 Reads:
-  ../../examples.Rmd
-  ../../exercises/exercises.Rmd
+  ../../r-archive/examples.Rmd
+  ../../r-archive/exercises/exercises.Rmd
 
 Writes:
   ../src/pages/examples/<slug>.mdx
@@ -19,6 +19,7 @@ from typing import Optional
 HERE = Path(__file__).resolve().parent
 SITE = HERE.parent
 REPO = SITE.parent
+R_ARCHIVE = REPO / "r-archive"
 PAGES = SITE / "src" / "pages"
 
 
@@ -417,7 +418,7 @@ MANUAL_EXAMPLE_SLUGS = frozenset(
 def main() -> int:
     print(f"Site root: {SITE}")
     examples_idx = process(
-        REPO / "examples.Rmd",
+        R_ARCHIVE / "examples.Rmd",
         PAGES / "examples",
         "pnw_database.sqlite",
         manual_slugs=MANUAL_EXAMPLE_SLUGS,
@@ -426,7 +427,7 @@ def main() -> int:
         print(f"  examples/{s['slug']}.mdx — {s['title']} ({s['exerciseCount']} ex)")
 
     exercises_idx = process(
-        REPO / "exercises" / "exercises.Rmd",
+        R_ARCHIVE / "exercises" / "exercises.Rmd",
         PAGES / "exercises",
         "pnw_flights_database.sqlite",
     )
