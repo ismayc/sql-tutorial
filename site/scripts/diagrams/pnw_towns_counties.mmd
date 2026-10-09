@@ -1,0 +1,35 @@
+erDiagram
+    pnw_counties {
+        INTEGER county_id PK
+        TEXT county
+        TEXT state
+        REAL fips_short "county part of the FIPS code"
+        TEXT county_seat
+        INTEGER county_seat_town_id FK "town_id of the seat (NULL if not in pnw_towns)"
+        REAL year_established
+        TEXT origin
+        TEXT etymology
+        REAL population_2022
+        REAL land_area_sq_mi
+    }
+    pnw_towns {
+        INTEGER town_id PK
+        TEXT town
+        TEXT state
+        TEXT primary_county
+        TEXT secondary_county
+        TEXT tertiary_county
+        INTEGER primary_county_id FK
+        INTEGER secondary_county_id FK
+        INTEGER tertiary_county_id FK
+        REAL population_2020_census
+        REAL population_2010_census
+        REAL land_area_sq_mi
+    }
+    fips {
+        REAL fips "state code x 1000 + county code"
+        TEXT name "e.g. OREGON, Baker County"
+        TEXT state "abbreviation (OR), blank on state rows"
+    }
+    pnw_counties ||--o{ pnw_towns : "county_id → primary_county_id"
+    pnw_towns |o--o| pnw_counties : "town_id → county_seat_town_id"
