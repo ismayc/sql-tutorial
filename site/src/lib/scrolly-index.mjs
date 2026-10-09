@@ -56,7 +56,7 @@ export const SCROLLY_GROUPS = [
     slug: "sorting-and-grouping-techniques",
     title: "Sorting and Grouping",
     items: [
-      { act: clauseOrderAct, question: "Why can't WHERE see my SELECT alias?" },
+      { act: clauseOrderAct, question: "Why does standard SQL reject my SELECT alias in WHERE?" },
       { act: orderByAct, question: "What does the second ORDER BY column do?" },
       { act: groupByAct, question: "How do many rows become one row per group? WHERE or HAVING?" },
     ],
