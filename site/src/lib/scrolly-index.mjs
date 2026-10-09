@@ -9,6 +9,7 @@
 import { innerAct, leftAct, multiAct, antiAct } from "./scrolly-diagrams.mjs";
 import { oneToManyAct, zeroOrOneAct, manyToManyAct } from "./scrolly-diagrams-cardinality.mjs";
 import { clauseOrderAct, groupByAct, wherePrecedenceAct } from "./scrolly-diagrams-sql.mjs";
+import { orderMapAct, joinOrderAct } from "./scrolly-diagrams-order.mjs";
 import {
   selectColumnsAct,
   distinctAct,
@@ -79,6 +80,8 @@ export const SCROLLY_GROUPS = [
       { act: leftAct, question: "Where do the NULLs in a LEFT JOIN come from?" },
       { act: multiAct, question: "Why did my row count go up after a join?" },
       { act: antiAct, question: "How do I find the rows with no match?" },
+      { act: orderMapAct, question: "Why does SQL run my clauses in a different order than I wrote them?" },
+      { act: joinOrderAct, question: "When does the JOIN happen, and when does LIMIT cut the rows?" },
     ],
   },
   {

@@ -6,6 +6,7 @@ import * as joinActs from "./scrolly-diagrams.mjs";
 import * as sqlActs from "./scrolly-diagrams-sql.mjs";
 import * as moreActs from "./scrolly-diagrams-more.mjs";
 import * as cardinalityActs from "./scrolly-diagrams-cardinality.mjs";
+import * as orderActs from "./scrolly-diagrams-order.mjs";
 
 const pageSources = import.meta.glob("../pages/examples/*.mdx", {
   query: "?raw",
@@ -13,7 +14,7 @@ const pageSources = import.meta.glob("../pages/examples/*.mdx", {
   eager: true,
 }) as Record<string, string>;
 
-const acts = { ...joinActs, ...sqlActs, ...moreActs, ...cardinalityActs } as unknown as Record<
+const acts = { ...joinActs, ...sqlActs, ...moreActs, ...cardinalityActs, ...orderActs } as unknown as Record<
   string,
   { id?: string; title?: string }
 >;

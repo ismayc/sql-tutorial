@@ -8,6 +8,7 @@ import SchemaReference from "../../components/SchemaReference.astro";
 import Scrolly from "../../components/Scrolly.astro";
 import { innerAct, leftAct, multiAct, antiAct } from "../../lib/scrolly-diagrams.mjs";
 import { oneToManyAct, zeroOrOneAct, manyToManyAct } from "../../lib/scrolly-diagrams-cardinality.mjs";
+import { orderMapAct, joinOrderAct } from "../../lib/scrolly-diagrams-order.mjs";
 
 # Joining Techniques
 
@@ -207,6 +208,14 @@ An anti-join finds rows in one table that have NO match in another table. It's i
  ORDER BY c.population_2022 DESC;`}
   requireOrdering
 />
+
+## Order of operations: putting it together
+
+A query with a join, a filter, groups, a sort, and a `LIMIT` does not run in the order it is written. The first diagram lines the two orders up; the second runs one real query through all eight clauses, from `FROM` to `LIMIT`. (The single-table version is on <a href={`${import.meta.env.BASE_URL}examples/sorting-and-grouping-techniques#scrolly-clause-order`}>Sorting and Grouping</a>.)
+
+<Scrolly act={orderMapAct} />
+
+<Scrolly act={joinOrderAct} swap />
 
 ## Going further
 
