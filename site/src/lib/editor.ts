@@ -9,7 +9,8 @@ import {
   bracketMatching,
   indentOnInput,
 } from "@codemirror/language";
-import { closeBrackets, closeBracketsKeymap, autocompletion, completionKeymap } from "@codemirror/autocomplete";
+import { closeBrackets, closeBracketsKeymap, autocompletion, completionKeymap, acceptCompletion } from "@codemirror/autocomplete";
+import type { Completion, CompletionContext, CompletionResult } from "@codemirror/autocomplete";
 import schemas from "../generated-schemas.json";
 
 export interface CreateEditorOpts {
@@ -32,13 +33,48 @@ function schemaForDb(dbFile?: string): Record<string, string[]> | undefined {
 // keywords, which confuses students. Demote them to ordinary identifiers;
 // SQLite itself does not reserve any of these.
 const DEMOTED_KEYWORDS = new Set(["state", "year", "month", "day", "hour", "minute", "temp"]);
+// The other way round: COUNT is highlighted only because ANSI reserves it, so
+// SUM, AVG, MIN, MAX, and the other SQLite functions read as plain names next
+// to it. Promote them so every function in the lessons looks the same. None
+// is a table or column name in generated-schemas.json.
+const PROMOTED_FUNCTIONS = [
+  "sum", "avg", "min", "max", "total", "round", "abs", "length", "upper", "lower",
+  "substr", "substring", "trim", "ltrim", "rtrim", "instr", "ifnull", "coalesce",
+  "nullif", "group_concat", "printf", "strftime", "julianday", "random", "iif",
+];
 const TutorialSQLite = SQLDialect.define({
   ...SQLite.spec,
-  keywords: (SQLite.spec.keywords ?? "")
-    .split(/\s+/)
-    .filter((k) => k && !DEMOTED_KEYWORDS.has(k))
-    .join(" "),
+  keywords: [
+    ...(SQLite.spec.keywords ?? "").split(/\s+/).filter((k) => k && !DEMOTED_KEYWORDS.has(k)),
+    ...PROMOTED_FUNCTIONS,
+  ].join(" "),
 });
+
+// lang-sql's schema completion offers column names only after "table." (or
+// for one default table), so typing `SELECT po` never suggested
+// population_2020_census. Offer every column in the page's database as a bare
+// name too, with its table(s) as the detail, and rank columns of tables
+// already named in the query first. Qualified "table." completion is left to
+// lang-sql.
+function columnCompletions(schema: Record<string, string[]>) {
+  const tablesByColumn = new Map<string, string[]>();
+  for (const [table, cols] of Object.entries(schema)) {
+    for (const col of cols) tablesByColumn.set(col, [...(tablesByColumn.get(col) ?? []), table]);
+  }
+  return (ctx: CompletionContext): CompletionResult | null => {
+    const word = ctx.matchBefore(/[A-Za-z_][A-Za-z0-9_]*/);
+    if (!word || (word.from === word.to && !ctx.explicit)) return null;
+    if (ctx.state.sliceDoc(word.from - 1, word.from) === ".") return null;
+    const doc = ctx.state.doc.toString().toLowerCase();
+    const options: Completion[] = [...tablesByColumn].map(([col, tables]) => ({
+      label: col,
+      type: "property",
+      detail: tables.join(", "),
+      boost: tables.some((t) => new RegExp(`\\b${t.toLowerCase()}\\b`).test(doc)) ? 2 : 1,
+    }));
+    return { from: word.from, options, validFor: /^[A-Za-z0-9_]*$/ };
+  };
+}
 
 export interface EditorHandle {
   view: EditorView;
@@ -75,6 +111,7 @@ export function createEditor({ parent, initialValue = "", dbFile, onChange, onSu
           upperCaseKeywords: true,
           ...(schema ? { schema } : {}),
         }),
+        ...(schema ? [TutorialSQLite.language.data.of({ autocomplete: columnCompletions(schema) })] : []),
         autocompletion({ activateOnTyping: true, defaultKeymap: false }),
         EditorView.lineWrapping,
         themeComp.of(dark ? [oneDark] : []),
@@ -88,6 +125,9 @@ export function createEditor({ parent, initialValue = "", dbFile, onChange, onSu
               return true;
             },
           },
+          // Tab accepts an open suggestion (completionKeymap binds only
+          // Enter); with no suggestion open it falls through to indentWithTab.
+          { key: "Tab", run: acceptCompletion },
           ...closeBracketsKeymap,
           ...completionKeymap,
           ...defaultKeymap,

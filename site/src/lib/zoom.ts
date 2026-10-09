@@ -11,8 +11,15 @@ function ensureDialog(): HTMLDialogElement {
   dialog.innerHTML = `
     <button type="button" class="sqlt-zoom-close" aria-label="Close enlarged image" data-zoom-close>×</button>
     <img alt="" />
+    <span class="sqlt-zoom-hint" aria-hidden="true">Click the image to zoom to full width</span>
   `;
   dialogImg = dialog.querySelector("img");
+  const hint = dialog.querySelector<HTMLSpanElement>(".sqlt-zoom-hint");
+  dialogImg?.addEventListener("click", () => {
+    const zoomed = dialog!.classList.toggle("is-zoomed");
+    if (hint) hint.textContent = zoomed ? "Click the image to fit the screen" : "Click the image to zoom to full width";
+    dialog!.scrollTop = 0;
+  });
   dialog.querySelector<HTMLButtonElement>("[data-zoom-close]")?.addEventListener("click", () => {
     dialog?.close();
   });
@@ -51,6 +58,9 @@ function scan() {
           dialogImg.src = img.src;
           dialogImg.alt = altText;
         }
+        d.classList.remove("is-zoomed");
+        const hint = d.querySelector(".sqlt-zoom-hint");
+        if (hint) hint.textContent = "Click the image to zoom to full width";
         d.setAttribute("aria-label", `Enlarged: ${altText}`);
         d.showModal();
       });
